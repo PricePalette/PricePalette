@@ -5,7 +5,6 @@ export default function Login() {
     <div
       style={{
         display: "flex",
-        border: "2px dashed red",
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
