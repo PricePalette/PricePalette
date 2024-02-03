@@ -2,9 +2,16 @@ import { AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../theme'; // Adjust the path accordingly
 import Header from '@/components/Header';
+import { useRouter } from 'next/router';
 
 
 export default function Home() {
+    const router = useRouter();
+
+  const handleButtonClick = () => {
+    router.push('/getStarted');
+  };
+  
   return (
     <ThemeProvider theme={theme}>
       <div>
@@ -17,7 +24,7 @@ export default function Home() {
             <Typography variant="body1" gutterBottom>
               Customize price pages
             </Typography>
-            <Button variant="contained" color="primary" size="large">
+            <Button onClick={handleButtonClick} variant="contained" color="primary" size="large">
               Get Started
             </Button>
           </div>
