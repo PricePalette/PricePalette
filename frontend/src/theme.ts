@@ -12,10 +12,10 @@ export const roboto = Roboto({
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#556cd6",
+      main: "#1192DD",
     },
     secondary: {
-      main: "#19857b",
+      main: "#F9D00B",
     },
     error: {
       main: red.A400,
@@ -23,6 +23,9 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
+  },
+  appBarGradient: {
+    backgroundImage: `linear-gradient(to right, #1192DD, black)`,
   },
 });
 
