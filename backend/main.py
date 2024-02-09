@@ -20,9 +20,10 @@ app.include_router(widget_router)
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request, exc):
-    print(exc)
-    return JSONResponse(status_code=422, content={"message": "error"})
+async def validation_exception_handler(request, exc: RequestValidationError):
+    err_msg = "; ".join([f'{err["msg"]}: {err["loc"][-1]}' if err["type"] == "missing" else err["msg"]
+                         for err in exc.errors()])
+    return JSONResponse(status_code=422, content={"message": "error", "detail": err_msg})
 
 
 @app.exception_handler(HTTPException)

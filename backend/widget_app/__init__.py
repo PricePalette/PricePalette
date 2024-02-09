@@ -4,7 +4,7 @@ from pydantic.types import UUID4
 
 from backend.database import MONGO_CXN
 from backend.dependency import verify_jwt
-from backend.widget_app.models import UserID, WidgetID, WidgetMetadata
+from backend.widget_app.models import UserID, WidgetID, WidgetMetadata, UpdateWidget, CreateWidget
 
 widget_collection = MONGO_CXN["widgets"]
 widget_router = APIRouter(
@@ -34,8 +34,14 @@ async def widget_info(widget_id: UUID4):
     return JSONResponse(content={"message": "OK", "content": widget})
 
 
+@widget_router.post("/create")
+async def update_widget(data: CreateWidget):
+    widget_collection.insert_one(data.model_dump(mode="json"))
+    return JSONResponse(content={"message": "OK", "content": {"widget_id": str(data.widget_id)}})
+
+
 @widget_router.put("/update")
-async def update_widget(data: WidgetMetadata):
+async def update_widget(data: UpdateWidget):
     if widget_collection.count_documents({"widget_id": str(data.widget_id)}) == 0:
         return JSONResponse(content={"message": "error"}, status_code=404)
     widget_collection.update_one({"widget_id": str(data.widget_id)})
