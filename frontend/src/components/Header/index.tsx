@@ -1,6 +1,6 @@
 import { AppBar, Button, Toolbar, Typography, Box, Link } from "@mui/material";
 import React from "react";
-import theme from "/src/theme.ts";
+import theme from "../../theme";
 
 export default function Header() {
   return (

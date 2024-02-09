@@ -29,4 +29,18 @@ const theme = createTheme({
   },
 });
 
+declare module "@mui/material/styles" {
+  interface Theme {
+    appBarGradient?: {
+      backgroundImage?: string;
+    };
+  }
+  // allow configuration using `createTheme`
+  interface ThemeOptions {
+    appBarGradient?: {
+      backgroundImage?: string;
+    };
+  }
+}
+
 export default theme;
