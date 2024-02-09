@@ -2,10 +2,16 @@ from fastapi import FastAPI, HTTPException, Depends
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer
+from backend.auth_app.models import User
+
+#import very.jwt from dependency.py
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-app = FastAPI()
+#aadd Outh2 in dependency
+
+app = FastAPI() #use this only in main.py
+
 
 # In-memory database (replace with a real database in a production environment)
 db_users = []
@@ -15,30 +21,20 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-class User:
-    def __init__(self, username: str, password: str, orgname: str, email: str):
-        self.username = username
-        self.password = password
-        self.orgname = orgname
-        self.email = email
-
-
 def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
     expire = datetime.utcnow() + expires_delta
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": expire, "iat": datetime.utcnow(), "sub": User.username})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
 @app.post("/register")
-async def register(user_info: dict):
-    username = user_info.get("username")
-    password = user_info.get("password")
-    orgname = user_info.get("orgname")
-    email = user_info.get("email")
-
-
+async def register(user_info: User):
+    username = user_info.username
+    password = user_info.password
+    orgname = user_info.orgname
+    email = user_info.email
 
     if not username or not password:
         raise HTTPException(status_code=400, detail="Username and password are required")
