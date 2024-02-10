@@ -9,6 +9,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from backend.database import MONGO_CLIENT, ALCHEMY_ENGINE
 from backend.database_models import create_tables
 from backend.widget_app import widget_router
+from backend.auth_app import auth_router
 
 
 @asynccontextmanager
