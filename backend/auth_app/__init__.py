@@ -1,35 +1,40 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordBearer
 from backend.auth_app.models import User
+from backend.dependency import verify_jwt, oauth2_scheme
+from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKEN_EXPIRE_MINUTES
 
 #import very.jwt from dependency.py
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+#oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-#aadd Outh2 in dependency
+#add Outh2 in dependency
 
-app = FastAPI() #use this only in main.py
+#app = FastAPI() #use this only in main.py
 
-
+auth_router = APIRouter(
+    prefix="/auth",
+    tags=["authorization for login/register"],
+    # dependencies=[Depends(verify_jwt)]
+)
 # In-memory database (replace with a real database in a production environment)
 db_users = []
 
-SECRET_KEY = "1A2B3C"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+#JWT_SECRET_KEY = "1A2B3C"
+#JWT_ALGORITHM = "HS256"
+#JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-def create_access_token(data: dict, expires_delta: timedelta):
-    to_encode = data.copy()
+def create_access_token(sub: str, expires_delta: timedelta):
     expire = datetime.utcnow() + expires_delta
-    to_encode.update({"exp": expire, "iat": datetime.utcnow(), "sub": User.username})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    to_encode = {"exp": expire, "iat": datetime.utcnow(), "sub": sub}
+    encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
     return encoded_jwt
 
 
-@app.post("/register")
+@auth_router.post("/register")
 async def register(user_info: User):
     username = user_info.username
     password = user_info.password
@@ -53,13 +58,13 @@ async def register(user_info: User):
     db_users.append(new_user)
 
     # Simulate successful login for the registered user
-    expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(data={"sub": username}, expires_delta=expires_delta)
+    expires_delta = timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(sub = username, expires_delta=expires_delta)
 
     return {"message": "User registered successfully", "access_token": access_token}
 
 
-@app.post("/login")
+@auth_router.post("/login")
 async def login(user_info: dict):
     email = user_info.get("email")
     password = user_info.get("password")
@@ -69,8 +74,8 @@ async def login(user_info: dict):
 
     for user in db_users:
         if user.email == email and user.password == password:
-            expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-            access_token = create_access_token(data={"sub": email}, expires_delta=expires_delta)
+            expires_delta = timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+            access_token = create_access_token(sub = email, expires_delta=expires_delta)
             return {"message": "Login successful", "access_token": access_token, "token_type": "bearer"}
 
     raise HTTPException(status_code=401, detail="Invalid credentials")

@@ -6,7 +6,8 @@ from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 
 from backend.database import MONGO_CLIENT
-from backend.widget_app import widget_router
+from widget_app import widget_router
+from auth_app import auth_router
 
 
 @asynccontextmanager
@@ -17,6 +18,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, title="Price Palette API docs")
 app.include_router(widget_router)
+app.include_router(auth_router)
 
 
 @app.exception_handler(RequestValidationError)

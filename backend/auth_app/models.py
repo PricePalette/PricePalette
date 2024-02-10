@@ -6,3 +6,4 @@ class User(BaseModel):
         password:str
         orgname:str
         email:str
+
