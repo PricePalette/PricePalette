@@ -13,8 +13,10 @@ export default function Footer() {
     >
       <Typography variant="body2">
         © 2024 Price Palette, All rights reserved |
-        <Link href="mailto:abc@pricepalette.com"> Contact Us</Link>
-        <Link href="http://localhost:3000/faq"> FAQ </Link>
+        <Link href="mailto:abc@pricepalette.com"> Contact Us </Link>
+        <Link href="http://localhost:3000/faq"> | FAQ </Link>
+        <Link href="http://localhost:3000/privacyPolicy">| Privacy Policy</Link>
+        <Link href="http://localhost:3000/terms">| Terms & Conditions</Link>
       </Typography>
     </Box>
   );
