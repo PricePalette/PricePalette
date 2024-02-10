@@ -4,8 +4,14 @@ import theme from "../theme"; // Adjust the path accordingly
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { relative } from "path";
+import { useRouter } from "next/router";
 
 export default function Home() {
+  const router = useRouter();
+
+  const handleGetStartedClick = () => {
+    router.push("/getStarted");
+  };
   return (
     <ThemeProvider theme={theme}>
       <div>
@@ -36,6 +42,7 @@ export default function Home() {
                     borderRadius: 20,
                     marginTop: 20,
                   }}
+                  onClick={handleGetStartedClick}
                 >
                   Get Started
                 </Button>
@@ -57,7 +64,7 @@ export default function Home() {
             </Grid>
           </Grid>
         </Box>
-
+        {/*TO-DO : Need to add marquee or some content to show the existing clients */}
         <Footer />
       </div>
     </ThemeProvider>

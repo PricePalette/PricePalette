@@ -9,12 +9,12 @@ export default function Footer() {
         color: "white",
         padding: "0.5rem",
         textAlign: "center",
-        marginTop: "9rem",
       }}
     >
       <Typography variant="body2">
         © 2024 Price Palette, All rights reserved |
         <Link href="mailto:abc@pricepalette.com"> Contact Us</Link>
+        <Link href="http://localhost:3000/faq"> FAQ </Link>
       </Typography>
     </Box>
   );
