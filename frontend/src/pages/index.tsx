@@ -12,6 +12,10 @@ export default function Home() {
   const handleGetStartedClick = () => {
     router.push("/getStarted");
   };
+
+  const handleViewPlansClick = () => {
+    router.push("/viewPlans");
+  };
   return (
     <ThemeProvider theme={theme}>
       <div>
@@ -41,10 +45,23 @@ export default function Home() {
                   style={{
                     borderRadius: 20,
                     marginTop: 20,
+                    marginRight: 10,
                   }}
                   onClick={handleGetStartedClick}
                 >
                   Get Started
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="large"
+                  style={{
+                    borderRadius: 20,
+                    marginTop: 20,
+                  }}
+                  onClick={handleViewPlansClick}
+                >
+                  View Plans
                 </Button>
               </Box>
             </Grid>
