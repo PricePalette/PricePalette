@@ -12,7 +12,7 @@ widget_collection = MONGO_CXN["widgets"]
 widget_router = APIRouter(
     prefix="/widget",
     tags=["widgets in dashboard"],
-    dependencies=[Depends(verify_jwt)]
+    # dependencies=[Depends(verify_jwt)]
 )
 
 
@@ -39,7 +39,9 @@ async def widget_info(widget_id: UUID4):
 @widget_router.post("/create")
 async def update_widget(data: CreateWidget):
     with Session(ALCHEMY_ENGINE) as session:
-        widget = Widgets(widget_id="dfsds", user_id="sdfdsdf", title=data.title)
+        from_template = True if data.template_id_used else False
+        widget = Widgets(widget_id=data.widget_id, user_id=data.user_id, from_template=from_template,
+                         template_id_used=data.template_id_used, title=data.title, description=data.description)
         session.add(widget)
         session.commit()
 
