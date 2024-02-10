@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 
-from backend.database import MONGO_CLIENT
+from backend.database import MONGO_CLIENT, ALCHEMY_ENGINE
 from backend.widget_app import widget_router
 
 
@@ -13,6 +13,7 @@ from backend.widget_app import widget_router
 async def lifespan(app: FastAPI):
     yield
     MONGO_CLIENT.close()
+    ALCHEMY_ENGINE.dispose()
 
 
 app = FastAPI(lifespan=lifespan, title="Price Palette API docs")
