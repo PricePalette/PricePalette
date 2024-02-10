@@ -20,5 +20,7 @@ MYSQL_CREDS = {"host": os.environ["MYSQL_HOST"],
                "password": quote_plus(os.environ["MYSQL_PASSWORD"]),
                "ssl_ca_path": os.environ["MYSQL_SSL_CA_PATH"]}
 
-MYSQL_CXN_STRING = f"mysql+mysqldb://{MYSQL_CREDS['username']}:{MYSQL_CREDS['password']}@{MYSQL_CREDS['host']}/pricepalettedb" \
-                    f"?ssl_ca={MYSQL_CREDS['ssl_ca_path']}"
+MONGODB_CXN_STRING = f"mongodb+srv://{MONGODB_CREDS['username']}:{MONGODB_CREDS['password']}@{MONGODB_CREDS['host']}" \
+                     f"/?retryWrites=true&w=majority"
+MYSQL_CXN_STRING = f"mysql+mysqldb://{MYSQL_CREDS['username']}:{MYSQL_CREDS['password']}@{MYSQL_CREDS['host']}" \
+                   f"/pricepalettedb?ssl_ca={MYSQL_CREDS['ssl_ca_path']}"

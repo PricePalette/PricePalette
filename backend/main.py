@@ -13,6 +13,7 @@ from backend.widget_app import widget_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    MONGO_CLIENT.admin.command('ping')
     create_tables()
     yield
     MONGO_CLIENT.close()
