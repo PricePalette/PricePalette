@@ -63,4 +63,4 @@ async def login(user_info: Login):
             access_token = create_access_token(sub=user_id)
             return JSONResponse(content={"message": "OK", "content": {"token": access_token}})
 
-    return JSONResponse(status_code=422, content={"message": "error"})
+    return JSONResponse(status_code=401, content={"message": "error"})
