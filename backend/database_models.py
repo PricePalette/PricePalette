@@ -1,7 +1,7 @@
 import datetime
 
 from sqlalchemy import Column, ForeignKey
-from sqlalchemy import String, Text, Boolean, BigInteger, DateTime
+from sqlalchemy import String, Text, Boolean, Integer, BigInteger, DateTime
 from sqlalchemy.orm import declarative_base
 
 from database import ALCHEMY_ENGINE
@@ -33,6 +33,7 @@ class Users(Base):
     plan_id = Column(String(50), nullable=False)
     active = Column(Boolean, default=True)
     joined_date = Column(DateTime, default=datetime.datetime.utcnow())
+    widgets_created = Column(Integer, default=0)
 
 
 class Widgets(Base):
@@ -42,10 +43,9 @@ class Widgets(Base):
     user_id = Column(String(50), ForeignKey("Users.user_id"), nullable=False)
     from_template = Column(Boolean)
     template_id_used = Column(String(50), ForeignKey("Templates.template_id"), nullable=True)
-    title = Column(String(200), nullable=False)
-    description = Column(Text, nullable=True)
     active = Column(Boolean, default=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow())
+    updated_date = Column(DateTime, nullable=True)
 
 
 class WidgetEmbed(Base):
@@ -62,4 +62,4 @@ class WidgetEmbed(Base):
 
 
 def create_tables():
-    Base.metadata.create_all(ALCHEMY_ENGINE, checkfirst=True)
+    Base.metadata.create_all(ALCHEMY_ENGINE)

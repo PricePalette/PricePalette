@@ -1,6 +1,6 @@
 import uuid
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 from pydantic.types import UUID4
@@ -56,8 +56,8 @@ class WidgetMetadata(BaseModel):
 
 class CreateWidget(WidgetMetadata):
     widget_id: UUID4 = uuid.uuid4()
-    template_id_used: str
+    template_id_used: str = None
 
 
 class UpdateWidget(WidgetID, WidgetMetadata):
-    pass
+    updated_fields: List[str]

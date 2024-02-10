@@ -19,3 +19,15 @@ async def verify_jwt(bearer_auth: Annotated[HTTPAuthorizationCredentials, Depend
                    options={'require_iat': True, 'require_exp': True, 'require_sub': True})
     except JWTError:
         raise http_exc
+
+
+async def get_user_jwt(bearer_auth: Annotated[HTTPAuthorizationCredentials, Depends(bearer)]) -> str:
+    if bearer_auth.scheme != "Bearer" or bearer_auth.credentials is None:
+        raise http_exc
+
+    try:
+        decoded = jwt.decode(bearer_auth.credentials, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM],
+                             options={'require_iat': True, 'require_exp': True, 'require_sub': True})
+    except JWTError:
+        raise http_exc
+    return decoded['sub']

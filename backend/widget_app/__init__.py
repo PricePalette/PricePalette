@@ -1,11 +1,15 @@
+import datetime
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from pydantic.types import UUID4
+from sqlalchemy.sql import func
 from sqlalchemy.orm import Session
 
 from backend.database import MONGO_CXN, ALCHEMY_ENGINE
-from backend.database_models import Widgets
-from backend.dependency import verify_jwt
+from backend.database_models import Widgets, Users
+from backend.dependency import verify_jwt, get_user_jwt
 from backend.widget_app.models import UserID, WidgetID, WidgetMetadata, UpdateWidget, CreateWidget
 
 widget_collection = MONGO_CXN["widgets"]
@@ -17,7 +21,14 @@ widget_router = APIRouter(
 
 
 @widget_router.get("/list")
-async def list_widgets(user_id: UUID4):
+async def list_widgets(user_id: Annotated[str, Depends(get_user_jwt)]):
+    # with Session(ALCHEMY_ENGINE) as session:
+    #     session.
+    #     from_template = True if data.template_id_used else False
+    #     widget = Widgets(widget_id=data.widget_id, user_id=data.user_id, from_template=from_template,
+    #                      template_id_used=data.template_id_used, title=data.title, description=data.description)
+    #     session.add(widget)
+    #     session.commit()
     widgets = widget_collection.find({"user_id": str(user_id)})
     if not widgets:
         return JSONResponse(content={"message": "error"}, status_code=404)
@@ -37,14 +48,16 @@ async def widget_info(widget_id: UUID4):
 
 
 @widget_router.post("/create")
-async def update_widget(data: CreateWidget):
+async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_user_jwt)]):
     with Session(ALCHEMY_ENGINE) as session:
         from_template = True if data.template_id_used else False
-        widget = Widgets(widget_id=data.widget_id, user_id=data.user_id, from_template=from_template,
-                         template_id_used=data.template_id_used, title=data.title, description=data.description)
+        widget = Widgets(widget_id=data.widget_id, user_id=user_id, from_template=from_template,
+                         template_id_used=data.template_id_used)
         session.add(widget)
         session.commit()
 
+        session.query(Users).filter(Users.user_id == user_id).update({'widgets_created': Users.widgets_created + 1})
+        session.commit()
     widget_collection.insert_one(data.model_dump(mode="json"))
     return JSONResponse(content={"message": "OK", "content": {"widget_id": str(data.widget_id)}})
 
@@ -53,12 +66,27 @@ async def update_widget(data: CreateWidget):
 async def update_widget(data: UpdateWidget):
     if widget_collection.count_documents({"widget_id": str(data.widget_id)}) == 0:
         return JSONResponse(content={"message": "error"}, status_code=404)
-    widget_collection.update_one({"widget_id": str(data.widget_id)})
+
+    result = {key: value for key, value in data.model_dump(mode="json").items()
+              if key in data.updated_fields}
+
+    with Session(ALCHEMY_ENGINE) as session:
+        session.query(Widgets) \
+            .filter(Widgets.widget_id == str(data.widget_id)).update({'updated_date': func.now()})
+        session.commit()
+    widget_collection.update_one({"widget_id": str(data.widget_id)}, {"$set": result})
     return JSONResponse(content={"message": "OK"})
 
 
 @widget_router.delete("/delete")
-async def delete_widget(widget_id: UUID4):
+async def delete_widget(widget_id: UUID4, user_id: Annotated[str, Depends(get_user_jwt)]):
+    if widget_collection.count_documents({"widget_id": str(widget_id)}) == 0:
+        return JSONResponse(content={"message": "error"}, status_code=404)
+
+    with Session(ALCHEMY_ENGINE) as session:
+        session.query(Widgets).filter(Widgets.widget_id == str(widget_id)).delete()
+        session.query(Users).filter(Users.user_id == user_id).update({'widgets_created': Users.widgets_created - 1})
+        session.commit()
     delete_result = widget_collection.delete_one({"widget_id": str(widget_id)})
     if delete_result.deleted_count > 0:
         return JSONResponse(content={"message": "OK"})
@@ -66,6 +94,6 @@ async def delete_widget(widget_id: UUID4):
 
 
 @widget_router.get("/embed")
-async def embed_widget(widget_id: UUID4):
+async def embed_widget(widget_id: UUID4, user_id: Annotated[str, Depends(get_user_jwt)]):
     # embed information goes in SQL, write logic here
     return JSONResponse(content={"message": "OK", "content": {"embed_id": widget_id}})
