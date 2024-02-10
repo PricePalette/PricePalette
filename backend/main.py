@@ -4,13 +4,16 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import SQLAlchemyError
 
 from backend.database import MONGO_CLIENT, ALCHEMY_ENGINE
+from backend.database_models import create_tables
 from backend.widget_app import widget_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    create_tables()
     yield
     MONGO_CLIENT.close()
     ALCHEMY_ENGINE.dispose()
@@ -31,6 +34,12 @@ async def validation_exception_handler(request, exc: RequestValidationError):
 async def validation_exception_handler(request, exc):
     return JSONResponse(status_code=exc.status_code,
                         content={"message": "error", "details": exc.detail})
+
+
+@app.exception_handler(SQLAlchemyError)
+async def validation_exception_handler(request, exc):
+    return JSONResponse(status_code=500,
+                        content={"message": "error", "details": exc.orig.args[1]})
 
 
 @app.get("/")

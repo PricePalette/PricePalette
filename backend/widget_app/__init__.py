@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from pydantic.types import UUID4
+from sqlalchemy.orm import Session
 
-from backend.database import MONGO_CXN
+from backend.database import MONGO_CXN, ALCHEMY_ENGINE
+from backend.database_models import Widgets
 from backend.dependency import verify_jwt
 from backend.widget_app.models import UserID, WidgetID, WidgetMetadata, UpdateWidget, CreateWidget
 
@@ -36,6 +38,11 @@ async def widget_info(widget_id: UUID4):
 
 @widget_router.post("/create")
 async def update_widget(data: CreateWidget):
+    with Session(ALCHEMY_ENGINE) as session:
+        widget = Widgets(widget_id="dfsds", user_id="sdfdsdf", title=data.title)
+        session.add(widget)
+        session.commit()
+
     widget_collection.insert_one(data.model_dump(mode="json"))
     return JSONResponse(content={"message": "OK", "content": {"widget_id": str(data.widget_id)}})
 
