@@ -10,13 +10,13 @@ from sqlalchemy.orm import Session
 from backend.database import MONGO_CXN, ALCHEMY_ENGINE
 from backend.database_models import Widgets, Users
 from backend.dependency import verify_jwt, get_user_jwt
-from backend.widget_app.models import UserID, WidgetID, WidgetMetadata, UpdateWidget, CreateWidget
+from backend.widget_app.models import UserID, WidgetMetadata, UpdateWidget, CreateWidget
 
 widget_collection = MONGO_CXN["widgets"]
 widget_router = APIRouter(
     prefix="/widget",
-    tags=["widgets in dashboard"],
-    # dependencies=[Depends(verify_jwt)]
+    tags=["widgets"],
+    dependencies=[Depends(verify_jwt)]
 )
 
 
@@ -39,8 +39,8 @@ async def list_widgets(user_id: Annotated[str, Depends(get_user_jwt)]):
 
 
 @widget_router.get("/info")
-async def widget_info(widget_id: UUID4):
-    widget = widget_collection.find_one({"widget_id": str(widget_id)})
+async def widget_info(widgetId: UUID4):
+    widget = widget_collection.find_one({"widget_id": str(widgetId)})
     if not widget:
         return JSONResponse(content={"message": "error"}, status_code=404)
     widget.pop("_id", None)
@@ -51,7 +51,7 @@ async def widget_info(widget_id: UUID4):
 async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_user_jwt)]):
     with Session(ALCHEMY_ENGINE) as session:
         from_template = True if data.template_id_used else False
-        widget = Widgets(widget_id=data.widget_id, user_id=user_id, from_template=from_template,
+        widget = Widgets(widget_id=data.widgetId, user_id=user_id, from_template=from_template,
                          template_id_used=data.template_id_used)
         session.add(widget)
         session.commit()
@@ -59,41 +59,41 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
         session.query(Users).filter(Users.user_id == user_id).update({'widgets_created': Users.widgets_created + 1})
         session.commit()
     widget_collection.insert_one(data.model_dump(mode="json"))
-    return JSONResponse(content={"message": "OK", "content": {"widget_id": str(data.widget_id)}})
+    return JSONResponse(content={"message": "OK", "content": {"widget_id": str(data.widgetId)}})
 
 
 @widget_router.put("/update")
 async def update_widget(data: UpdateWidget):
-    if widget_collection.count_documents({"widget_id": str(data.widget_id)}) == 0:
+    if widget_collection.count_documents({"widget_id": str(data.widgetId)}) == 0:
         return JSONResponse(content={"message": "error"}, status_code=404)
 
     result = {key: value for key, value in data.model_dump(mode="json").items()
-              if key in data.updated_fields}
+              if key in data.updatedFields}
 
     with Session(ALCHEMY_ENGINE) as session:
         session.query(Widgets) \
-            .filter(Widgets.widget_id == str(data.widget_id)).update({'updated_date': func.now()})
+            .filter(Widgets.widget_id == str(data.widgetId)).update({'updated_date': func.now()})
         session.commit()
-    widget_collection.update_one({"widget_id": str(data.widget_id)}, {"$set": result})
+    widget_collection.update_one({"widget_id": str(data.widgetId)}, {"$set": result})
     return JSONResponse(content={"message": "OK"})
 
 
 @widget_router.delete("/delete")
-async def delete_widget(widget_id: UUID4, user_id: Annotated[str, Depends(get_user_jwt)]):
-    if widget_collection.count_documents({"widget_id": str(widget_id)}) == 0:
+async def delete_widget(widgetId: UUID4, user_id: Annotated[str, Depends(get_user_jwt)]):
+    if widget_collection.count_documents({"widget_id": str(widgetId)}) == 0:
         return JSONResponse(content={"message": "error"}, status_code=404)
 
     with Session(ALCHEMY_ENGINE) as session:
-        session.query(Widgets).filter(Widgets.widget_id == str(widget_id)).delete()
+        session.query(Widgets).filter(Widgets.widget_id == str(widgetId)).delete()
         session.query(Users).filter(Users.user_id == user_id).update({'widgets_created': Users.widgets_created - 1})
         session.commit()
-    delete_result = widget_collection.delete_one({"widget_id": str(widget_id)})
+    delete_result = widget_collection.delete_one({"widget_id": str(widgetId)})
     if delete_result.deleted_count > 0:
         return JSONResponse(content={"message": "OK"})
     return JSONResponse(content={"message": "error"}, status_code=500)
 
 
 @widget_router.get("/embed")
-async def embed_widget(widget_id: UUID4, user_id: Annotated[str, Depends(get_user_jwt)]):
+async def embed_widget(widgetId: UUID4, user_id: Annotated[str, Depends(get_user_jwt)]):
     # embed information goes in SQL, write logic here
-    return JSONResponse(content={"message": "OK", "content": {"embed_id": widget_id}})
+    return JSONResponse(content={"message": "OK", "content": {"embed_id": widgetId}})

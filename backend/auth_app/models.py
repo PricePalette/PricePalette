@@ -1,9 +1,11 @@
+from pydantic import BaseModel, EmailStr
 
-from pydantic import BaseModel
 
-class User(BaseModel):
-        username:str
-        password:str
-        orgname:str
-        email:str
+class Login(BaseModel):
+    email: EmailStr
+    password: str
 
+
+class Register(Login):
+    username: str
+    org_name: str

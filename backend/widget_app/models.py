@@ -11,7 +11,7 @@ class UserID(BaseModel):
 
 
 class WidgetID(BaseModel):
-    widget_id: UUID4
+    widgetId: UUID4
 
 
 class PriceDurationEnum(str, Enum):
@@ -24,22 +24,33 @@ class CurrencyEnum(str, Enum):
     usd = 'USD'
 
 
+class FontSizeEnum(str, Enum):
+    s = 'S'
+    m = 'M'
+    l = 'L'
+
+
 class CardPrice(BaseModel):
     duration: PriceDurationEnum
     currency: CurrencyEnum
 
 
 class Font(BaseModel):
-    size: int
+    size: FontSizeEnum
     family: str
     color: str
 
 
+class CardFeature(BaseModel):
+    text: str
+    hint: str = None
+
+
 class Card(BaseModel):
     title: str
-    desc: str
+    description: str
     img: str
-    features: List[dict] = Field(min_length=1)
+    features: List[CardFeature] = Field(min_length=1)
     amount: int
     buttonText: str
     priceCaption: str
@@ -55,9 +66,9 @@ class WidgetMetadata(BaseModel):
 
 
 class CreateWidget(WidgetMetadata):
-    widget_id: UUID4 = uuid.uuid4()
+    widgetId: UUID4 = uuid.uuid4()
     template_id_used: str = None
 
 
 class UpdateWidget(WidgetID, WidgetMetadata):
-    updated_fields: List[str]
+    updatedFields: List[str]
