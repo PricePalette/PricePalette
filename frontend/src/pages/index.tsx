@@ -14,7 +14,7 @@ export default function Home() {
   };
 
   const handleViewPlansClick = () => {
-    router.push("/login");
+    router.push("/viewPlans");
   };
   return (
     <ThemeProvider theme={theme}>
