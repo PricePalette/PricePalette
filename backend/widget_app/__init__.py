@@ -50,9 +50,9 @@ async def widget_info(widgetId: UUID4):
 @widget_router.post("/create")
 async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_user_jwt)]):
     with Session(ALCHEMY_ENGINE) as session:
-        from_template = True if data.template_id_used else False
+        from_template = True if data.templateIdUsed else False
         widget = Widgets(widget_id=data.widgetId, user_id=user_id, from_template=from_template,
-                         template_id_used=data.template_id_used)
+                         template_id_used=data.templateIdUsed)
         session.add(widget)
         session.commit()
 

@@ -67,7 +67,7 @@ class WidgetMetadata(BaseModel):
 
 class CreateWidget(WidgetMetadata):
     widgetId: UUID4 = uuid.uuid4()
-    template_id_used: str = None
+    templateIdUsed: str = None
 
 
 class UpdateWidget(WidgetID, WidgetMetadata):
