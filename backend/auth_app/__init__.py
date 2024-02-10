@@ -1,18 +1,8 @@
 from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from fastapi.security import OAuth2PasswordBearer
 from backend.auth_app.models import User
-from backend.dependency import verify_jwt, oauth2_scheme
 from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKEN_EXPIRE_MINUTES
-
-#import very.jwt from dependency.py
-
-#oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-#add Outh2 in dependency
-
-#app = FastAPI() #use this only in main.py
 
 auth_router = APIRouter(
     prefix="/auth",
@@ -21,10 +11,6 @@ auth_router = APIRouter(
 )
 # In-memory database (replace with a real database in a production environment)
 db_users = []
-
-#JWT_SECRET_KEY = "1A2B3C"
-#JWT_ALGORITHM = "HS256"
-#JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 def create_access_token(sub: str, expires_delta: timedelta):
