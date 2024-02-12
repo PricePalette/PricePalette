@@ -4,7 +4,7 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy import String, Text, Boolean, Integer, BigInteger, DateTime
 from sqlalchemy.orm import declarative_base
 
-from database import ALCHEMY_ENGINE
+from backend.database import ALCHEMY_ENGINE
 
 Base = declarative_base()
 

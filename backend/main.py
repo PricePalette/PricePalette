@@ -28,6 +28,7 @@ app.include_router(auth_router)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc: RequestValidationError):
+    print(exc)
     err_msg = "; ".join([f'{err["msg"]}: {err["loc"][-1]}' if err["type"] == "missing" else err["msg"]
                          for err in exc.errors()])
     return JSONResponse(status_code=422, content={"message": "error", "detail": err_msg})
