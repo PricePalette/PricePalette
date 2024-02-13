@@ -1,3 +1,10 @@
+import Template1 from "@/templates/Template1";
+import { Container } from "@mui/material";
+
 export default function RenderWidget() {
-  return <>Render Widget</>;
+  return (
+    <Container>
+      <Template1 />
+    </Container>
+  );
 }

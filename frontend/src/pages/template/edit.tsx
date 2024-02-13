@@ -58,6 +58,8 @@ export default function EditTemplatePage() {
           style={{
             border: "2px blue solid",
             width: currentTool ? "63.7%" : "100%",
+            display: "flex",
+            alignItems: "center",
           }}
         >
           <RenderWidget />
