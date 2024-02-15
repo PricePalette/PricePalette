@@ -4,8 +4,10 @@ import Footer from "@/components/Footer";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useFormik } from "formik";
+import { useRouter } from "next/router";
 
 export default function Login() {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -86,7 +88,15 @@ export default function Login() {
                 width={"50000"}
                 onSuccess={(credentialResponse) => {
                   console.log(credentialResponse);
-                  console.log(jwtDecode(credentialResponse.credential!));
+                  const creds: any = jwtDecode(credentialResponse.credential!);
+                  console.log(creds.email);
+                  router.push({
+                    pathname: "/confirm/[type]/[email]",
+                    query: {
+                      type: "login",
+                      email: creds.email,
+                    },
+                  });
                 }}
                 onError={() => {
                   console.log("Login Failed");
