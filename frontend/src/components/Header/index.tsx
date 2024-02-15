@@ -1,23 +1,26 @@
-import { AppBar, Button, Toolbar, Typography, Box, Link } from "@mui/material";
+import { AppBar, Button, Toolbar, Typography, Box } from "@mui/material";
 import React from "react";
 import theme from "../../theme";
+import { useRouter } from "next/router";
 
 export default function Header() {
+  const router = useRouter();
+
   return (
     <AppBar position="static" sx={theme.appBarGradient}>
       <Toolbar sx={{ display: "flex", alignItems: "center" }}>
-        <Link href="/">
-          <Box
-            component="img"
-            sx={{
-              height: 50,
-              width: 50,
-              borderRadius: "50%",
-            }}
-            alt="Price Palette"
-            src="/altlogo.png"
-          />
-        </Link>
+        <Box
+          component="img"
+          sx={{
+            height: 50,
+            width: 50,
+            borderRadius: "50%",
+            cursor: "pointer",
+          }}
+          alt="Price Palette"
+          src="/altlogo.png"
+          onClick={() => router.push("/")}
+        />
         <Typography
           variant="h6"
           component="div"
@@ -31,6 +34,7 @@ export default function Header() {
             marginRight: 12,
             backgroundColor: "#1192DD",
           }}
+          onClick={() => router.push("/login")}
         >
           Login
         </Button>
@@ -40,6 +44,7 @@ export default function Header() {
             borderRadius: 20,
             marginRight: 4,
           }}
+          onClick={() => router.push("/register")}
         >
           Sign Up
         </Button>
