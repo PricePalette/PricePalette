@@ -1,19 +1,22 @@
 import uuid
 from datetime import datetime, timedelta
 
-from fastapi import HTTPException, APIRouter
+import bcrypt
 from jose import jwt
+from fastapi import APIRouter
+from sqlalchemy import or_
+from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
 from backend.auth_app.models import Register, Login
 from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKEN_EXPIRE_MINUTES
+from backend.database import ALCHEMY_ENGINE
+from backend.database_models import Users
 
 auth_router = APIRouter(
     prefix="/auth",
     tags=["login/register"],
 )
-# In-memory database (replace with a real database in a production environment)
-db_users = []
 
 
 def create_access_token(sub: str):
@@ -23,44 +26,50 @@ def create_access_token(sub: str):
     return encoded_jwt
 
 
+def create_hash_and_salt(password: str):
+    salt = bcrypt.gensalt()
+    pswd = bcrypt.hashpw(password.encode(), salt)
+    return pswd.decode(), salt.decode()
+
+
 @auth_router.post("/register")
 async def register(user_info: Register):
-    user_id = str(uuid.uuid4())
-    username = user_info.username
-    password = user_info.password
-    orgname = user_info.org_name
-    email = user_info.email
+    user_id = str(user_info.user_id)
+    with Session(ALCHEMY_ENGINE) as session:
+        missing_fields = []
+        user_exists = session.query(Users).filter_by(user_name=user_info.username).count()
+        if user_exists > 0:
+            missing_fields.append({"field": "username", "message": "Username exists"})
 
-    if not username or not password or not orgname or not email:
-        return JSONResponse(content={"message": "error", "detail": "Insufficient information"},
-                            status_code=400)
+        user_exists = session.query(Users).filter_by(email=user_info.email).count()
+        if user_exists > 0:
+            missing_fields.append({"field": "email", "message": "Email exists"})
 
-    for user in db_users:
-        if user.username == username:
-            raise HTTPException(status_code=400, detail="Username already registered")
-        elif user.email == email:
-            raise HTTPException(status_code=400, detail="Email already registered")
+        if missing_fields:
+            return JSONResponse(status_code=409, content={"message": "error", "errors": missing_fields})
 
-    new_user = Register(username=username, password=password, org_name=orgname, email=email)
-    db_users.append(new_user)
-
+        pswd, salt = create_hash_and_salt(user_info.password)
+        user = Users(user_name=user_info.username, email=user_info.email, organization_name=user_info.org_name,
+                     password=pswd, salt=salt, plan_id="631e263e-d9ae-40cc-ac21-91d71fe7c9fd",
+                     user_id=user_id)
+        session.add(user)
+        session.commit()
     access_token = create_access_token(sub=user_id)
-
-    return JSONResponse(content={"message": "OK", "content": {"token": access_token}})
+    return JSONResponse(content={"message": "OK", "access_token": access_token})
 
 
 @auth_router.post("/login")
 async def login(user_info: Login):
-    user_id = str(uuid.uuid4())
-    email = user_info.email
-    password = user_info.password
+    with Session(ALCHEMY_ENGINE) as session:
+        user = session.query(Users).filter_by(email=user_info.email).limit(1).all()
+        if not user:
+            return JSONResponse(status_code=409,
+                                content={"message": "error",
+                                         "errors": [{"field": "email", "message": "Invalid email"}]})
 
-    if not email or not password:
-        return JSONResponse(status_code=422, content={"message": "error"})
-
-    for user in db_users:
-        if user.email == email and user.password == password:
-            access_token = create_access_token(sub=user_id)
-            return JSONResponse(content={"message": "OK", "content": {"token": access_token}})
-
-    return JSONResponse(status_code=401, content={"message": "error"})
+        if not bcrypt.checkpw(user_info.password.encode(), user[0].password.encode()):
+            return JSONResponse(status_code=409,
+                                content={"message": "error",
+                                         "errors": [{"field": "password", "message": "Invalid password"}]})
+    access_token = create_access_token(sub=user[0].user_id)
+    return JSONResponse(content={"message": "OK", "access_token": access_token})

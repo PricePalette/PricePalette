@@ -1,4 +1,3 @@
-import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -56,7 +55,7 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
         session.add(widget)
         session.commit()
 
-        session.query(Users).filter(Users.user_id == user_id).update({'widgets_created': Users.widgets_created + 1})
+        session.query(Users).filter_by(user_id=user_id).update({'widgets_created': Users.widgets_created + 1})
         session.commit()
     widget_collection.insert_one(data.model_dump(mode="json"))
     return JSONResponse(content={"message": "OK", "content": {"widget_id": str(data.widgetId)}})
@@ -71,8 +70,7 @@ async def update_widget(data: UpdateWidget):
               if key in data.updatedFields}
 
     with Session(ALCHEMY_ENGINE) as session:
-        session.query(Widgets) \
-            .filter(Widgets.widget_id == str(data.widgetId)).update({'updated_date': func.now()})
+        session.query(Widgets).filter_by(widget_id=str(data.widgetId)).update({'updated_date': func.now()})
         session.commit()
     widget_collection.update_one({"widget_id": str(data.widgetId)}, {"$set": result})
     return JSONResponse(content={"message": "OK"})
@@ -84,8 +82,8 @@ async def delete_widget(widgetId: UUID4, user_id: Annotated[str, Depends(get_use
         return JSONResponse(content={"message": "error"}, status_code=404)
 
     with Session(ALCHEMY_ENGINE) as session:
-        session.query(Widgets).filter(Widgets.widget_id == str(widgetId)).delete()
-        session.query(Users).filter(Users.user_id == user_id).update({'widgets_created': Users.widgets_created - 1})
+        session.query(Widgets).filter_by(widget_id=str(widgetId)).delete()
+        session.query(Users).filter_by(user_id=user_id).update({'widgets_created': Users.widgets_created - 1})
         session.commit()
     delete_result = widget_collection.delete_one({"widget_id": str(widgetId)})
     if delete_result.deleted_count > 0:
