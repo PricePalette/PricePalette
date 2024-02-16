@@ -1,27 +1,35 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { backendAPI, SERVER_ERROR, SERVER_SUCCESS } from "@/utils/constants";
+import { toErrorMap } from "@/utils/toErrorMap";
 import { Button, Stack, TextField, Typography } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
+import superagent from "superagent";
 
 // This page is for confirming the login and register attributes when user uses Google Sign in
 export default function ConfirmPage() {
+  const queryClient = useQueryClient();
   const router = useRouter();
   let viewComponent = null;
   const email = String(router.query.email);
   const suggestUsername = email.substring(0, email?.indexOf("@"));
 
   const loginFormik = useFormik({
-    initialValues: { email: router.query.email, password: "" },
+    initialValues: {
+      email: (router.query.email as string) || "",
+      password: "",
+    },
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      loginMutation.mutate(values);
     },
   });
 
   const registerFormik = useFormik({
     initialValues: {
       orgName: "",
-      email: router.query.email,
+      email: (router.query.email as string) || "",
       username: suggestUsername,
       password: "",
       confirmPassword: "",
@@ -38,7 +46,72 @@ export default function ConfirmPage() {
         return;
       }
 
-      alert(JSON.stringify(values, null, 2));
+      registerMutation.mutate(values);
+    },
+  });
+
+  const loginMutation = useMutation({
+    mutationFn: (data: { email: string; password: string }) => {
+      const { email, password } = data;
+
+      return superagent
+        .post(`${backendAPI}/user/login`)
+        .send({
+          email,
+          password,
+        })
+        .set("Accept", "application/json")
+        .then((res) => res.body)
+        .catch((error) => error.response.body);
+    },
+    onSuccess: (data) => {
+      // error
+      if (data.message === SERVER_ERROR) {
+        loginFormik.setErrors(toErrorMap(data.errors));
+      }
+
+      // success
+      if (data.message === SERVER_SUCCESS) {
+        localStorage.setItem("pp_access_token", data.access_token);
+        queryClient.setQueryData(["UserQuery", { id: 1 }], data.content);
+        router.push("/dashboard");
+      }
+    },
+  });
+
+  const registerMutation = useMutation({
+    mutationFn: (data: {
+      orgName: string;
+      email: string;
+      username: string;
+      password: string;
+    }) => {
+      const { email, username, orgName, password } = data;
+
+      return superagent
+        .post(`${backendAPI}/user/register`)
+        .send({
+          email,
+          password,
+          username,
+          org_name: orgName,
+        })
+        .set("Accept", "application/json")
+        .then((res) => res.body)
+        .catch((error) => error.response.body);
+    },
+    onSuccess: (data) => {
+      // error
+      if (data.message === SERVER_ERROR) {
+        registerFormik.setErrors(toErrorMap(data.errors));
+      }
+
+      // success
+      if (data.message === SERVER_SUCCESS) {
+        localStorage.setItem("pp_access_token", data.access_token);
+        queryClient.setQueryData(["UserQuery", { id: 1 }], data.content);
+        router.push("/dashboard");
+      }
     },
   });
 
