@@ -14,7 +14,7 @@ with open(urlretrieved[0], "r") as fp:
 
 JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 JWT_ALGORITHM = os.environ["JWT_ALGORITHM"]
-JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 30
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 60
 
 MONGODB_CREDS = {"host": os.environ["MONGODB_HOST"],
                  "port": int(os.environ["MONGODB_PORT"]),
