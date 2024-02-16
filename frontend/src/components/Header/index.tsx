@@ -10,12 +10,12 @@ export default function Header() {
           <Box
             component="img"
             sx={{
-              height: 50,
-              width: 50,
-              borderRadius: "50%",
+              height: 40,
+              width: "auto",
+              /*borderRadius: "50%",*/
             }}
             alt="Price Palette"
-            src="/altlogo.png"
+            src="/logo-png.png"
           />
         </Link>
         <Typography
