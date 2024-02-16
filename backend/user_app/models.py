@@ -1,6 +1,6 @@
-import uuid
+from uuid import UUID, uuid4
 
-from pydantic import BaseModel, EmailStr, UUID4
+from pydantic import BaseModel, EmailStr, Field
 
 
 class Login(BaseModel):
@@ -9,6 +9,6 @@ class Login(BaseModel):
 
 
 class Register(Login):
-    user_id: UUID4 = uuid.uuid4()
+    user_id: UUID = Field(default_factory=uuid4)
     username: str
     org_name: str
