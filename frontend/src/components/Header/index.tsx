@@ -2,31 +2,33 @@ import { AppBar, Button, Toolbar, Typography, Box } from "@mui/material";
 import React from "react";
 import theme from "../../theme";
 import { useRouter } from "next/router";
+import { useQuery } from "@tanstack/react-query";
+import superagent from "superagent";
+import { backendAPI } from "@/utils/constants";
+import UserDetail from "../UserDetail";
 
 export default function Header() {
   const router = useRouter();
+  const { data } = useQuery({
+    queryKey: ["UserQuery", { id: 1 }],
+    queryFn: () =>
+      superagent
+        .get(`${backendAPI}/user/info`)
+        .set("Accept", "application/json")
+        .set(
+          "Authorization",
+          `Bearer ${localStorage.getItem("pp_access_token")}`
+        )
+        .then((res) => res.body.content),
+  });
 
-  return (
-    <AppBar position="static" sx={theme.appBarGradient}>
-      <Toolbar sx={{ display: "flex", alignItems: "center" }}>
-        <Box
-          component="img"
-          sx={{
-            height: 50,
-            width: 50,
-            borderRadius: "50%",
-            cursor: "pointer",
-          }}
-          alt="Price Palette"
-          src="/altlogo.png"
-          onClick={() => router.push("/")}
-        />
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1 }}
-        ></Typography>
-        {/* TODO: Show the below  button on ly if the user is not authenticated */}
+  let body = null;
+
+  if (data) {
+    body = <UserDetail email={data.email} username={data.username} />;
+  } else {
+    body = (
+      <>
         <Button
           color="inherit"
           style={{
@@ -48,6 +50,31 @@ export default function Header() {
         >
           Sign Up
         </Button>
+      </>
+    );
+  }
+
+  return (
+    <AppBar position="static" sx={theme.appBarGradient}>
+      <Toolbar sx={{ display: "flex", alignItems: "center" }}>
+        <Box
+          component="img"
+          sx={{
+            height: 50,
+            width: 50,
+            borderRadius: "50%",
+            cursor: "pointer",
+          }}
+          alt="Price Palette"
+          src="/altlogo.png"
+          onClick={() => router.push("/")}
+        />
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ flexGrow: 1 }}
+        ></Typography>
+        {body}
       </Toolbar>
     </AppBar>
   );

@@ -5,17 +5,51 @@ import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { SERVER_ERROR, SERVER_SUCCESS, backendAPI } from "@/utils/constants";
+import superagent from "superagent";
+import { toErrorMap } from "@/utils/toErrorMap";
 
 export default function Login() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
-    onSubmit: (values, { setErrors }) => {
-      setErrors({ email: "change", password: "yo" });
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: (values) => {
+      loginMutation.mutate(values);
+    },
+  });
+
+  const loginMutation = useMutation({
+    mutationFn: (data: { email: string; password: string }) => {
+      const { email, password } = data;
+
+      return superagent
+        .post(`${backendAPI}/user/login`)
+        .send({
+          email,
+          password,
+        })
+        .set("Accept", "application/json")
+        .then((res) => res.body)
+        .catch((error) => error.response.body);
+    },
+    onSuccess: (data) => {
+      // error
+      if (data.message === SERVER_ERROR) {
+        formik.setErrors(toErrorMap(data.errors));
+      }
+
+      // success
+      if (data.message === SERVER_SUCCESS) {
+        localStorage.setItem("pp_access_token", data.access_token);
+        queryClient.setQueryData(["UserQuery", { id: 1 }], data.content);
+        router.push("/dashboard");
+      }
     },
   });
 
