@@ -24,7 +24,7 @@ export default function getStarted() {
         spacing={12}
       >
         <Grid item xs={11}>
-          <ImageList cols={4} gap={8}>
+          <ImageList cols={4} gap={8} sx={{ height: 400 }}>
             {templateData.map((item) => (
               <ImageListItem
                 key={item.img}
@@ -39,14 +39,14 @@ export default function getStarted() {
                 }}
               >
                 <img
-                  srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                  src={`${item.img}?w=248&fit=crop&auto=format`}
+                  srcSet={`${item.img}`}
+                  src={`${item.img}`}
                   alt={item.title}
                   loading="lazy"
                   style={{
                     width: "100%",
                     height: "100%",
-                    objectFit: "cover",
+                    objectFit: "fill",
                     transition: "transform 0.3s ease",
                   }}
                 />
@@ -55,7 +55,7 @@ export default function getStarted() {
                     position: "absolute",
                     top: 5,
                     right: 5,
-                    color: "white",
+                    color: "black",
                   }}
                   aria-label="edit"
                 >

@@ -60,13 +60,12 @@ export default function Header() {
         <Box
           component="img"
           sx={{
-            height: 50,
-            width: 50,
-            borderRadius: "50%",
-            cursor: "pointer",
-          }}
-          alt="Price Palette"
-          src="/altlogo.png"
+              height: 40,
+              width: "auto",
+              /*borderRadius: "50%",*/
+            }}
+            alt="Price Palette"
+            src="/logo-png.png"
           onClick={() => router.push("/")}
         />
         <Typography
