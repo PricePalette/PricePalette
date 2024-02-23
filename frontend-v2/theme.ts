@@ -1,5 +1,21 @@
-import { createTheme } from "@mantine/core";
+import { MantineColorsTuple, createTheme } from "@mantine/core";
+
+const myColor: MantineColorsTuple = [
+  "#e9fcfc",
+  "#dbf3f3",
+  "#b8e6e5",
+  "#91d8d7",
+  "#72cdcb",
+  "#5ec5c3",
+  "#50c2bf",
+  "#40aaa8",
+  "#319896",
+  "#158482",
+];
 
 export const theme = createTheme({
-  /* Put your mantine theme override here */
+  primaryColor: "myColor",
+  colors: {
+    myColor,
+  },
 });
