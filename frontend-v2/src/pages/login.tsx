@@ -10,6 +10,7 @@ import {
   Anchor,
   Stack,
   Flex,
+  Title,
 } from "@mantine/core";
 import { GoogleButton } from "../illustrations/Google";
 import { useRouter } from "next/router";
@@ -64,72 +65,87 @@ export default function Login() {
   });
 
   return (
-    <Flex style={{ height: "100vh" }} align={"center"} justify={"center"}>
-      <LoginIllus height={400} width={400} style={{ marginRight: "8em" }} />
-      <Paper radius="md" p="xl" withBorder>
-        <Text size="lg" fw={500}>
-          Welcome to PricePalette, Login with
-        </Text>
+    <Flex style={{ height: "100vh" }}>
+      <Flex
+        bg="myColor.7"
+        h={"100vh"}
+        w="50%"
+        direction={"column"}
+        align={"center"}
+        justify={"center"}
+      >
+        <Title style={{ fontSize: "2.9rem" }} fw={900} c={"#edfcfa"}>
+          Build a fully <span style={{ color: "#F9D00B" }}>functional</span>{" "}
+          <br /> pricing widget today!
+        </Title>
+        <LoginIllus height={350} width={350} style={{ marginTop: "2em" }} />
+      </Flex>
+      <Flex h={"100vh"} w="50%" align={"center"} justify={"center"}>
+        <Paper radius="md" p="xl" w={"50%"}>
+          <Text size="lg" fw={500}>
+            Welcome to PricePalette, Login with
+          </Text>
 
-        <Group grow mb="md" mt="md">
-          <GoogleButton radius="xl">Google</GoogleButton>
-        </Group>
-
-        <Divider
-          label="Or continue with email"
-          labelPosition="center"
-          my="lg"
-        />
-
-        <form onSubmit={formik.handleSubmit}>
-          <Stack>
-            <TextInput
-              required
-              label="Email"
-              name="email"
-              placeholder="hello@email.com"
-              radius="md"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              error={
-                formik.touched.email && Boolean(formik.errors.email)
-                  ? formik.errors.email
-                  : null
-              }
-            />
-
-            <PasswordInput
-              required
-              label="Password"
-              name="password"
-              placeholder="********"
-              radius="md"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              error={
-                formik.touched.password && Boolean(formik.errors.password)
-                  ? formik.errors.password
-                  : null
-              }
-            />
-          </Stack>
-
-          <Group justify="space-between" mt="xl">
-            <Anchor
-              component="button"
-              type="button"
-              c="dimmed"
-              onClick={() => router.push("/register")}
-              size="xs"
-            >
-              {"Don't have an account? Register"}
-            </Anchor>
-            <Button type="submit" radius="xl">
-              Login
-            </Button>
+          <Group grow mb="md" mt="md">
+            <GoogleButton radius="xl">Google</GoogleButton>
           </Group>
-        </form>
-      </Paper>
+
+          <Divider
+            label="Or continue with email"
+            labelPosition="center"
+            my="lg"
+          />
+
+          <form onSubmit={formik.handleSubmit}>
+            <Stack>
+              <TextInput
+                required
+                label="Email"
+                name="email"
+                placeholder="hello@email.com"
+                radius="md"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.email && Boolean(formik.errors.email)
+                    ? formik.errors.email
+                    : null
+                }
+              />
+
+              <PasswordInput
+                required
+                label="Password"
+                name="password"
+                placeholder="********"
+                radius="md"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.password && Boolean(formik.errors.password)
+                    ? formik.errors.password
+                    : null
+                }
+              />
+            </Stack>
+
+            <Group justify="space-between" mt="xl">
+              <Anchor
+                component="button"
+                type="button"
+                c="dimmed"
+                onClick={() => router.push("/register")}
+                size="xs"
+              >
+                {"Don't have an account? Register"}
+              </Anchor>
+              <Button type="submit" radius="xl">
+                Login
+              </Button>
+            </Group>
+          </form>
+        </Paper>
+      </Flex>
     </Flex>
   );
 }
