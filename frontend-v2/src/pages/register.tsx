@@ -186,7 +186,7 @@ export default function Register() {
               component="button"
               type="button"
               c="dimmed"
-              onClick={() => router.push("/register")}
+              onClick={() => router.push("/login")}
               size="xs"
             >
               {"Already have an account? Login"}
