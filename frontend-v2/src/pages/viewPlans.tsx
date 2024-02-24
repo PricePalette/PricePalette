@@ -4,23 +4,17 @@ import { plansData } from '../../mockdata';
 import { IconCheck } from '@tabler/icons-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import classes from '../styles/viewplans.module.css'
 
 export default function ViewPlans() {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           <Header />
-          <Container size="sm" style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '40px' }}>
+          <Container size="sm" className={classes.container}>
+            <div className={classes.cardDiv}>
               {plansData.map((eachPlan, index) => (
-                <Card key={index} shadow="lg" radius="md" style={{ width: 300, height: 440}}>
-                  <Card.Section style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    textAlign: 'center', 
-                    gap: '10px',
-                    padding: '18px'  
-                  }}>
+                <Card key={index} shadow="lg" radius="md" className={classes.card}>
+                  <Card.Section className={classes.cardSection}>
                     <Text size="lg" fw={500}>{eachPlan.title}</Text>
                     <Text size="md" style={{ marginBottom: '10px' }}>{eachPlan.subTitle}</Text>
                     <Text fw={700} style={{ fontSize: 26, lineHeight: 1, }}>{eachPlan.price}</Text>
@@ -36,6 +30,7 @@ export default function ViewPlans() {
                     </List>
                   </Group>
     
+                     {/* Handle On Click */}
                   <Button variant="light" color="blue"  radius="md" style={{marginTop: '30px'}} >
                     Buy now
                   </Button>
