@@ -11,12 +11,16 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import classes from "../../styles/header.module.css";
 import { Logo } from "@/Logo";
+import { useRouter } from "next/router";
+
 
 export function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
+  const router = useRouter();
   const theme = useMantineTheme();
+
 
   return (
     <Box pb={120}>
@@ -49,8 +53,8 @@ export function Header() {
       >
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
           <Group justify="center" grow pb="xl" px="md">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
+          <Button variant="default" onClick={() => router.push("/login")}>Log in</Button>
+          <Button onClick={() => router.push("/register")}>Sign up</Button>
           </Group>
         </ScrollArea>
       </Drawer>

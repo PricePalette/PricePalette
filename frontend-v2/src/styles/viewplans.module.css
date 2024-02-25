@@ -1,0 +1,35 @@
+.card {
+    width: 300px;
+    height: 440px;
+    transition: transform 0.5s ease;
+    cursor: pointer;
+    transition: 'transform 0.5s ease';
+
+}
+
+.card:hover {
+    transform: scale(1.15);
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
+}
+
+.cardSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    padding: 18px;
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cardDiv {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
