@@ -1,4 +1,4 @@
-export type WidgetMetadata = {
+export type WidgetMetaData = {
   title: string;
   price: {
     duration: "M" | "Y";

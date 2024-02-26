@@ -1,12 +1,12 @@
-import { WidgetMetadata } from "@/types";
+import { WidgetMetaData } from "@/types";
 import { create } from "zustand";
 
-interface MetadataSate {
-  metadata: null | WidgetMetadata;
-  setMetadata: (metadata: null | WidgetMetadata) => void;
+interface MetaDataSate {
+  metaData: null | WidgetMetaData;
+  setMetaData: (metaData: null | WidgetMetaData) => void;
 }
 
-export const useMetaData = create<MetadataSate>()((set) => ({
-  metadata: null,
-  setMetadata: (metadata) => set(() => ({ metadata })),
+export const useMetaData = create<MetaDataSate>()((set) => ({
+  metaData: null,
+  setMetaData: (metaData) => set(() => ({ metaData })),
 }));
