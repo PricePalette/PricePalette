@@ -9,6 +9,9 @@ import {
 import classes from "@/styles/editTemplate.module.css";
 import { useMetaData } from "@/stores/useMetaData";
 import { useGetUrlId } from "@/utils/useGetUrlId";
+import DynamicTemplateLoader from "@/components/DynamicTemplateLoader";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -50,6 +53,8 @@ export default function EditTemplatePage() {
   ));
 
   return (
+    <>
+    <Header/>
     <Flex style={{ height: "100vh" }}>
       <nav className={classes.navbar} style={{ height: "100%", width: "20%" }}>
         <div className={classes.wrapper}>
@@ -68,6 +73,10 @@ export default function EditTemplatePage() {
           </div>
         </div>
       </nav>
+      <div style={{ width: "80%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f0f0f0" }}>
+        <DynamicTemplateLoader id={Number(widgetId)} />
+      </div>
     </Flex>
+    </>
   );
 }
