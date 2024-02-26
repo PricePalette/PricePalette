@@ -6,8 +6,9 @@ import {
   IconLayout,
   TablerIconsProps,
 } from "@tabler/icons-react";
-import classes from "../../utils/editTemplate.module.css";
+import classes from "@/styles/editTemplate.module.css";
 import { useMetaData } from "@/stores/useMetaData";
+import { useGetUrlId } from "@/utils/useGetUrlId";
 
 type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -21,8 +22,12 @@ const mainLinksMockdata: {
 ];
 
 export default function EditTemplatePage() {
+  // getting the widget id from url
+  const widgetId = useGetUrlId();
   const metadata = useMetaData((state) => state.metaData);
   const setMetaData = useMetaData((state) => state.setMetaData);
+
+  console.log("widget id: ", widgetId);
 
   const [active, setActive] = useState<WidgetSettingType>("Cards");
 
