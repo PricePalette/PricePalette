@@ -26,9 +26,8 @@
     flex: 1;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    margin-top: 60px;
-   
+    align-items: flex-start;  
+    margin-top: 18px; 
 }
 
 .cardDiv {
