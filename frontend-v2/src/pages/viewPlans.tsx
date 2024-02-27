@@ -8,9 +8,13 @@ import classes from '../styles/viewplans.module.css'
 
 export default function ViewPlans() {
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', }}>
           <Header />
-          <Container size="sm" className={classes.container}>
+          <Text  className={classes.largeText}>{"Choose the plan that is right for you"}</Text>
+          <Text  className={classes.smallText}>{"Grow with ease, Scale your solutions, Pay as you progress"}</Text>
+
+          <Container size="xs" className={classes.container}>
+
             <div className={classes.cardDiv}>
               {plansData.map((eachPlan, index) => (
                 <Card key={index} shadow="lg" radius="md" className={classes.card}>
@@ -31,7 +35,7 @@ export default function ViewPlans() {
                   </Group>
     
                      {/* Handle On Click */}
-                  <Button variant="light" color="blue"  radius="md" style={{marginTop: '30px'}} >
+                  <Button  color="#4C5897"  radius="md" style={{marginTop: '30px'}} >
                     Buy now
                   </Button>
                 </Card>

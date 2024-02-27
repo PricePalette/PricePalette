@@ -4,6 +4,7 @@
     transition: transform 0.5s ease;
     cursor: pointer;
     transition: 'transform 0.5s ease';
+    background-color: #D5F5F3;
 
 }
 
@@ -25,11 +26,29 @@
     flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;  
+    margin-top: 18px; 
 }
 
 .cardDiv {
     display: flex;
     justify-content: center;
     gap: 40px;
+
 }
+
+.largeText {
+    font-size: 2rem;
+    font-weight: 600; 
+    color: #333;
+    text-align: center; 
+    margin-bottom: 1rem; 
+  }
+  
+
+.smallText {
+    font-size: 1.5rem;
+    color: #666; 
+    text-align: center; 
+  }
+  
