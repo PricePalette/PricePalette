@@ -4,9 +4,11 @@
 name: Build and deploy Node.js app to Azure Web App - pricepalette-frontend
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows:
+      - Build nextjs on PR/push to main
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
