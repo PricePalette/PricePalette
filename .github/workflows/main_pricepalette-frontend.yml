@@ -4,11 +4,12 @@
 name: Build and deploy Node.js app to Azure Web App - pricepalette-frontend
 
 on:
-  workflow_run:
-    workflows:
-      - Build nextjs on PR/push to main
-    types:
-      - completed
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -28,18 +29,18 @@ jobs:
           npm install
           npm run build --if-present
           npm run test --if-present
-        working-directory: ./frontend-v2
+        working-directory: frontend-v2
 
       - name: Zip artifact for deployment
         run: zip release.zip ./.next -r
-        working-directory: ./frontend-v2
+        working-directory: frontend-v2
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
           path: release.zip
-        working-directory: ./frontend-v2
+        working-directory: frontend-v2
 
   deploy:
     runs-on: ubuntu-latest
