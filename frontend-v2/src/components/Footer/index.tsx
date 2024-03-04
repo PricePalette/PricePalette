@@ -1,4 +1,5 @@
 import React from "react";
+import { Router, useRouter } from "next/router";
 import { Anchor, Group, ActionIcon, rem } from "@mantine/core";
 import {
   IconBrandTwitter,
@@ -9,29 +10,35 @@ import classes from "../../styles/footer.module.css";
 import { Logo } from "@/Logo";
 
 const links = [
-  { link: "#", label: "Contact Us" },
-  { link: "#", label: "Privacy Policy" },
-  { link: "#", label: "FAQ" },
+  { link: "mailto:abc@pricepalette.ca", label: "Contact Us" },
+  { link: "/privacyPolicy", label: "Privacy Policy" },
+  { link: "/faq", label: "FAQ" },
+  { link: "/terms", label: "Terms & Conditions" },
 ];
 
 export function Footer() {
+  const router = useRouter();
   const items = links.map((link) => (
     <Anchor
-      c="dimmed"
+      c="bright"
       key={link.label}
       href={link.link}
       lh={1}
-      onClick={(event) => event.preventDefault()}
+      onClick={() => router.push(link.link)}
       size="sm"
     >
       {link.label}
     </Anchor>
   ));
 
+  const handleLogo = () => {
+    router.push("/");
+  };
+
   return (
     <div className={classes.footer}>
       <div className={classes.inner}>
-        <Logo height={40} width={100} />
+        <Logo height={40} width={100} onClick={handleLogo} />
         <Group className={classes.links}>{items}</Group>
 
         <Group gap="xs" justify="flex-end" wrap="nowrap">

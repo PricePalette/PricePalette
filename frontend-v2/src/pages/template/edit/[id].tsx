@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { UnstyledButton, Tooltip, Title, rem, Text, Flex } from "@mantine/core";
+import {
+  UnstyledButton,
+  Tooltip,
+  Title,
+  rem,
+  Text,
+  Flex,
+  ColorInput,
+} from "@mantine/core";
 import {
   IconTextSize,
   IconPalette,
@@ -64,8 +72,18 @@ export default function EditTemplatePage() {
             <Title order={4} className={classes.title}>
               {active}
             </Title>
-
-            {active}
+            {active === "Color"}
+            <ColorInput
+              label="Theme Color"
+              description="Theme Color"
+              placeholder="blue"
+            />
+            <br></br>
+            <ColorInput
+              label="Font Color"
+              description="Font Color"
+              placeholder="black"
+            />
           </div>
         </div>
       </nav>

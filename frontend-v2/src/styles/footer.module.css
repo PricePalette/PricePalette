@@ -2,11 +2,11 @@
   margin-top: rem(120px);
   border-top: rem(1px) solid
     light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
-    bottom: 0;
-    width: 100%;
-    position: fixed;
-    height: rem(60px);
-
+  bottom: 0;
+  width: 100%;
+  position: fixed;
+  height: rem(60px);
+  background-color: #5ec5c3;
 }
 
 .inner {
