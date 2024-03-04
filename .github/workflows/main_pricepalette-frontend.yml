@@ -40,7 +40,6 @@ jobs:
         with:
           name: node-app
           path: release.zip
-        working-directory: ./frontend-v2
 
   deploy:
     runs-on: ubuntu-latest
