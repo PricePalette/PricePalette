@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: release.zip
+          path: ./frontend-v2/release.zip
 
   deploy:
     runs-on: ubuntu-latest
