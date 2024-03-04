@@ -1,7 +1,7 @@
 import { Grid, Image, Container, Title, Accordion } from "@mantine/core";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import classes from "../styles/Faq.module.css";
+import classes from "../styles/faq.module.css";
 
 const placeholder = "This is a sample answer";
 
