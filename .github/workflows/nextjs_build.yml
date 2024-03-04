@@ -1,5 +1,9 @@
 name: Build nextjs on PR/push to main
 
+defaults:
+  run:
+    working-directory: ./frontend-v2
+
 on:
   pull_request:
     branches:

@@ -3,6 +3,10 @@
 
 name: Build and deploy Node.js app to Azure Web App - pricepalette-frontend
 
+defaults:
+  run:
+    working-directory: ./frontend-v2
+
 on:
   workflow_run:
     workflows:
