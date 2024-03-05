@@ -7,7 +7,7 @@ export type WidgetMetaData = {
   cards: {
     title: string;
     description: string;
-    img: string;
+    img?: string;
     features: {
       text: string;
       hint?: string;
