@@ -1,0 +1,9 @@
+.header {
+  top: 0;
+  width: 100%;
+  position: fixed;
+  height: rem(60px);
+  padding-left: var(--mantine-spacing-md);
+  padding-right: var(--mantine-spacing-md);
+  background-color: white;
+}

@@ -1,0 +1,44 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  height: 100%;
+  background-image: url("/getstarted.svg");
+}
+
+.grid {
+  /* flex: 1; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 18px;
+}
+
+.card {
+  width: 400px;
+  height: 600px;
+  transition: transform 0.5s ease;
+  cursor: pointer;
+  transition: "transform 0.5s ease";
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.largeText {
+  margin-top: 2rem;
+  font-size: 3rem;
+  font-weight: 600;
+  color: #5ec5c3;
+  text-align: center;
+}
+
+.smallText {
+  font-size: 1.5rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 2rem;
+}
