@@ -36,7 +36,9 @@ def widget_exists(widget_id: str):
 
 @widget_router.get("/list")
 async def list_widgets(user_id: Annotated[str, Depends(get_user_jwt)]):
-    widgets = widget_collection.find({"user_id": str(user_id)})
+    with Session(ALCHEMY_ENGINE) as session:
+        widget_ids = [i.widget_id for i in session.query(Widgets).filter_by(user_id=user_id)]
+    widgets = widget_collection.find({"widgetId": {"$in": widget_ids}})
     if not widgets:
         return JSONResponse(content={"message": "error"}, status_code=404)
     widgets = list(widgets)
