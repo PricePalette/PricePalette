@@ -9,7 +9,6 @@ import {
   useMantineTheme,
   useMantineColorScheme,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import classes from "../../styles/header.module.css";
 import { Logo } from "@/Logo";
 import { useRouter } from "next/router";
