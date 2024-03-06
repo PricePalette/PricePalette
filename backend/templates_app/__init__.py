@@ -16,25 +16,16 @@ templates_router = APIRouter(
 )
 
 
-@templates_router.get("/fetch")
-async def fetch_template(template_id: UUID4):
-    all_templates = list(templates_collection.find())
-
-    for template in all_templates:
-        template.pop("_id")
-        template.pop("createdDate")
-
-    return JSONResponse(content={"message": "OK", "content": all_templates})
-
-
 @templates_router.get("/list")
 async def list_templates():
     with Session(ALCHEMY_ENGINE) as session:
-        all_templates = []
-        for tmp in session.query(Templates).filter_by(active=True).all():
-            all_templates.append({"title": tmp.title, "description": tmp.description,
-                                  "img": tmp.img})
-    return JSONResponse(content={"message": "OK", "content": all_templates})
+        all_templates = [tmp.template_id for tmp in session.query(Templates).filter_by(active=True).all()]
+    templates = list(templates_collection.find({"widgetId": {"$in": all_templates}}))
+    if not templates:
+        return JSONResponse(content={"message": "error"}, status_code=404)
+    for tmp in templates:
+        tmp.pop("_id", None)
+    return JSONResponse(content={"message": "OK", "content": templates})
 
 
 @templates_router.post("/create")
