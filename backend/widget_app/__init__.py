@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import Session
 
 from backend.database import MONGO_CXN, ALCHEMY_ENGINE
-from backend.database_models import Widgets, Users, WidgetEmbed
+from backend.database_models import Widgets, Users, WidgetEmbed, Templates
 from backend.dependency import verify_jwt, get_user_jwt
 from backend.widget_app.models import UserID, WidgetMetadata, UpdateWidget, CreateWidget
 
@@ -58,7 +58,7 @@ async def widget_info(widgetId: UUID4):
 
 @widget_router.post("/create")
 async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_user_jwt)]):
-    with Session(ALCHEMY_ENGINE) as session:
+    with (Session(ALCHEMY_ENGINE) as session):
         from_template = True if data.templateIdUsed else False
         widget = Widgets(widget_id=data.widgetId, user_id=user_id, from_template=from_template,
                          template_id_used=data.templateIdUsed)
@@ -66,6 +66,8 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
         session.commit()
 
         session.query(Users).filter_by(user_id=user_id).update({'widgets_created': Users.widgets_created + 1})
+        session.query(Templates).filter_by(template_id=data.templateIdUsed
+                                           ).update({'usages': Templates.usages + 1})
 
         widget_collection.insert_one(data.model_dump(mode="json"))
 

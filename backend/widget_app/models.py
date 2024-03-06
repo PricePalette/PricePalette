@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import List
 from uuid import UUID, uuid4
@@ -67,7 +68,8 @@ class WidgetMetadata(BaseModel):
 
 class CreateWidget(WidgetMetadata):
     widgetId: UUID = Field(default_factory=uuid4)
-    templateIdUsed: str = None
+    templateIdUsed: str
+    createdDate: datetime = datetime.utcnow()
 
 
 class UpdateWidget(WidgetID, WidgetMetadata):
