@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from pydantic import UUID4
 from sqlalchemy.orm import Session
 
 from backend.database import MONGO_CXN, ALCHEMY_ENGINE
