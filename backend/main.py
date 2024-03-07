@@ -9,7 +9,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from backend.database import MONGO_CLIENT, ALCHEMY_ENGINE
 from backend.database_models import create_tables
 from backend.widget_app import widget_router
-from backend.auth_app import auth_router
 from backend.user_app import user_router
 
 
@@ -24,7 +23,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, title="Price Palette API docs")
 app.include_router(widget_router)
-app.include_router(auth_router)
 app.include_router(user_router)
 
 
