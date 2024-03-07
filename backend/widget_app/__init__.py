@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import Session
 
 from backend.database import MONGO_CXN, ALCHEMY_ENGINE
-from backend.database_models import Widgets, Users, WidgetEmbed
+from backend.database_models import Widgets, Users, WidgetEmbed, Templates
 from backend.dependency import verify_jwt, get_user_jwt
 from backend.widget_app.models import UserID, WidgetMetadata, UpdateWidget, CreateWidget
 
@@ -36,7 +36,9 @@ def widget_exists(widget_id: str):
 
 @widget_router.get("/list")
 async def list_widgets(user_id: Annotated[str, Depends(get_user_jwt)]):
-    widgets = widget_collection.find({"user_id": str(user_id)})
+    with Session(ALCHEMY_ENGINE) as session:
+        widget_ids = [i.widget_id for i in session.query(Widgets).filter_by(user_id=user_id)]
+    widgets = widget_collection.find({"widgetId": {"$in": widget_ids}})
     if not widgets:
         return JSONResponse(content={"message": "error"}, status_code=404)
     widgets = list(widgets)
@@ -56,7 +58,7 @@ async def widget_info(widgetId: UUID4):
 
 @widget_router.post("/create")
 async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_user_jwt)]):
-    with Session(ALCHEMY_ENGINE) as session:
+    with (Session(ALCHEMY_ENGINE) as session):
         from_template = True if data.templateIdUsed else False
         widget = Widgets(widget_id=data.widgetId, user_id=user_id, from_template=from_template,
                          template_id_used=data.templateIdUsed)
@@ -64,6 +66,8 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
         session.commit()
 
         session.query(Users).filter_by(user_id=user_id).update({'widgets_created': Users.widgets_created + 1})
+        session.query(Templates).filter_by(template_id=data.templateIdUsed
+                                           ).update({'usages': Templates.usages + 1})
 
         widget_collection.insert_one(data.model_dump(mode="json"))
 

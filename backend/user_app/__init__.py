@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, timedelta
 from typing import Annotated
 
@@ -11,7 +12,7 @@ from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKE
 from backend.database import ALCHEMY_ENGINE
 from backend.database_models import Users
 from backend.dependency import get_user_jwt
-from backend.user_app.models import Register, Login
+from backend.user_app.models import Register, Login, ForgotPassword
 
 user_router = APIRouter(
     prefix="/user",
@@ -91,3 +92,24 @@ async def info(user_id: Annotated[str, Depends(get_user_jwt)]):
     return JSONResponse(content={"message": "OK",
                                  "content": {"user_id": user.user_id, "user_name": user.user_name,
                                              "email": user.email}})
+
+
+@user_router.post("/forgot_password")
+async def forgot_password(request_data: ForgotPassword, password_reset_tokens=None):
+    email = request_data.email
+
+    if not email:
+        return JSONResponse(status_code=422, content={"message": "error", "detail": "Email not provided"})
+
+    with Session(ALCHEMY_ENGINE) as session:
+        user = session.query(Users).filter_by(email=email).limit(1).first()
+
+        if not user:
+            return JSONResponse(status_code=404, content={"message": "error", "detail": "Email not found"})
+
+        # Generate a unique password reset token
+        reset_token = str(uuid.uuid4())
+        # Store the reset token with the corresponding user email
+        password_reset_tokens[reset_token] = email
+
+        return JSONResponse(content={"message": "OK", "content": {"reset_token": reset_token}})

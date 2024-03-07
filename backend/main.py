@@ -1,15 +1,15 @@
 from contextlib import asynccontextmanager
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 
 from backend.database import MONGO_CLIENT, ALCHEMY_ENGINE
 from backend.database_models import create_tables
-from backend.user_app import user_router
 from backend.widget_app import widget_router
+from backend.user_app import user_router
 
 
 @asynccontextmanager
@@ -28,7 +28,6 @@ app.include_router(user_router)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc: RequestValidationError):
-    print(exc)
     err_msg = "; ".join([f'{err["msg"]}: {err["loc"][-1]}' if err["type"] == "missing" else err["msg"]
                          for err in exc.errors()])
     return JSONResponse(status_code=422, content={"message": "error", "detail": err_msg})
