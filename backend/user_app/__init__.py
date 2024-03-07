@@ -12,7 +12,7 @@ from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKE
 from backend.database import ALCHEMY_ENGINE
 from backend.database_models import Users
 from backend.dependency import get_user_jwt
-from backend.user_app.models import Register, Login
+from backend.user_app.models import Register, Login, ForgotPassword
 
 user_router = APIRouter(
     prefix="/user",
@@ -92,13 +92,6 @@ async def info(user_id: Annotated[str, Depends(get_user_jwt)]):
     return JSONResponse(content={"message": "OK",
                                  "content": {"user_id": user.user_id, "user_name": user.user_name,
                                              "email": user.email}})
-
-
-class ForgotPassword:
-    def __init__(self):
-        self.email = None
-
-    pass
 
 
 @user_router.post("/forgot_password")
