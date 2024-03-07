@@ -12,3 +12,6 @@ class Register(Login):
     user_id: UUID = Field(default_factory=uuid4)
     username: str
     org_name: str
+
+class ForgotPassword(BaseModel):
+    email: EmailStr
