@@ -9,7 +9,7 @@ BLOB_SIGNATURE = "OXlACUbCYjEg31IFEB9zIVR%2FmsJCzxLKFIRWkxYFOuc%3D"
 
 blob_url = ("https://pricepalettefiles.blob.core.windows.net/backend/.env?sp=r&st=2024-02-12T01:20:37Z"
             "&se=2024-05-01T08:20:37Z&spr=https&sv=2022-11-02&sr=b"
-            f"&sig={os.environ.get('BLOB_SIGNATURE', BLOB_SIGNATURE)}")
+            f"&sig={os.environ['BLOB_SIGNATURE']}")
 
 urlretrieved = urlretrieve(blob_url)
 with open(urlretrieved[0], "r") as fp:
