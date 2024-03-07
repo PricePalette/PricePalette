@@ -1,17 +1,17 @@
-import uuid
+from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import List
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
-from pydantic.types import UUID4
 
 
 class UserID(BaseModel):
-    user_id: UUID4
+    user_id: UUID
 
 
 class WidgetID(BaseModel):
-    widgetId: UUID4
+    widgetId: UUID
 
 
 class PriceDurationEnum(str, Enum):
@@ -66,8 +66,9 @@ class WidgetMetadata(BaseModel):
 
 
 class CreateWidget(WidgetMetadata):
-    widgetId: UUID4 = uuid.uuid4()
-    templateIdUsed: str = None
+    widgetId: UUID = Field(default_factory=uuid4)
+    templateIdUsed: str
+    createdDate: datetime = datetime.utcnow()
 
 
 class UpdateWidget(WidgetID, WidgetMetadata):
