@@ -61,7 +61,7 @@ async def register(user_info: Register):
     access_token = create_access_token(sub=user_id)
     return JSONResponse(content={"message": "OK", "access_token": access_token,
                                  "content": {"user_id": user_id, "user_name": user_info.username,
-                                             "email": user_info.email}})
+                                             "email": user_info.email, "stripe_cust_id": customer.stripe_id}})
 
 
 @user_router.post("/login")

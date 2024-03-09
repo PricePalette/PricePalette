@@ -49,6 +49,7 @@ class Widgets(Base):
     active = Column(Boolean, default=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow())
     updated_date = Column(DateTime, nullable=True)
+    stripe_product_id = Column(String(100), unique=True, nullable=False)
 
 
 class WidgetEmbed(Base):
