@@ -5,12 +5,9 @@ from urllib.request import urlretrieve
 from dotenv import load_dotenv
 
 
-BLOB_SIGNATURE = "OXlACUbCYjEg31IFEB9zIVR%2FmsJCzxLKFIRWkxYFOuc%3D"
-
-blob_url = ("https://pricepalettefiles.blob.core.windows.net/backend/.env?sp=r&st=2024-02-12T01:20:37Z"
-            "&se=2024-05-01T08:20:37Z&spr=https&sv=2022-11-02&sr=b"
+blob_url = ("https://pricepalettefiles.blob.core.windows.net/backend/env?sp=r&st=2024-03-09T22:30:41Z"
+            "&se=2024-11-30T06:30:41Z&sip=0.0.0.0-255.255.255.255&spr=https&sv=2022-11-02&sr=b"
             f"&sig={os.environ['BLOB_SIGNATURE']}")
-
 urlretrieved = urlretrieve(blob_url)
 with open(urlretrieved[0], "r") as fp:
     load_dotenv(stream=fp)
