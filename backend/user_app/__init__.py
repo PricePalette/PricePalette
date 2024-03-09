@@ -1,23 +1,20 @@
 import uuid
-
-import requests
 from datetime import datetime, timedelta
 from typing import Annotated
 
 import bcrypt
-from fastapi import APIRouter, Depends, HTTPException
-from jose import jwt
-from mysqlx import get_session
-from sqlalchemy.orm import Session
+import requests
 from fastapi import APIRouter, Depends
+from fastapi import HTTPException
+from jose import jwt
+from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
+from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.database import ALCHEMY_ENGINE, stripe
 from backend.database_models import Users
 from backend.dependency import get_user_jwt
 from backend.user_app.models import Register, Login, ForgotPassword, ResetPassword
-from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKEN_EXPIRE_MINUTES, STRIPE_SECRET_KEY
-
 
 user_router = APIRouter(
     prefix="/user",
