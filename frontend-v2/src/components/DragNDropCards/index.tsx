@@ -1,23 +1,19 @@
-import cx from "clsx";
 import { Draggable, DragDropContext, Droppable } from "@hello-pangea/dnd";
 import { rem, Text } from "@mantine/core";
 import { useListState } from "@mantine/hooks";
 import { IconGripVertical } from "@tabler/icons-react";
 import classes from "@/styles/drapNDropCards.module.css";
-
-const data = [
-  { position: 6, mass: 12.011, symbol: "C", name: "Carbon" },
-  { position: 7, mass: 14.007, symbol: "N", name: "Nitrogen" },
-  { position: 39, mass: 88.906, symbol: "Y", name: "Yttrium" },
-  { position: 56, mass: 137.33, symbol: "Ba", name: "Barium" },
-  { position: 58, mass: 140.12, symbol: "Ce", name: "Cerium" },
-];
+import { useMetaData } from "@/stores/useMetaData";
+import { arrayMoveImmutable } from "array-move";
+import cx from "clsx";
 
 export function DrapNDropCards() {
-  const [state, handlers] = useListState(data);
+  const metaData = useMetaData((state) => state.metaData);
+  const updateCards = useMetaData((state) => state.updateCards);
+  const [state, handlers] = useListState(metaData?.cards);
 
   const items = state.map((item, index) => (
-    <Draggable key={item.symbol} index={index} draggableId={item.symbol}>
+    <Draggable key={item.id} index={index} draggableId={item.id}>
       {(provided, snapshot) => (
         <div
           className={cx(classes.item, {
@@ -32,11 +28,10 @@ export function DrapNDropCards() {
               stroke={1.5}
             />
           </div>
-          <Text className={classes.symbol}>{item.symbol}</Text>
           <div>
-            <Text>{item.name}</Text>
+            <Text>{item.title}</Text>
             <Text c="dimmed" size="sm">
-              Position: {item.position} • Mass: {item.mass}
+              {item.description}
             </Text>
           </div>
         </div>
@@ -46,9 +41,21 @@ export function DrapNDropCards() {
 
   return (
     <DragDropContext
-      onDragEnd={({ destination, source }) =>
-        handlers.reorder({ from: source.index, to: destination?.index || 0 })
-      }
+      onDragEnd={({ destination, source }) => {
+        console.log("oldCards: ", metaData);
+        const newCards = arrayMoveImmutable(
+          metaData?.cards!,
+          source.index,
+          destination?.index || 0
+        );
+        updateCards(newCards);
+        console.log("newCardsNonState: ", newCards);
+        console.log("newCards: ", metaData);
+        return handlers.reorder({
+          from: source.index,
+          to: destination?.index || 0,
+        });
+      }}
     >
       <Droppable droppableId="dnd-list" direction="vertical">
         {(provided) => (

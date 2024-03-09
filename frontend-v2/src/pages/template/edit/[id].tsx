@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  UnstyledButton,
-  Tooltip,
-  Title,
-  rem,
-  Text,
-  Flex,
-  ColorInput,
-} from "@mantine/core";
+import { UnstyledButton, Tooltip, Title, rem, Text, Flex } from "@mantine/core";
 import {
   IconTextSize,
   IconPalette,
@@ -19,6 +11,7 @@ import { useMetaData } from "@/stores/useMetaData";
 import { useGetUrlId } from "@/utils/useGetUrlId";
 import DynamicTemplateLoader from "@/components/DynamicTemplateLoader";
 import { DrapNDropCards } from "@/components/DragNDropCards";
+import { SetupMetadata } from "@/components/SetupMetaData";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -35,11 +28,6 @@ export default function EditTemplatePage() {
   // getting the widget id from url
   const widgetId = useGetUrlId();
   let body = null;
-  console.log(widgetId);
-
-  const metadata = useMetaData((state) => state.metaData);
-  const setMetaData = useMetaData((state) => state.setMetaData);
-
   const [active, setActive] = useState<WidgetSettingType>("Cards");
 
   const mainLinks = mainLinksMockdata.map((link) => (
@@ -109,5 +97,9 @@ export default function EditTemplatePage() {
     );
   }
 
-  return <Flex style={{ height: "100vh" }}>{body}</Flex>;
+  return (
+    <SetupMetadata widgetId={widgetId}>
+      <Flex style={{ height: "100vh" }}>{body}</Flex>
+    </SetupMetadata>
+  );
 }
