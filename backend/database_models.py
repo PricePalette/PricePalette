@@ -36,6 +36,7 @@ class Users(Base):
     joined_date = Column(DateTime, default=datetime.datetime.utcnow())
     widgets_created = Column(Integer, default=0)
     forgot_password = Column(String(200), nullable=True)
+    stripe_cust_id = Column(String(100), unique=True, nullable=True)
 
 
 class Widgets(Base):

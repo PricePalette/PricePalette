@@ -3,16 +3,20 @@ from datetime import datetime, timedelta
 from typing import Annotated
 
 import bcrypt
-from fastapi import APIRouter, Depends
+import stripe
 from jose import jwt
 from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
 from starlette.responses import JSONResponse
 
-from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.database import ALCHEMY_ENGINE
 from backend.database_models import Users
 from backend.dependency import get_user_jwt
 from backend.user_app.models import Register, Login, ForgotPassword
+from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKEN_EXPIRE_MINUTES, STRIPE_SECRET_KEY
+
+
+stripe.api_key = STRIPE_SECRET_KEY
 
 user_router = APIRouter(
     prefix="/user",
@@ -50,9 +54,10 @@ async def register(user_info: Register):
             return JSONResponse(status_code=409, content={"message": "error", "errors": missing_fields})
 
         pswd, salt = create_hash_and_salt(user_info.password)
+        customer = stripe.Customer.create(email=user_info.email, name=user_info.org_name)
         user = Users(user_name=user_info.username, email=user_info.email, organization_name=user_info.org_name,
                      password=pswd, salt=salt, plan_id="631e263e-d9ae-40cc-ac21-91d71fe7c9fd",
-                     user_id=user_id)
+                     user_id=user_id, stripe_cust_id=customer.stripe_id)
         session.add(user)
         session.commit()
     access_token = create_access_token(sub=user_id)
