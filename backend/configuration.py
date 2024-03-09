@@ -33,3 +33,5 @@ MONGODB_CXN_STRING = f"mongodb+srv://{MONGODB_CREDS['username']}:{MONGODB_CREDS[
                      f"/?retryWrites=true&w=majority"
 MYSQL_CXN_STRING = f"mysql+mysqldb://{MYSQL_CREDS['username']}:{MYSQL_CREDS['password']}@{MYSQL_CREDS['host']}" \
                    f"/pricepalettedb"
+
+STRIPE_SECRET_KEY = os.environ["STRIPE_SECRET_KEY"]
