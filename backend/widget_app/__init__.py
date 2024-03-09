@@ -103,8 +103,17 @@ async def delete_widget(widgetId: UUID4, user_id: Annotated[str, Depends(get_use
     widget_exists(str(widgetId))
 
     with Session(ALCHEMY_ENGINE) as session:
-        session.query(Widgets).filter_by(widget_id=str(widgetId)).delete()
-        session.query(Users).filter_by(user_id=user_id).update({'widgets_created': Users.widgets_created - 1})
+        widget = session.query(Widgets).filter_by(widget_id=str(widgetId))
+        user = session.query(Users).filter_by(user_id=user_id)
+
+        for card in widget_collection.find_one({"widgetId": str(widgetId)})["cards"]:
+            stripe.Price.modify(card["stripe_price_id"], active=False)
+
+        product_id = widget.all()[0].stripe_product_id
+        stripe.Product.modify(product_id, active=False)
+
+        user.update({'widgets_created': Users.widgets_created - 1})
+        widget.delete()
         session.commit()
     delete_result = widget_collection.delete_one({"widgetId": str(widgetId)})
     if delete_result.deleted_count > 0:
