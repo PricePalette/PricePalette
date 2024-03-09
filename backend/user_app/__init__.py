@@ -3,20 +3,18 @@ from datetime import datetime, timedelta
 from typing import Annotated
 
 import bcrypt
-import stripe
+
 from jose import jwt
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends
 from starlette.responses import JSONResponse
 
-from backend.database import ALCHEMY_ENGINE
+from backend.database import ALCHEMY_ENGINE, stripe
 from backend.database_models import Users
 from backend.dependency import get_user_jwt
 from backend.user_app.models import Register, Login, ForgotPassword
 from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKEN_EXPIRE_MINUTES, STRIPE_SECRET_KEY
 
-
-stripe.api_key = STRIPE_SECRET_KEY
 
 user_router = APIRouter(
     prefix="/user",
