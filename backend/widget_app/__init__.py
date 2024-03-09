@@ -7,7 +7,7 @@ from pydantic.types import UUID4
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Session
 
-from backend.database import MONGO_CXN, ALCHEMY_ENGINE
+from backend.database import MONGO_CXN, ALCHEMY_ENGINE, stripe
 from backend.database_models import Widgets, Users, WidgetEmbed, Templates
 from backend.dependency import verify_jwt, get_user_jwt
 from backend.widget_app.models import UserID, WidgetMetadata, UpdateWidget, CreateWidget
@@ -59,17 +59,26 @@ async def widget_info(widgetId: UUID4):
 @widget_router.post("/create")
 async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_user_jwt)]):
     with (Session(ALCHEMY_ENGINE) as session):
+        widget_json = data.model_dump(mode="json")
+        product = stripe.Product.create(name=f"{data.title} - {data.widgetId}", description=data.description,
+                                        metadata={"for_user_id": user_id})
+        widget_json["stripe_product_id"] = product.stripe_id
+
+        for card, json_card in zip(data.cards, widget_json["cards"]):
+            price = stripe.Price.create(currency=data.price.currency.lower(), unit_amount=card.amount,
+                                        recurring={"interval": data.price.duration.lower()}, product=product.stripe_id)
+            json_card["stripe_price_id"] = price.stripe_id
+
         from_template = True if data.templateIdUsed else False
         widget = Widgets(widget_id=data.widgetId, user_id=user_id, from_template=from_template,
-                         template_id_used=data.templateIdUsed)
+                         template_id_used=data.templateIdUsed, stripe_product_id=product.stripe_id)
         session.add(widget)
-        session.commit()
 
         session.query(Users).filter_by(user_id=user_id).update({'widgets_created': Users.widgets_created + 1})
         session.query(Templates).filter_by(template_id=data.templateIdUsed
                                            ).update({'usages': Templates.usages + 1})
 
-        widget_collection.insert_one(data.model_dump(mode="json"))
+        widget_collection.insert_one(widget_json)
 
         session.commit()
     return JSONResponse(content={"message": "OK", "content": {"widget_id": str(data.widgetId)}})
@@ -94,8 +103,17 @@ async def delete_widget(widgetId: UUID4, user_id: Annotated[str, Depends(get_use
     widget_exists(str(widgetId))
 
     with Session(ALCHEMY_ENGINE) as session:
-        session.query(Widgets).filter_by(widget_id=str(widgetId)).delete()
-        session.query(Users).filter_by(user_id=user_id).update({'widgets_created': Users.widgets_created - 1})
+        widget = session.query(Widgets).filter_by(widget_id=str(widgetId))
+        user = session.query(Users).filter_by(user_id=user_id)
+
+        for card in widget_collection.find_one({"widgetId": str(widgetId)})["cards"]:
+            stripe.Price.modify(card["stripe_price_id"], active=False)
+
+        product_id = widget.all()[0].stripe_product_id
+        stripe.Product.modify(product_id, active=False)
+
+        user.update({'widgets_created': Users.widgets_created - 1})
+        widget.delete()
         session.commit()
     delete_result = widget_collection.delete_one({"widgetId": str(widgetId)})
     if delete_result.deleted_count > 0:
