@@ -35,9 +35,6 @@ export function Header() {
             <Logo height={40} width={100} onClick={handleLogo} />
           </Box>
           <Group visibleFrom="sm">
-            {/* Temporarile moving it here, could change in the final one after building the index page */}
-            <Button onClick={() => setColorScheme("light")}>Light</Button>
-            <Button onClick={() => setColorScheme("dark")}>Dark</Button>
             <Button variant="default" onClick={handleLogin}>
               Log in
             </Button>
