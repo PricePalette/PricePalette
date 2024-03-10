@@ -1,7 +1,7 @@
 .header {
   top: 0;
   width: 100%;
-  position: fixed;
+  position: absolute;
   height: rem(60px);
   padding-left: var(--mantine-spacing-md);
   padding-right: var(--mantine-spacing-md);
