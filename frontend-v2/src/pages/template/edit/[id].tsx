@@ -7,7 +7,6 @@ import {
   TablerIconsProps,
 } from "@tabler/icons-react";
 import classes from "@/styles/editTemplate.module.css";
-import { useMetaData } from "@/stores/useMetaData";
 import { useGetUrlId } from "@/utils/useGetUrlId";
 import DynamicTemplateLoader from "@/components/DynamicTemplateLoader";
 import { DrapNDropCards } from "@/components/DragNDropCards";

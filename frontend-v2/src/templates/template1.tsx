@@ -2,7 +2,6 @@ import { useMetaData } from "@/stores/useMetaData";
 import { WidgetMetaData } from "@/types";
 import { Text, Card, Flex, Title, Button, Tooltip } from "@mantine/core";
 import { IconCheck, IconQuestionMark } from "@tabler/icons-react";
-import { title } from "process";
 import { v4 as uuidv4 } from "uuid";
 
 // this is the metadata for this specific template
