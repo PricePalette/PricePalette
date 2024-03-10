@@ -5,9 +5,10 @@ export type WidgetMetaData = {
     currency: "CAD" | "USD";
   };
   cards: {
+    id: string;
     title: string;
     description: string;
-    img: string;
+    img?: string;
     features: {
       text: string;
       hint?: string;
