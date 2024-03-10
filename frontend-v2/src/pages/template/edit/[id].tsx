@@ -4,9 +4,9 @@ import {
   Tooltip,
   Title,
   rem,
-  Text,
   Flex,
   ActionIcon,
+  Button,
 } from "@mantine/core";
 import {
   IconTextSize,
@@ -16,6 +16,7 @@ import {
   IconZoomReset,
   IconZoomOut,
   IconZoomIn,
+  IconRocket,
 } from "@tabler/icons-react";
 import classes from "@/styles/editTemplate.module.css";
 import { useGetUrlId } from "@/utils/useGetUrlId";
@@ -23,6 +24,7 @@ import DynamicTemplateLoader from "@/components/DynamicTemplateLoader";
 import { DrapNDropCards } from "@/components/DragNDropCards";
 import { SetupMetadata } from "@/components/SetupMetaData";
 import { useControls } from "react-zoom-pan-pinch";
+import { Logo } from "@/illustrations/Logo";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -106,23 +108,53 @@ export default function EditTemplatePage() {
           <div className={classes.wrapper}>
             <div className={classes.aside}>
               <div className={classes.logo}>
-                <Text>Temp</Text>
+                <Logo width={38} height={38} />
               </div>
               {mainLinks}
             </div>
             <div className={classes.main}>
-              <Title order={4} className={classes.title}>
-                {active}
-              </Title>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flexWrap: "wrap",
+                  height: "100%",
+                }}
+              >
+                <Title order={4} className={classes.title}>
+                  {active}
+                </Title>
 
-              <div style={{ padding: "1em" }}>
-                {active === "Cards" ? (
-                  <DrapNDropCards />
-                ) : active === "Color" ? (
-                  "Color"
-                ) : (
-                  "Labels"
-                )}
+                <div
+                  style={{
+                    padding: "1em",
+                  }}
+                >
+                  {active === "Cards" ? (
+                    <DrapNDropCards />
+                  ) : active === "Color" ? (
+                    "Color"
+                  ) : (
+                    "Labels"
+                  )}
+                </div>
+
+                <div
+                  style={{
+                    marginTop: "auto",
+                    backgroundColor: "white",
+                    padding: "1.5em",
+                  }}
+                >
+                  <Button
+                    color="#edc639"
+                    style={{ width: "100%" }}
+                    leftSection={<IconRocket size={18} />}
+                    onClick={() => alert("WIP: webpack functionality")}
+                  >
+                    Publish
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -136,7 +168,6 @@ export default function EditTemplatePage() {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#f0f0f0",
-            border: "2px red solid",
             overflow: "scroll",
           }}
         >

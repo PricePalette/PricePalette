@@ -1,7 +1,7 @@
 import { Loader } from "@mantine/core";
 import { useMetaData } from "@/stores/useMetaData";
-import { metaData as template1MetaData } from "@/templates/template1";
 import { useEffect } from "react";
+import { gridTemplateMetaData } from "@/utils/initialMetaDatas";
 
 export function SetupMetadata({
   children,
@@ -18,7 +18,7 @@ export function SetupMetadata({
   useEffect(() => {
     switch (widgetId) {
       case "1":
-        setMetaData(template1MetaData);
+        setMetaData(gridTemplateMetaData);
     }
   }, [widgetId, setMetaData]);
 
