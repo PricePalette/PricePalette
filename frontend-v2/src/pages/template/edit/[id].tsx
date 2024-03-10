@@ -1,16 +1,28 @@
 import { useState } from "react";
-import { UnstyledButton, Tooltip, Title, rem, Text, Flex } from "@mantine/core";
+import {
+  UnstyledButton,
+  Tooltip,
+  Title,
+  rem,
+  Text,
+  Flex,
+  ActionIcon,
+} from "@mantine/core";
 import {
   IconTextSize,
   IconPalette,
   IconLayout,
   TablerIconsProps,
+  IconZoomReset,
+  IconZoomOut,
+  IconZoomIn,
 } from "@tabler/icons-react";
 import classes from "@/styles/editTemplate.module.css";
 import { useGetUrlId } from "@/utils/useGetUrlId";
 import DynamicTemplateLoader from "@/components/DynamicTemplateLoader";
 import { DrapNDropCards } from "@/components/DragNDropCards";
 import { SetupMetadata } from "@/components/SetupMetaData";
+import { useControls } from "react-zoom-pan-pinch";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -22,6 +34,41 @@ const mainLinksMockdata: {
   { icon: IconPalette, label: "Color" },
   { icon: IconTextSize, label: "Labels" },
 ];
+
+const ZoomControls = () => {
+  const { zoomIn, zoomOut, resetTransform } = useControls();
+
+  return (
+    <ActionIcon.Group>
+      <ActionIcon
+        variant="default"
+        size="lg"
+        aria-label="Zoom In"
+        onClick={() => zoomIn()}
+      >
+        <IconZoomIn style={{ width: rem(20) }} stroke={1.5} />
+      </ActionIcon>
+
+      <ActionIcon
+        variant="default"
+        size="lg"
+        aria-label="Zoom Out"
+        onClick={() => zoomOut()}
+      >
+        <IconZoomOut style={{ width: rem(20) }} stroke={1.5} />
+      </ActionIcon>
+
+      <ActionIcon
+        variant="default"
+        size="lg"
+        aria-label="Zoom Reset"
+        onClick={() => resetTransform()}
+      >
+        <IconZoomReset style={{ width: rem(20) }} stroke={1.5} />
+      </ActionIcon>
+    </ActionIcon.Group>
+  );
+};
 
 export default function EditTemplatePage() {
   // getting the widget id from url
@@ -85,9 +132,12 @@ export default function EditTemplatePage() {
             width: "80%",
             height: "100%",
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "#f0f0f0",
+            border: "2px red solid",
+            overflow: "scroll",
           }}
         >
           <DynamicTemplateLoader id={Number(widgetId)} />
