@@ -113,9 +113,9 @@ export default function Dashboard() {
     setProfileModalOpen(true);
   };
   return (
-    <>
+    <div>
       <Header />
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", height: "100vh" }}>
         {/* Navbar */}
         <nav className={classes.navbar}>
           <ScrollArea className={classes.links}>
@@ -259,6 +259,6 @@ export default function Dashboard() {
           setProfileModalOpen={setProfileModalOpen}
         />
       </div>
-    </>
+    </div>
   );
 }
