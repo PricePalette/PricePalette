@@ -1,5 +1,4 @@
-import { Template1 } from "@/templates/template1";
-import GridTemplate from "../GridTemplate";
+import { GridTemplate } from "@/templates/GridTemplate";
 
 interface DynamicTemplateLoaderProps {
   id: number;
@@ -10,7 +9,7 @@ const DynamicTemplateLoader: React.FC<DynamicTemplateLoaderProps> = ({
 }) => {
   switch (id) {
     case 1:
-      return <Template1 />;
+      return <GridTemplate />;
     case 2:
       return <GridTemplate />;
     case 3:
