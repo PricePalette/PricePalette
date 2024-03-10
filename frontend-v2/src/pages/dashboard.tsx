@@ -158,13 +158,14 @@ export default function Dashboard() {
 
           {data && data.content?.length > 0 ? (
             data.content.map((item: any, index: any) => (
-              <Card withBorder radius="md" className={classes.card}>
+              <Card key={index} withBorder radius="md" className={classes.card}>
                 <div className={classes.cardContent}>
                   <Group>
                     <Image
                       src="https://images.unsplash.com/photo-1602080858428-57174f9431cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80"
                       height={160}
                       fit="cover"
+                      alt="A description of the image"
                     />
                     <div className={classes.body}>
                       <Text className={classes.title} mt="xs" mb="md">
