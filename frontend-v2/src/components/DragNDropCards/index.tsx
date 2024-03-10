@@ -44,22 +44,28 @@ export function DrapNDropCards() {
       buttonText: "",
       features: [],
     },
-    onSubmit: (values, { setFieldError }) => {
+    onSubmit: (values, { setFieldError, setValues }) => {
       const { title, description, amount, buttonText, priceCaption, features } =
         values;
 
       if (!title) {
         setFieldError("title", "Your card must contain a title");
+        return;
       } else if (!description) {
         setFieldError("description", "Your card must contain a description");
+        return;
       } else if (!amount) {
         setFieldError("amount", "Your card must have a price amount");
+        return;
       } else if (!priceCaption) {
         setFieldError("priceCaption", "Your price should have a caption");
+        return;
       } else if (!buttonText) {
         setFieldError("buttonText", "Your card button text cannot be empty");
+        return;
       } else if (features.length < 1) {
         setFieldError("features", "Your card must have at least 1 feature");
+        return;
       }
 
       const newFeatures: {
@@ -82,6 +88,15 @@ export function DrapNDropCards() {
         id: uuidv4(),
       });
       updateCards(oldCards!);
+
+      setValues({
+        buttonText: "",
+        description: "",
+        features: [],
+        amount: 0,
+        priceCaption: "",
+        title: "",
+      });
 
       close();
     },
@@ -249,7 +264,7 @@ export function DrapNDropCards() {
           <TagsInput
             mt={"0.5em"}
             label="Features"
-            placeholder="Feature"
+            placeholder="Feature (please the enter key to add a feature)"
             defaultValue={[]}
             name="features"
             value={formik.values.features}
