@@ -82,7 +82,7 @@ function TemplateCard({
   );
 }
 
-export function Template1() {
+export function GridTemplate() {
   const metaData = useMetaData((state) => state.metaData);
   console.log(metaData);
 
