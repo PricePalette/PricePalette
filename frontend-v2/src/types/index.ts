@@ -20,9 +20,9 @@ export type WidgetMetaData = {
   description: string;
   themeColor: `#${string}`;
   font: {
-    size: "s" | "m" | "l";
-    family: string;
-    color: `#${string}`;
+    size?: "s" | "m" | "l";
+    family?: string;
+    color?: `#${string}`;
   };
   widgetId: string;
   updatedFields: string[];

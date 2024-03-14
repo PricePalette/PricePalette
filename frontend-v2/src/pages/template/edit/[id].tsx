@@ -25,6 +25,7 @@ import { DrapNDropCards } from "@/components/DragNDropCards";
 import { SetupMetadata } from "@/components/SetupMetaData";
 import { useControls } from "react-zoom-pan-pinch";
 import { Logo } from "@/illustrations/Logo";
+import EditLabels from "@/components/EditLabels";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -135,7 +136,7 @@ export default function EditTemplatePage() {
                   ) : active === "Color" ? (
                     "Color"
                   ) : (
-                    "Labels"
+                    <EditLabels />
                   )}
                 </div>
 
