@@ -1,15 +1,20 @@
 import { useMetaData } from "@/stores/useMetaData";
 import { WidgetMetaData } from "@/types";
+import { fontSizeMap } from "@/utils/constants";
 import { Text, Card, Flex, Title, Button, Tooltip } from "@mantine/core";
 import { IconCheck, IconQuestionMark } from "@tabler/icons-react";
 
 function TemplateCard({
   card,
   billDuration,
+  metaData,
 }: {
   card: WidgetMetaData["cards"][0];
   billDuration: "Monthly" | "Yearly";
+  metaData: WidgetMetaData;
 }) {
+  const currentFontSize = metaData.font?.size || "m";
+  const appliedFontSize = fontSizeMap[currentFontSize];
   return (
     <Card
       withBorder
@@ -31,12 +36,24 @@ function TemplateCard({
           justify={"center"}
           style={{ height: "100%" }}
         >
-          <Text fw={700} style={{ fontSize: "1.5rem" }}>
+          <Text
+            fw={700}
+            style={{ fontSize: `calc(1.3rem + ${appliedFontSize})` }}
+          >
             {card.title}
           </Text>
-          <span style={{ fontSize: "4rem" }}>${card.amount}</span>
-          <span style={{ fontSize: "0.8rem" }}>{card.priceCaption}</span>
-          <Text size="xl">Billed {billDuration}</Text>
+          <span style={{ fontSize: `calc(3.5rem + ${appliedFontSize})` }}>
+            ${card.amount}
+          </span>
+          <span style={{ fontSize: `calc(0.5rem + ${appliedFontSize})` }}>
+            {card.priceCaption}
+          </span>
+          <Text size="xl">
+            Billed {billDuration}{" "}
+            <span style={{ fontSize: `1rem` }}>
+              in {metaData.price.currency}
+            </span>
+          </Text>
         </Flex>
       </Card.Section>
 
@@ -55,7 +72,10 @@ function TemplateCard({
           {card.features.map((feature, index) => (
             <Flex align={"center"} key={index}>
               <IconCheck height={"18px"} width={"18px"} />
-              <Text size="sm" ml={"xs"}>
+              <Text
+                style={{ fontSize: `calc(0.5rem + ${appliedFontSize})` }}
+                ml={"xs"}
+              >
                 {feature.text}
               </Text>
               {feature.hint ? (
@@ -84,7 +104,6 @@ function TemplateCard({
 
 export function GridTemplate() {
   const metaData = useMetaData((state) => state.metaData);
-  console.log(metaData);
 
   return (
     <Flex direction={"column"}>
@@ -98,6 +117,7 @@ export function GridTemplate() {
             <TemplateCard
               key={index}
               card={card}
+              metaData={metaData}
               billDuration={
                 metaData.price.duration === "M" ? "Monthly" : "Yearly"
               }
