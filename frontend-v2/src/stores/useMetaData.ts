@@ -6,6 +6,8 @@ interface MetaDataSate {
   setMetaData: (metaData: null | WidgetMetaData) => void;
   updateCards: (newCards: WidgetMetaData["cards"]) => void;
   updateWidgetMetaData: (updates: Partial<WidgetMetaData>) => void;
+  updateThemeColor: (colorHex: string) => void;
+  updateFontColor: (colorHexFont: string) => void;
 }
 
 export const useMetaData = create<MetaDataSate>()((set) => ({
@@ -18,6 +20,17 @@ export const useMetaData = create<MetaDataSate>()((set) => ({
       metaData: {
         ...state.metaData!,
         ...updates,
+      },
+    })),
+  updateThemeColor: (colorHex) =>
+    set((state) => ({
+      metaData: { ...state.metaData!, themeColor: colorHex },
+    })),
+  updateFontColor: (colorHexFont) =>
+    set((state) => ({
+      metaData: {
+        ...state.metaData!,
+        font: { ...state.metaData?.font, color: colorHexFont },
       },
     })),
 }));

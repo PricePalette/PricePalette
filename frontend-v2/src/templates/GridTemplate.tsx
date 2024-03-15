@@ -23,7 +23,7 @@ function TemplateCard({
       style={{ height: "550px", width: "300px" }}
     >
       <Card.Section
-        bg={"blue"}
+        bg={`${metaData.themeColor}`}
         p={"lg"}
         style={{
           height: "290px",
@@ -37,20 +37,31 @@ function TemplateCard({
           style={{ height: "100%" }}
         >
           <Text
+            c={`${metaData.font.color}`}
             fw={700}
             style={{ fontSize: `calc(1.3rem + ${appliedFontSize})` }}
           >
             {card.title}
           </Text>
-          <span style={{ fontSize: `calc(3.5rem + ${appliedFontSize})` }}>
+          <span
+            style={{
+              fontSize: `calc(3.5rem + ${appliedFontSize})`,
+              color: `${metaData.font.color}`,
+            }}
+          >
             ${card.amount}
           </span>
-          <span style={{ fontSize: `calc(0.5rem + ${appliedFontSize})` }}>
+          <span
+            style={{
+              fontSize: `calc(0.5rem + ${appliedFontSize})`,
+              color: `${metaData.font.color}`,
+            }}
+          >
             {card.priceCaption}
           </span>
-          <Text size="xl">
+          <Text size="xl" c={`${metaData.font.color}`}>
             Billed {billDuration}{" "}
-            <span style={{ fontSize: `1rem` }}>
+            <span style={{ fontSize: `1rem`, color: `${metaData.font.color}` }}>
               in {metaData.price.currency}
             </span>
           </Text>
@@ -73,6 +84,7 @@ function TemplateCard({
             <Flex align={"center"} key={index}>
               <IconCheck height={"18px"} width={"18px"} />
               <Text
+                c={`${metaData.font.color}`}
                 style={{ fontSize: `calc(0.5rem + ${appliedFontSize})` }}
                 ml={"xs"}
               >
@@ -96,7 +108,9 @@ function TemplateCard({
           ))}
         </Flex>
 
-        <Button style={{ width: "100%" }}>{card.buttonText}</Button>
+        <Button style={{ width: "100%" }} bg={`${metaData.themeColor}`}>
+          {card.buttonText}
+        </Button>
       </Flex>
     </Card>
   );
