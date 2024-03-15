@@ -26,6 +26,8 @@ import { SetupMetadata } from "@/components/SetupMetaData";
 import { useControls } from "react-zoom-pan-pinch";
 import { Logo } from "@/illustrations/Logo";
 import EditLabels from "@/components/EditLabels";
+import EditColors from "@/components/EditColors";
+import { ColorPicker } from "@mantine/core";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -134,7 +136,7 @@ export default function EditTemplatePage() {
                   {active === "Cards" ? (
                     <DrapNDropCards />
                   ) : active === "Color" ? (
-                    "Color"
+                    <EditColors />
                   ) : (
                     <EditLabels />
                   )}

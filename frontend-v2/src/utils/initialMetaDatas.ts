@@ -15,7 +15,7 @@ export const gridTemplateMetaData: WidgetMetaData = {
   font: {
     size: "m",
     family: "Arial",
-    color: "#FFFFFF",
+    color: "#000000",
   },
   // this is just for now, will change when integrating with API
   widgetId: "8a0d2edd-79d3-4628-a7fd-f22890930a95",

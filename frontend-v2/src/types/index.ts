@@ -18,11 +18,11 @@ export type WidgetMetaData = {
     priceCaption: string;
   }[];
   description: string;
-  themeColor: `#${string}`;
+  themeColor: string;
   font: {
     size?: "s" | "m" | "l";
     family?: string;
-    color?: `#${string}`;
+    color?: string;
   };
   widgetId: string;
   updatedFields: string[];
