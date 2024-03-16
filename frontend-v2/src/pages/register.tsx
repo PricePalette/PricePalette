@@ -11,7 +11,6 @@ import {
   Button,
   Text,
   Title,
-  rem,
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import { Register as RegisterIllus } from "../illustrations/Register";
@@ -207,7 +206,12 @@ export default function Register() {
               >
                 {"Already have an account? Login"}
               </Anchor>
-              <Button type="submit" radius="xl">
+              <Button
+                type="submit"
+                radius="xl"
+                loading={registerMutation.isLoading}
+                loaderProps={{ type: "dots" }}
+              >
                 Register
               </Button>
             </Group>

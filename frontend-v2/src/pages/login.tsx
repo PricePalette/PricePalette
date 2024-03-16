@@ -4,7 +4,6 @@ import {
   Text,
   Paper,
   Group,
-  PaperProps,
   Button,
   Divider,
   Anchor,
@@ -139,7 +138,12 @@ export default function Login() {
               >
                 {"Don't have an account? Register"}
               </Anchor>
-              <Button type="submit" radius="xl">
+              <Button
+                type="submit"
+                radius="xl"
+                loading={loginMutation.isLoading}
+                loaderProps={{ type: "dots" }}
+              >
                 Login
               </Button>
             </Group>
