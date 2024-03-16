@@ -11,9 +11,8 @@ import {
   Box,
   ThemeIcon,
   rem,
-  Loader,
   Modal,
-  LoadingOverlay,
+  Skeleton,
 } from "@mantine/core";
 import { IconTemplate, IconDashboard, IconSettings } from "@tabler/icons-react";
 import classes from "../styles/navbarnested.module.css";
@@ -26,6 +25,7 @@ import { NoDataIcon } from "@/illustrations/NoData";
 import { Header } from "@/components/Header";
 import ProfileModal from "@/components/ProfileModal";
 import { AuthOrNot } from "@/components/AuthOrNot";
+import superagent from "superagent";
 
 const mockdata = [
   { label: "Dashboard", icon: IconDashboard, link: "/dashboard" },
@@ -37,29 +37,24 @@ const mockdata = [
   { label: "Profile Settings", icon: IconSettings, link: "/settings" },
 ];
 
-const fetchWidgetList = async () => {
-  const jwtToken = localStorage.getItem("pp_access_token");
-  const response = await fetch(`${backendAPI}/widget/list`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${jwtToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-
-  return response.json();
-};
-
 export default function Dashboard() {
   const router = useRouter();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isProfileModalOpen, setProfileModalOpen] = useState(false);
 
-  const { data, error, isLoading } = useQuery("widgets", fetchWidgetList);
+  const { data, isLoading } = useQuery({
+    queryKey: ["WidgetsQuery", { id: 1 }],
+    queryFn: () =>
+      superagent
+        .get(`${backendAPI}/widget/list`)
+        .set("Accept", "application/json")
+        .set(
+          "Authorization",
+          `Bearer ${localStorage.getItem("pp_access_token")}`
+        )
+        .then((res) => res.body.content)
+        .catch((error) => error.response.body),
+  });
 
   const deleteWidget = async (widgetId: any) => {
     const jwtToken = localStorage.getItem("pp_access_token");
@@ -84,20 +79,6 @@ export default function Dashboard() {
 
   const handleDelete = (widgetId: any) => deleteWidgetMutate(widgetId);
 
-  // if (isLoading)
-  //   return (
-  //     <div
-  //       style={{
-  //         height: "100vh",
-  //         display: "flex",
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //       }}
-  //     >
-  //       <Loader />
-  //     </div>
-  //   );
-
   const handleCreateWidget = () => {
     router.push("/getStarted");
   };
@@ -113,6 +94,7 @@ export default function Dashboard() {
   const handleProfileClick = () => {
     setProfileModalOpen(true);
   };
+
   return (
     <AuthOrNot>
       <div>
@@ -158,8 +140,10 @@ export default function Dashboard() {
               Widgets
             </Title>
 
-            {data && data.content?.length > 0 ? (
-              data.content.map((item: any, index: any) => (
+            {isLoading ? (
+              <Skeleton height={150} />
+            ) : data && data.length > 0 ? (
+              data.map((item: any, index: any) => (
                 <Card
                   key={index}
                   withBorder

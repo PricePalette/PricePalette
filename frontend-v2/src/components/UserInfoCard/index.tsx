@@ -32,6 +32,7 @@ export function UserInfoCard({
           localStorage.removeItem("pp_access_token");
           router.push("/");
           queryClient.removeQueries();
+          ``;
         }}
       >
         Logout
