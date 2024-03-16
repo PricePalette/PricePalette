@@ -17,7 +17,7 @@ templates_router = APIRouter(
 async def list_templates():
     with Session(ALCHEMY_ENGINE) as session:
         all_templates = [tmp.template_id for tmp in session.query(Templates).filter_by(active=True).all()]
-    templates = list(templates_collection.find({"widgetId": {"$in": all_templates}}))
+    templates = list(templates_collection.find({"templateId": {"$in": all_templates}}))
     if not templates:
         return JSONResponse(content={"message": "error"}, status_code=404)
     for tmp in templates:
