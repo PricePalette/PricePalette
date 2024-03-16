@@ -19,7 +19,7 @@ export const templateData = [
 
 export const plansData = [
   {
-    id: "1",
+    id: "price_1Ov0bVCjcrhrZTSatO9LbWyF",
     title: "Lite",
     subTitle: "Suitable for startups",
     price: "$15",
@@ -31,7 +31,7 @@ export const plansData = [
     ],
   },
   {
-    id: "2",
+    id: "price_1Ov0bVCjcrhrZTSarKzaXfdL",
     title: "Pro",
     subTitle: "Suitable for small business",
     price: "$25",
@@ -43,7 +43,7 @@ export const plansData = [
     ],
   },
   {
-    id: "3",
+    id: "price_1Ov0bVCjcrhrZTSaNA5k670V",
     title: "Elite",
     subTitle: "Suitable for medium scale business",
     price: "$40",

@@ -1,83 +1,53 @@
-.inner {
-  display: flex;
-  justify-content: space-between;
-
-  @media (max-width: 200px) {
-    flex-direction: column;
-  }
+.wrapper {
+  position: relative;
+  padding-top: rem(150px);
+  padding-bottom: rem(150px);
+  background-image: url("/index.svg");
 }
 
-.content {
-  max-width: rem(480px);
-  margin-right: calc(var(--mantine-spacing-xl) * 3);
-  padding-top: calc(var(--mantine-spacing-xl) * 2);
-  padding-bottom: calc(var(--mantine-spacing-xl) * 2);
-
-  @media (max-width: 200px) {
-    max-width: 100%;
-    margin-right: 0;
-  }
+.inner {
+  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .title {
-  color: var(--mantine-color-black);
+  text-align: center;
+  font-weight: 800;
+  font-size: rem(40px);
+  letter-spacing: -1px;
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+  margin-bottom: var(--mantine-spacing-xs);
   font-family: Greycliff CF, var(--mantine-font-family);
-  font-weight: 900;
-  line-height: 1.05;
-  font-size: rem(48px);
-  max-width: rem(500px);
+}
 
-  @media (max-width: 200px) {
-    font-size: rem(28px);
-  }
+.highlight {
+  color: light-dark(var(--mantine-color-cyan-9), var(--mantine-color-cyan-4));
+}
+.content {
+  max-width: rem(800px);
+  margin-right: calc(var(--mantine-spacing-xl) * 1);
+}
 
-  @media (max-width: 200px) {
-    font-size: rem(34px);
-    line-height: 1.15;
-    max-width: 100%;
+.description {
+  text-align: center;
+}
+
+.controls {
+  margin-top: var(--mantine-spacing-lg);
+  display: flex;
+  justify-content: center;
+}
+
+.control {
+  &:not(:first-of-type) {
+    margin-left: var(--mantine-spacing-md);
   }
 }
 
 .image {
-  width: rem(376px);
-  height: rem(356px);
-
-  @media (max-width: 200px) {
-    display: none;
-  }
-}
-
-.description {
-  color: var(--mantine-color-white);
-  opacity: 0.75;
-  max-width: rem(500px);
-
-  @media (max-width: 200px) {
-    max-width: 100%;
-  }
-}
-
-.control {
-  padding-left: rem(20px);
-  padding-right: rem(20px);
-  font-family: Greycliff CF, var(--mantine-font-family);
-  font-size: rem(22px);
-
-  @media (max-width: 200px) {
-    width: 100%;
-  }
-}
-
-.buttonsContainer {
-  display: flex;
-}
-
-.buttonSpace {
-  width: 15px;
-}
-
-.highlight {
-  position: relative;
-  border-radius: var(--mantine-radius-sm);
-  padding: rem(4px) rem(12px);
+  margin-left: 2rem;
+  margin-top: 1rem;
+  width: rem(500px);
+  height: rem(300px);
 }
