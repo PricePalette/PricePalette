@@ -82,7 +82,7 @@ async def login(user_info: Login):
     return JSONResponse(content={"message": "OK",
                                  "access_token": access_token,
                                  "content": {"user_id": user.user_id, "user_name": user.user_name,
-                                             "email": user.email}})
+                                             "email": user.email, "stripe_cust_id": user.stripe_cust_id}})
 
 
 @user_router.get("/info")
@@ -94,7 +94,7 @@ async def info(user_id: Annotated[str, Depends(get_user_jwt)]):
     user = user[0]
     return JSONResponse(content={"message": "OK",
                                  "content": {"user_id": user.user_id, "user_name": user.user_name,
-                                             "email": user.email}})
+                                             "email": user.email, "stripe_cust_id": user.stripe_cust_id}})
 
 
 @user_router.post("/forgot-password")
