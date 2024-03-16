@@ -36,6 +36,7 @@ class Users(Base):
     joined_date = Column(DateTime, default=datetime.datetime.utcnow())
     widgets_created = Column(Integer, default=0)
     forgot_password = Column(String(200), nullable=True)
+    stripe_cust_id = Column(String(100), unique=True, nullable=True)
 
 
 class Widgets(Base):
@@ -48,6 +49,7 @@ class Widgets(Base):
     active = Column(Boolean, default=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow())
     updated_date = Column(DateTime, nullable=True)
+    stripe_product_id = Column(String(100), unique=True, nullable=False)
 
 
 class WidgetEmbed(Base):
@@ -61,6 +63,19 @@ class WidgetEmbed(Base):
 
     def __repr__(self):
         return f"WidgetEmbed(embed_id={self.embed_id!r}, widget_id={self.widget_id!r})"
+
+
+class Subscriptions(Base):
+    __tablename__ = "Subscriptions"
+
+    subscription_id = Column(String(255), primary_key=True)
+    user_id = Column(String(255), ForeignKey("Users.user_id"), nullable=False)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow())
+    active = Column(Boolean, default=True)
+    client_secret = Column(String(200), nullable=False)
+
+    def __repr__(self):
+        return f"Subscriptions(subscription_id={self.subscription_id!r}, user_id={self.user_id!r})"
 
 
 def create_tables():

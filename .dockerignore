@@ -2,3 +2,6 @@ __pycache__/
 venv/
 .gitignore
 .git/
+
+frontend/
+frontend-v2/

@@ -15,3 +15,8 @@ class Register(Login):
 
 class ForgotPassword(BaseModel):
     email: EmailStr
+
+
+class ResetPassword(ForgotPassword):
+    token: str
+    newPassword: str

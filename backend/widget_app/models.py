@@ -15,13 +15,14 @@ class WidgetID(BaseModel):
 
 
 class PriceDurationEnum(str, Enum):
-    monthly = 'M'
-    yearly = 'Y'
+    monthly = 'month'
+    yearly = 'year'
 
 
 class CurrencyEnum(str, Enum):
-    cnd = 'CND'
-    usd = 'USD'
+    cnd = 'cad'
+    usd = 'usd'
+    inr = 'inr'
 
 
 class FontSizeEnum(str, Enum):
