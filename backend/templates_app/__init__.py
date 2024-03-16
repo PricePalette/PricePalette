@@ -4,14 +4,12 @@ from sqlalchemy.orm import Session
 
 from backend.database import MONGO_CXN, ALCHEMY_ENGINE
 from backend.database_models import Templates
-from backend.dependency import verify_jwt
 from backend.templates_app.models import CreateTemplate
 
 templates_collection = MONGO_CXN["templates"]
 templates_router = APIRouter(
     prefix="/template",
-    tags=["template"],
-    dependencies=[Depends(verify_jwt)]
+    tags=["template"]
 )
 
 
