@@ -27,13 +27,13 @@ async def list_templates():
     return JSONResponse(content={"message": "OK", "content": templates})
 
 
-@templates_router.post("/create")
-async def create_templates(data: CreateTemplate):
-    with Session(ALCHEMY_ENGINE) as session:
-        template = Templates(template_id=data.widgetId, title=data.title, description=data.description, img=data.img,
-                             usages=0, active=True)
-        session.add(template)
-
-        templates_collection.insert_one(data.model_dump(mode="json"))
-        session.commit()
-    return JSONResponse(content={"message": "OK", "content": {"template_id": str(data.widgetId)}})
+# @templates_router.post("/create")
+# async def create_templates(data: CreateTemplate):
+#     with Session(ALCHEMY_ENGINE) as session:
+#         template = Templates(template_id=data.widgetId, title=data.title, description=data.description, img=data.img,
+#                              usages=0, active=True)
+#         session.add(template)
+#
+#         templates_collection.insert_one(data.model_dump(mode="json"))
+#         session.commit()
+#     return JSONResponse(content={"message": "OK", "content": {"template_id": str(data.widgetId)}})
