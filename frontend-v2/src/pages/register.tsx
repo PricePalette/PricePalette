@@ -11,7 +11,6 @@ import {
   Button,
   Text,
   Title,
-  rem,
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import { Register as RegisterIllus } from "../illustrations/Register";
@@ -78,6 +77,7 @@ export default function Register() {
 
       // success
       if (data.message === SERVER_SUCCESS) {
+        localStorage.setItem("stripe_cust_id", data.content.stripe_cust_id);
         localStorage.setItem("pp_access_token", data.access_token);
         queryClient.setQueryData(["UserQuery", { id: 1 }], data.content);
         router.push("/dashboard");
@@ -207,7 +207,12 @@ export default function Register() {
               >
                 {"Already have an account? Login"}
               </Anchor>
-              <Button type="submit" radius="xl">
+              <Button
+                type="submit"
+                radius="xl"
+                loading={registerMutation.isLoading}
+                loaderProps={{ type: "dots" }}
+              >
                 Register
               </Button>
             </Group>
