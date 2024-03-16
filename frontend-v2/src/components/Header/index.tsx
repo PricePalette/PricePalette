@@ -25,8 +25,6 @@ export function Header() {
         .then((res) => res.body.content),
   });
 
-  console.log(data);
-
   if (data) {
     body = (
       <Popover width={300} trapFocus position="bottom" withArrow shadow="md">

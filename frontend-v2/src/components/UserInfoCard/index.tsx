@@ -1,5 +1,7 @@
 import { getUserAvatar } from "@/utils/getUserAvatar";
 import { Paper, Avatar, Button, Text } from "@mantine/core";
+import { useRouter } from "next/router";
+import { useQueryClient } from "react-query";
 
 export function UserInfoCard({
   email,
@@ -8,6 +10,9 @@ export function UserInfoCard({
   email: string;
   username: string;
 }) {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   return (
     <Paper radius="md" withBorder p="lg" bg="var(--mantine-color-body)">
       <Avatar src={getUserAvatar(username)} size={120} radius={120} mx="auto" />
@@ -18,7 +23,17 @@ export function UserInfoCard({
         {username}
       </Text>
 
-      <Button variant="filled" fullWidth mt="md" bg={"red"}>
+      <Button
+        variant="filled"
+        fullWidth
+        mt="md"
+        bg={"red"}
+        onClick={() => {
+          localStorage.removeItem("pp_access_token");
+          router.push("/");
+          queryClient.removeQueries();
+        }}
+      >
         Logout
       </Button>
     </Paper>

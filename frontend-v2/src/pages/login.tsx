@@ -19,6 +19,7 @@ import superagent from "superagent";
 import { SERVER_ERROR, SERVER_SUCCESS, backendAPI } from "@/utils/constants";
 import { useFormik } from "formik";
 import { toErrorMap } from "@/utils/toErrorMap";
+import { AuthOrNot } from "@/components/AuthOrNot";
 
 export default function Login() {
   const router = useRouter();
@@ -56,9 +57,9 @@ export default function Login() {
 
       // success
       if (data.message === SERVER_SUCCESS) {
+        router.push("/dashboard");
         localStorage.setItem("pp_access_token", data.access_token);
         queryClient.setQueryData(["UserQuery", { id: 1 }], data.content);
-        router.push("/dashboard");
       }
     },
   });
