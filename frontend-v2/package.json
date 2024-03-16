@@ -13,6 +13,8 @@
     "@mantine/core": "7.5.3",
     "@mantine/form": "^7.6.1",
     "@mantine/hooks": "7.5.3",
+    "@stripe/react-stripe-js": "^2.6.2",
+    "@stripe/stripe-js": "^3.0.10",
     "@tabler/icons-react": "^2.47.0",
     "array-move": "^4.0.0",
     "clsx": "^2.1.0",
@@ -22,6 +24,7 @@
     "react-dom": "18.2.0",
     "react-query": "^3.39.3",
     "react-zoom-pan-pinch": "^3.4.3",
+    "stripe": "^14.21.0",
     "superagent": "^8.1.2",
     "uuid": "^9.0.1",
     "zustand": "^4.5.1"
