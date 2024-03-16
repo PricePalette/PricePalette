@@ -1,6 +1,6 @@
 import { Group, Button, Box, Popover, Avatar } from "@mantine/core";
 import classes from "../../styles/header.module.css";
-import { Logo } from "@/Logo";
+import { Logo } from "@/illustrations/Logo";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import superagent from "superagent";
@@ -55,10 +55,13 @@ export function Header() {
   return (
     <Box pb={60}>
       <header className={classes.header}>
-        <Group justify="space-between" h="100%">
-          <Box>
-            <Logo height={40} width={100} onClick={() => router.push("/")} />
-          </Box>
+        <Group justify="space-between" h="100%" align="center">
+          <Logo
+            height={50}
+            width={140}
+            onClick={() => router.push("/")}
+            style={{ cursor: "pointer", marginLeft: "0.5em" }}
+          />
 
           {body}
         </Group>

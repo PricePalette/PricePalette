@@ -77,6 +77,7 @@ export default function Register() {
 
       // success
       if (data.message === SERVER_SUCCESS) {
+        localStorage.setItem("stripe_cust_id", data.content.stripe_cust_id);
         localStorage.setItem("pp_access_token", data.access_token);
         queryClient.setQueryData(["UserQuery", { id: 1 }], data.content);
         router.push("/dashboard");

@@ -238,10 +238,11 @@ export default function Dashboard() {
                   alignItems: "center",
                   justifyContent: "center",
                   flexDirection: "column",
+                  width: "100%",
                   margin: 8,
                 }}
               >
-                <NoDataIcon />{" "}
+                <NoDataIcon />
                 <Text fw={600} fz={20} mt="md">
                   No widgets as of now
                 </Text>
