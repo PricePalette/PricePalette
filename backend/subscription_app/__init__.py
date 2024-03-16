@@ -1,11 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from backend.database import ALCHEMY_ENGINE, stripe
-from backend.database_models import Templates, Users
+from backend.database_models import Subscriptions
 from backend.dependency import verify_jwt, get_user_jwt
 from backend.subscription_app.models import CreateSubscribe
 
@@ -18,24 +18,25 @@ sub_router = APIRouter(
 
 @sub_router.post("/create")
 async def create_subscription(data: CreateSubscribe, user_id: Annotated[str, Depends(get_user_jwt)]):
-    return JSONResponse(content={"message": "OK", "content": {"subscription_id": user_id,
-                                                              "client_secret": user_id}})
-    # with Session(ALCHEMY_ENGINE) as session:
-    #     user = session.query(Users).filter_by(user_id=user_id).limit(1).all()
-    #     if not user:
-    #         return JSONResponse(status_code=404, content={"message": "error", "detail": "User not found"})
-    #     user = user[0]
-    # customer = stripe.Customer.search(query=f"email:'{user.email}'")
-    # if not customer:
-    #     customer = stripe.Customer.create(email=user.email, name=user.organization_name)
-    #     # save customer.id
-    #
-    # with Session(ALCHEMY_ENGINE) as session:
-    #     all_templates = [tmp.template_id for tmp in session.query(Templates).filter_by(active=True).all()]
-    # templates = list(templates_collection.find({"widgetId": {"$in": all_templates}}))
-    # if not templates:
-    #     return JSONResponse(content={"message": "error"}, status_code=404)
-    # for tmp in templates:
-    #     tmp.pop("_id", None)
-    # return JSONResponse(content={"message": "OK", "content": templates})
+    try:
+        subscription = stripe.Subscription.create(
+            customer=data.stripe_cust_id,
+            items=[{
+                'price': data.price_id,
+            }],
+            payment_behavior='default_incomplete',
+            expand=['latest_invoice.payment_intent'],
+        )
+    except stripe.error.StripeError:
+        raise HTTPException(status_code=500, detail="Stripe payment failure")
 
+    with Session(ALCHEMY_ENGINE) as session:
+        subscribe = Subscriptions(subscription_id=subscription.id, user_id=user_id,
+                                  client_secret=subscription.latest_invoice.
+                                  payment_intent.client_secret)
+        session.add(subscribe)
+        session.commit()
+
+    return JSONResponse(content={"message": "OK", "content": {"subscription_id": subscription.id,
+                                                              "client_secret": subscription.latest_invoice.
+                        payment_intent.client_secret}})

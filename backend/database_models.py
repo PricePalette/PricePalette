@@ -65,5 +65,18 @@ class WidgetEmbed(Base):
         return f"WidgetEmbed(embed_id={self.embed_id!r}, widget_id={self.widget_id!r})"
 
 
+class Subscriptions(Base):
+    __tablename__ = "Subscriptions"
+
+    subscription_id = Column(String(255), primary_key=True)
+    user_id = Column(String(255), ForeignKey("Users.user_id"), nullable=False)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow())
+    active = Column(Boolean, default=True)
+    client_secret = Column(String(200), nullable=False)
+
+    def __repr__(self):
+        return f"Subscriptions(subscription_id={self.subscription_id!r}, user_id={self.user_id!r})"
+
+
 def create_tables():
     Base.metadata.create_all(ALCHEMY_ENGINE)

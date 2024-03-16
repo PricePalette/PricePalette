@@ -10,4 +10,5 @@ MONGO_CXN = MONGO_CLIENT["PricePalette"]
 
 ALCHEMY_ENGINE = create_engine(MYSQL_CXN_STRING, pool_size=1)
 
+stripe.api_version = '2022-08-01'
 stripe.api_key = STRIPE_SECRET_KEY

@@ -9,8 +9,6 @@ from backend.configuration import JWT_ALGORITHM, JWT_SECRET_KEY, JWT_ACCESS_TOKE
 bearer = HTTPBearer()
 http_exc = HTTPException(status_code=401, detail="Unauthorized")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 
 async def verify_jwt(bearer_auth: Annotated[HTTPAuthorizationCredentials, Depends(bearer)]):
     if bearer_auth.scheme != "Bearer" or bearer_auth.credentials is None:
