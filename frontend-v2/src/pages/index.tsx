@@ -23,6 +23,7 @@ import {
   IconSettings,
   IconGauge,
 } from "@tabler/icons-react";
+import { Carousel } from "@mantine/carousel";
 
 const mockdata = [
   {
@@ -44,6 +45,80 @@ const mockdata = [
     icon: IconSettings,
   },
 ];
+
+// const testimonialData = [
+//   {
+//     company: "Testimonial1",
+//     logo: "/intel.png",
+//     name: "John Doe",
+//     review:
+//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
+//   },
+//   {
+//     company: "Testimonial2",
+//     logo: "/apple.png",
+//     name: "Jane Doe",
+//     review:
+//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
+//   },
+//   {
+//     company: "Testimonial3",
+//     logo: "/intel.png",
+//     name: "John Doe",
+//     review:
+//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
+//   },
+//   {
+//     company: "Testimonial4",
+//     logo: "/intel.png",
+//     name: "John Doe",
+//     review:
+//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
+//   },
+//   {
+//     company: "Testimonial5",
+//     logo: "/intel.png",
+//     name: "Jane Doe",
+//     review:
+//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
+//   },
+//   {
+//     company: "Testimonial6",
+//     logo: "/intel.png",
+//     name: "John Doe",
+//     review:
+//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
+//   },
+// ];
+
+// const slides = testimonialData.map((testimonial, index) => (
+//   <Carousel.Slide key={index}>
+//     <Group justify="center" gap="lg">
+//       <Card
+//         key={index}
+//         withBorder
+//         radius="md"
+//         p="md"
+//         style={{ width: "calc(50% - 10px)" }}
+//       >
+//         <Group wrap="nowrap" gap={0}>
+//           <Image
+//             src={testimonial.logo}
+//             alt={`Logo of ${testimonial.company}`}
+//             height={160}
+//             style={{ objectFit: "cover" }}
+//           />
+//           <div style={{ padding: "20px" }}>
+//             <Text fw={500}>{testimonial.name}</Text>
+//             <Text fz="md" c="dimmed" lineClamp={6}>
+//               {testimonial.review}
+//             </Text>
+//           </div>
+//         </Group>
+//       </Card>
+//     </Group>
+//   </Carousel.Slide>
+// ));
 
 export default function IndexPage() {
   const router = useRouter();
@@ -129,7 +204,7 @@ export default function IndexPage() {
             marginTop: "2rem",
           }}
         >
-          <div className={classes.content}>
+          <div className={classes.content} style={{ marginTop: "5rem" }}>
             <Title className={classes.title}>
               A <span className={classes.highlight}>Pricing Widget </span>
               templates library
@@ -169,21 +244,26 @@ export default function IndexPage() {
             src="/index3.png"
             alt="Pricing widget image"
             className={classes.image}
+            style={{ marginTop: "6rem" }}
           />
         </div>
       </Container>
       <Container size="xl" py="xl">
         <Group justify="center">
-          <Badge variant="filled" size="xl" style={{ marginTop: "1rem" }}>
+          <Badge
+            variant="filled"
+            size="xl"
+            style={{ marginTop: "5rem", marginBottom: "1rem" }}
+          >
             Pricing Plan Customization
           </Badge>
         </Group>
 
-        <Title order={2} className={classes.title} ta="center" mt="sm">
+        <Title order={2} className={classes.title} ta="center" mt="xs">
           Empower Your Customers with Custom Pricing Widgets
         </Title>
 
-        <Text c="dimmed" className={classes.description} ta="center" mt="md">
+        <Text c="dimmed" className={classes.description} ta="center" mt="xs">
           Provide your users with the flexibility to tailor pricing plans to
           their specific requirements.
         </Text>
@@ -249,6 +329,16 @@ export default function IndexPage() {
           </Card>
         </Group>
       </Container>
+      {/* <Container size="xl">
+        <Carousel
+          slideSize={{ base: "100%", sm: "50%" }}
+          slideGap={{ base: "xl", sm: 2 }}
+          align="start"
+          slidesToScroll={2}
+        >
+          {slides}
+        </Carousel>
+      </Container> */}
       <Container size="xl">
         <div
           style={{
