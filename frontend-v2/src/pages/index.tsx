@@ -12,6 +12,7 @@ import {
   Group,
   Badge,
   SimpleGrid,
+  Paper,
 } from "@mantine/core";
 import classes from "../../src/styles/index.module.css";
 import { Header } from "@/components/Header";
@@ -24,6 +25,7 @@ import {
   IconGauge,
 } from "@tabler/icons-react";
 import { Carousel } from "@mantine/carousel";
+import "@mantine/carousel/styles.css";
 
 const mockdata = [
   {
@@ -46,79 +48,67 @@ const mockdata = [
   },
 ];
 
-// const testimonialData = [
-//   {
-//     company: "Testimonial1",
-//     logo: "/intel.png",
-//     name: "John Doe",
-//     review:
-//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
-//   },
-//   {
-//     company: "Testimonial2",
-//     logo: "/apple.png",
-//     name: "Jane Doe",
-//     review:
-//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
-//   },
-//   {
-//     company: "Testimonial3",
-//     logo: "/intel.png",
-//     name: "John Doe",
-//     review:
-//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
-//   },
-//   {
-//     company: "Testimonial4",
-//     logo: "/intel.png",
-//     name: "John Doe",
-//     review:
-//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
-//   },
-//   {
-//     company: "Testimonial5",
-//     logo: "/intel.png",
-//     name: "Jane Doe",
-//     review:
-//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
-//   },
-//   {
-//     company: "Testimonial6",
-//     logo: "/intel.png",
-//     name: "John Doe",
-//     review:
-//       "This website has provided templates for customizing our pricing plans and is hosted on our website",
-//   },
-// ];
+const testimonial = [
+  {
+    company: "Testimonial1",
+    logo: "/intel.png",
+    name: "John Doe",
+    review:
+      "This website has provided templates for customizing our pricing plans and is hosted on our website",
+  },
+  {
+    company: "Testimonial2",
+    logo: "/apple.png",
+    name: "Jane Doe",
+    review:
+      "This website has provided templates for customizing our pricing plans and is hosted on our website",
+  },
+  {
+    company: "Testimonial3",
+    logo: "/intel.png",
+    name: "John Doe",
+    review:
+      "This website has provided templates for customizing our pricing plans and is hosted on our website",
+  },
+  {
+    company: "Testimonial2",
+    logo: "/apple.png",
+    name: "Jane Doe",
+    review:
+      "This website has provided templates for customizing our pricing plans and is hosted on our website",
+  },
+];
 
-// const slides = testimonialData.map((testimonial, index) => (
-//   <Carousel.Slide key={index}>
-//     <Group justify="center" gap="lg">
-//       <Card
-//         key={index}
-//         withBorder
-//         radius="md"
-//         p="md"
-//         style={{ width: "calc(50% - 10px)" }}
-//       >
-//         <Group wrap="nowrap" gap={0}>
-//           <Image
-//             src={testimonial.logo}
-//             alt={`Logo of ${testimonial.company}`}
-//             height={160}
-//             style={{ objectFit: "cover" }}
-//           />
-//           <div style={{ padding: "20px" }}>
-//             <Text fw={500}>{testimonial.name}</Text>
-//             <Text fz="md" c="dimmed" lineClamp={6}>
-//               {testimonial.review}
-//             </Text>
-//           </div>
-//         </Group>
-//       </Card>
-//     </Group>
-//   </Carousel.Slide>
-// ));
+interface CardProps {
+  company: string;
+  logo: string;
+  name: string;
+  review: string;
+}
+
+function TCard({ company, logo, name, review }: CardProps) {
+  return (
+    <Paper shadow="md" p="xl" radius="md">
+      <Group wrap="nowrap" gap={20}>
+        <Image
+          src={logo}
+          alt={`Logo of ${company}`}
+          height={100}
+          style={{ objectFit: "contain", alignItems: "start" }}
+        />
+        <div>
+          <Title order={2}>{name}</Title>
+          <Text size="xs">{review}</Text>
+        </div>
+      </Group>
+    </Paper>
+  );
+}
+const slides = testimonial.map((item) => (
+  <Carousel.Slide key={item.company}>
+    <TCard {...item} />
+  </Carousel.Slide>
+));
 
 export default function IndexPage() {
   const router = useRouter();
@@ -277,68 +267,21 @@ export default function IndexPage() {
           <Badge
             variant="filled"
             size="xl"
-            style={{ marginTop: "1rem", marginBottom: "1rem" }}
+            style={{ marginTop: "3rem", marginBottom: "2rem" }}
           >
             Testimonials
           </Badge>
         </Group>
-        <Group justify="center" gap="lg">
-          <Card
-            withBorder
-            radius="md"
-            p="md"
-            style={{ width: "calc(50% - 10px)" }}
-          >
-            <Group wrap="nowrap" gap={0}>
-              <Image
-                src="/apple.png"
-                alt="Logo of Apple"
-                height={160}
-                style={{ objectFit: "cover" }}
-              />
-              <div style={{ padding: "20px" }}>
-                <Text fw={500}>John Doe</Text>
-                <Text fz="md" c="dimmed" lineClamp={6}>
-                  This website has provided templates for customizing our
-                  pricing plans and is hosted on our website
-                </Text>
-              </div>
-            </Group>
-          </Card>
-          <Card
-            withBorder
-            radius="md"
-            p="md"
-            style={{ width: "calc(50% - 10px)" }}
-          >
-            <Group wrap="nowrap" gap={0}>
-              <Image
-                src="/intel.png"
-                alt="Logo of Apple"
-                height={160}
-                style={{ objectFit: "cover" }}
-              />
-              <div style={{ padding: "20px" }}>
-                <Text fw={500}>Jane Doe</Text>
-                <Text fz="md" c="dimmed" lineClamp={6}>
-                  This website has provided templates for customizing our
-                  pricing plans and is hosted on our website
-                </Text>
-              </div>
-            </Group>
-          </Card>
-        </Group>
-      </Container>
-      {/* <Container size="xl">
         <Carousel
           slideSize={{ base: "100%", sm: "50%" }}
           slideGap={{ base: "xl", sm: 2 }}
           align="start"
           slidesToScroll={2}
+          suppressHydrationWarning
         >
           {slides}
         </Carousel>
-      </Container> */}
+      </Container>
       <Container size="xl">
         <div
           style={{
