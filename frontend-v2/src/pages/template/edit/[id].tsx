@@ -7,6 +7,10 @@ import {
   Flex,
   ActionIcon,
   Button,
+  Avatar,
+  Box,
+  Group,
+  Popover,
 } from "@mantine/core";
 import {
   IconTextSize,
@@ -17,6 +21,7 @@ import {
   IconZoomOut,
   IconZoomIn,
   IconRocket,
+  IconExternalLink,
 } from "@tabler/icons-react";
 import classes from "@/styles/editTemplate.module.css";
 import { useGetUrlId } from "@/utils/useGetUrlId";
@@ -24,10 +29,15 @@ import DynamicTemplateLoader from "@/components/DynamicTemplateLoader";
 import { DrapNDropCards } from "@/components/DragNDropCards";
 import { SetupMetadata } from "@/components/SetupMetaData";
 import { useControls } from "react-zoom-pan-pinch";
-import { Logo } from "@/illustrations/Logo";
 import EditLabels from "@/components/EditLabels";
 import EditColors from "@/components/EditColors";
-import { ColorPicker } from "@mantine/core";
+import { LetterLogo } from "@/illustrations/LetterLogo";
+import { UserInfoCard } from "@/components/UserInfoCard";
+import { backendAPI } from "@/utils/constants";
+import { getUserAvatar } from "@/utils/getUserAvatar";
+import { useQuery } from "react-query";
+import superagent from "superagent";
+import { useRouter } from "next/router";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -111,9 +121,10 @@ export default function EditTemplatePage() {
           <div className={classes.wrapper}>
             <div className={classes.aside}>
               <div className={classes.logo}>
-                <Logo width={38} height={38} />
+                <LetterLogo width={38} height={38} />
               </div>
               {mainLinks}
+              <Profile />
             </div>
             <div className={classes.main}>
               <div
@@ -184,5 +195,84 @@ export default function EditTemplatePage() {
     <SetupMetadata widgetId={widgetId}>
       <Flex style={{ height: "100vh" }}>{body}</Flex>
     </SetupMetadata>
+  );
+}
+
+function Profile() {
+  const router = useRouter();
+  let body = null;
+
+  const { data } = useQuery({
+    queryKey: ["UserQuery", { id: 1 }],
+    queryFn: () =>
+      superagent
+        .get(`${backendAPI}/user/info`)
+        .set("Accept", "application/json")
+        .set(
+          "Authorization",
+          `Bearer ${localStorage.getItem("pp_access_token")}`
+        )
+        .then((res) => res.body.content),
+  });
+
+  if (data) {
+    body = (
+      <Popover width={300} trapFocus position="top-start" withArrow shadow="md">
+        <Popover.Target>
+          <Avatar
+            src={getUserAvatar(data.user_name)}
+            size={40}
+            radius={40}
+            style={{ cursor: "pointer", marginRight: "0.5em" }}
+          />
+        </Popover.Target>
+        <Popover.Dropdown>
+          <UserInfoCard email={data.email} username={data.user_name} />
+        </Popover.Dropdown>
+      </Popover>
+    );
+  } else {
+    body = (
+      <Popover width={300} trapFocus position="top-start" withArrow shadow="md">
+        <Popover.Target>
+          <Avatar
+            src={
+              "https://cdn2.iconfinder.com/data/icons/solid-glyphs-volume-2/256/user-unisex-512.png"
+            }
+            size={40}
+            radius={40}
+            style={{ cursor: "pointer", marginRight: "0.5em" }}
+          />
+        </Popover.Target>
+        <Popover.Dropdown>
+          <Group justify="center">
+            <Button
+              rightSection={<IconExternalLink size={14} />}
+              variant="default"
+              onClick={() => router.push("/login")}
+            >
+              Login
+            </Button>
+
+            <Button
+              rightSection={<IconExternalLink size={14} />}
+              onClick={() => router.push("/register")}
+            >
+              Sign up
+            </Button>
+          </Group>
+        </Popover.Dropdown>
+      </Popover>
+    );
+  }
+
+  return (
+    <Box ml={"auto"} mt={"auto"} mb="md">
+      <header className={classes.header}>
+        <Group justify="space-between" h="100%" align="center">
+          {body}
+        </Group>
+      </header>
+    </Box>
   );
 }

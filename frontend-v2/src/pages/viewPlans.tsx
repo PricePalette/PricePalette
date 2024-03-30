@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Card,
   Text,
@@ -13,7 +12,6 @@ import { IconCheck } from "@tabler/icons-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import classes from "../styles/viewplans.module.css";
-import { loadStripe } from "@stripe/stripe-js";
 import { backendAPI } from "@/utils/constants";
 import { useRouter } from "next/router";
 
@@ -21,6 +19,11 @@ export default function ViewPlans() {
   const router = useRouter();
 
   const createSubscription = async (priceId: string) => {
+    if (!localStorage.getItem("pp_access_token")) {
+      router.push("/login");
+      return;
+    }
+
     console.log("PRICE", priceId);
     const response = await fetch(`${backendAPI}/subscribe/create`, {
       method: "POST",
@@ -30,7 +33,7 @@ export default function ViewPlans() {
       },
       body: JSON.stringify({
         // To be set from local storage
-        stripe_cust_id: "cus_PkUqP7zJmfUkG6",
+        stripe_cust_id: localStorage.getItem("stripe_cust_id"),
         price_id: priceId,
       }),
     });
