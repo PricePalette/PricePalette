@@ -1,7 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import List
-from numbers import Number
+from typing import List, Union
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -52,7 +51,7 @@ class Card(BaseModel):
     description: str
     img: str = None
     features: List[CardFeature] = Field(min_length=1)
-    amount: Number
+    amount: Union[int, float]
     buttonText: str
     priceCaption: str
 
