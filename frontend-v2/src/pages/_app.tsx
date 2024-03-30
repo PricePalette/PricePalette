@@ -3,6 +3,7 @@ import Head from "next/head";
 import { MantineProvider } from "@mantine/core";
 import { theme } from "../../theme";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { PagesProgressBar as ProgressBar } from "next-nprogress-bar";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,12 @@ export default function App({ Component, pageProps }: any) {
           <link rel="shortcut icon" href="/favicon.svg" />
         </Head>
         <Component {...pageProps} />
+        <ProgressBar
+          height="4px"
+          color="#50c2c0"
+          options={{ showSpinner: false }}
+          shallowRouting
+        />
       </MantineProvider>
     </QueryClientProvider>
   );
