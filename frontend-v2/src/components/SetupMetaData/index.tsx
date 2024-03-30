@@ -17,7 +17,7 @@ export function SetupMetadata({
 
   useEffect(() => {
     switch (widgetId) {
-      case "1":
+      case "21c86e6a-eac0-4278-8fb4-30e80bb23026":
         setMetaData(gridTemplateMetaData);
     }
   }, [widgetId, setMetaData]);

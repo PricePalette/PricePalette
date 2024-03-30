@@ -185,7 +185,7 @@ export default function EditTemplatePage() {
             overflow: "scroll",
           }}
         >
-          <DynamicTemplateLoader id={Number(widgetId)} />
+          <DynamicTemplateLoader id={String(widgetId)} />
         </div>
       </>
     );

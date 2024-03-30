@@ -3,44 +3,38 @@ import React from "react";
 import { Header } from "@/components/Header";
 import { useRouter } from "next/router";
 import { Card, Text, Grid, SimpleGrid, Container, Group } from "@mantine/core";
+import { useQuery } from "react-query";
+import { SuperAgent } from "superagent";
+import { backendAPI } from "@/utils/constants";
+import { useState } from "react";
+import { useEffect } from "react";
+
+interface Template {
+  templateId: string;
+  templateName: string;
+  templateDescription: string;
+  templateImage: string;
+}
 
 export default function templates() {
   const router = useRouter();
-  const handleEditClick = (templateId: any) => {
+  const handleCardClick = (templateId: any) => {
     router.push(`/template/edit/${templateId}`);
   };
 
-  // These templates to be fetched from API
-  const templates = [
-    {
-      id: 1,
-      templateName: "Grid",
-      templateDescription:
-        "The Grid template offers a modern and structured layout, perfect for showcasing content in a visually appealing grid format. With flexible grid options, you can easily customize the layout to suit your needs.",
-      templateImage: "/sample_template2.png",
-    },
-    {
-      id: 2,
-      templateName: "List",
-      templateDescription:
-        "The List template provides a clean and organized way to present information in a list format. Ideal for displaying product features or any other type of sequential data. Customize it to match your brand's style effortlessly.",
-      templateImage: "/sample_template1.png",
-    },
-    {
-      id: 3,
-      templateName: "Cards",
-      templateDescription:
-        "The Cards template offers a versatile layout with cards that can be used to showcase various types of products. Each card provides a visually appealing content.",
-      templateImage: "/sample_template2.png",
-    },
-    {
-      id: 4,
-      templateName: "Report",
-      templateDescription:
-        "The Report template is designed for creating detailed and informative reports. With customizable sections and elegant formatting, you can present your data in a professional manner.",
-      templateImage: "/sample_template1.png",
-    },
-  ];
+  const [templates, setTemplates] = useState<Template[]>([]);
+
+  const getTemplates = async () => {
+    const response = await fetch(`${backendAPI}/template/list`, {
+      method: "GET",
+    });
+    const responseData = await response.json();
+    setTemplates(responseData.content);
+  };
+
+  useEffect(() => {
+    getTemplates();
+  }, []);
 
   return (
     <>
@@ -74,11 +68,12 @@ export default function templates() {
         <div style={{ padding: 20 }}>
           {templates.map((template) => (
             <Card
-              key={template.id}
+              key={template.templateId}
               withBorder
               shadow="sm"
               radius="md"
-              style={{ marginBottom: 20 }}
+              style={{ marginBottom: 20, cursor: "pointer" }}
+              onClick={() => handleCardClick(template.templateId)}
             >
               <Group wrap="nowrap" gap={20}>
                 <img
