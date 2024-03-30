@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from typing import List
+from numbers import Number
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
@@ -15,14 +16,13 @@ class WidgetID(BaseModel):
 
 
 class PriceDurationEnum(str, Enum):
-    monthly = 'month'
-    yearly = 'year'
+    monthly = 'M'
+    yearly = 'Y'
 
 
 class CurrencyEnum(str, Enum):
-    cnd = 'cad'
-    usd = 'usd'
-    inr = 'inr'
+    cnd = 'CAD'
+    usd = 'USD'
 
 
 class FontSizeEnum(str, Enum):
@@ -50,9 +50,9 @@ class CardFeature(BaseModel):
 class Card(BaseModel):
     title: str
     description: str
-    img: str
+    img: str = None
     features: List[CardFeature] = Field(min_length=1)
-    amount: int
+    amount: Number
     buttonText: str
     priceCaption: str
 
