@@ -65,14 +65,14 @@ const testimonial = [
   },
   {
     company: "Testimonial3",
-    logo: "/intel.png",
+    logo: "/Meta.png",
     name: "John Doe",
     review:
       "This website has provided templates for customizing our pricing plans and is hosted on our website",
   },
   {
     company: "Testimonial2",
-    logo: "/apple.png",
+    logo: "/McD.png",
     name: "Jane Doe",
     review:
       "This website has provided templates for customizing our pricing plans and is hosted on our website",
