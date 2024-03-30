@@ -68,7 +68,7 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
 
         for card, json_card in zip(data.cards, widget_json["cards"]):
             interval = STRIPE_INTERVAL[data.price.duration.lower()]
-            price = stripe.Price.create(currency=data.price.currency.lower(), unit_amount=card.amount * 100,
+            price = stripe.Price.create(currency=data.price.currency.lower(), unit_amount=int(card.amount * 100),
                                         recurring={"interval": interval}, product=product.stripe_id)
             json_card["stripe_price_id"] = price.stripe_id
 
