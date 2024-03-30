@@ -5,6 +5,5 @@ export const useGetUrlId = () => {
 
   const widgetId = router.query.widget;
 
-  // If 'widget' ID is not present,take 'template' ID
-  return widgetId || router.query.id;
+  return widgetId;
 };

@@ -115,28 +115,6 @@ export default function EditTemplatePage() {
     </Tooltip>
   ));
 
-  const handlePublish = async () => {
-    try {
-      const templateId = router.query.id;
-
-      const requestData = {
-        ...metaData,
-        templateIdUsed: templateId,
-      };
-
-      console.log("REQUEST DATA", requestData);
-      const response = await superagent
-        .post(`${backendAPI}/widget/create`)
-        .set(
-          "Authorization",
-          `Bearer ${localStorage.getItem("pp_access_token")}`
-        )
-        .send(requestData);
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Error making API call:", error);
-    }
-  };
   console.log("***Widget ID****", widgetId);
 
   // unless the page has a widgetId dont render anything
@@ -194,7 +172,7 @@ export default function EditTemplatePage() {
                     color="#edc639"
                     style={{ width: "100%" }}
                     leftSection={<IconRocket size={18} />}
-                    onClick={() => handlePublish()}
+                    onClick={() => {}}
                   >
                     Publish
                   </Button>

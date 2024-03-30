@@ -4,10 +4,12 @@ import { Header } from "@/components/Header";
 import { useRouter } from "next/router";
 import { Card, Text, Grid, SimpleGrid, Container, Group } from "@mantine/core";
 import { useQuery } from "react-query";
-import { SuperAgent } from "superagent";
+import superagent, { SuperAgent } from "superagent";
 import { backendAPI } from "@/utils/constants";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useMetaData } from "@/stores/useMetaData";
+import { gridTemplateMetaData } from "@/utils/initialMetaDatas";
 
 interface Template {
   templateId: string;
@@ -18,8 +20,42 @@ interface Template {
 
 export default function templates() {
   const router = useRouter();
-  const handleCardClick = (templateId: any) => {
-    router.push(`/template/edit/${templateId}`);
+
+  const handleCardClick = async (templateId: string) => {
+    let widget_id;
+
+    try {
+      const requestData = {
+        ...gridTemplateMetaData,
+        templateIdUsed: templateId,
+      };
+
+      console.log("REQUEST DATA", requestData);
+      const response = await superagent
+        .post(`${backendAPI}/widget/create`)
+        .set(
+          "Authorization",
+          `Bearer ${localStorage.getItem("pp_access_token")}`
+        )
+        .send(requestData);
+
+      const { message, content } = response.body;
+      if (message === "OK" && content) {
+        widget_id = content.widget_id;
+      } else {
+        console.error("Failed to create widget");
+        return;
+      }
+    } catch (error) {
+      console.error("Error making API call:", error);
+      return;
+    }
+
+    if (widget_id) {
+      router.push(`/template/edit/${templateId}?widget=${widget_id}`);
+    } else {
+      console.error("Failed to create widget: No widget ID returned");
+    }
   };
 
   const [templates, setTemplates] = useState<Template[]>([]);
