@@ -24,6 +24,5 @@ export type WidgetMetaData = {
     family?: string;
     color?: string;
   };
-  widgetId: string;
   updatedFields: string[];
 };

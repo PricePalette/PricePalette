@@ -117,12 +117,11 @@ export default function EditTemplatePage() {
 
   const handlePublish = async () => {
     try {
-      const templateId = router.query.templateId as string;
+      const templateId = router.query.id;
 
       const requestData = {
         ...metaData,
-        // templateIdUsed: templateId,
-        templateIdUsed: `21c86e6a-eac0-4278-8fb4-30e80bb23026`,
+        templateIdUsed: templateId,
       };
 
       console.log("REQUEST DATA", requestData);
@@ -138,6 +137,7 @@ export default function EditTemplatePage() {
       console.error("Error making API call:", error);
     }
   };
+  console.log("***Widget ID****", widgetId);
 
   // unless the page has a widgetId dont render anything
   // widgetId initially is undefined then it carries a value

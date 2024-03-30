@@ -32,7 +32,7 @@ const mockdata = [
   {
     label: "Templates",
     icon: IconTemplate,
-    link: "/getStarted",
+    link: "/templates",
   },
   { label: "Profile Settings", icon: IconSettings, link: "/settings" },
 ];
@@ -80,7 +80,7 @@ export default function Dashboard() {
   const handleDelete = (widgetId: any) => deleteWidgetMutate(widgetId);
 
   const handleCreateWidget = () => {
-    router.push("/getStarted");
+    router.push("/templates");
   };
 
   const handleEdit = (templateId: any, widgetId: any) => {
