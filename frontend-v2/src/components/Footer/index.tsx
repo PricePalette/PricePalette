@@ -42,7 +42,7 @@ export function Footer() {
         <Group className={classes.links}>{items}</Group>
 
         <Group gap="xs" justify="flex-end" wrap="nowrap">
-          <ActionIcon size="xl" variant="default" radius="xl">
+          <ActionIcon size="lg" variant="default" radius="xl">
             <IconBrandTwitter
               style={{ width: rem(18), height: rem(18) }}
               stroke={1.5}

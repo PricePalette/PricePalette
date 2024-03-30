@@ -19,6 +19,10 @@ export function SetupMetadata({
     switch (widgetId) {
       case "21c86e6a-eac0-4278-8fb4-30e80bb23026":
         setMetaData(gridTemplateMetaData);
+      case "1905d495-6371-4b2a-9f6a-c4a586e0d216":
+        setMetaData(gridTemplateMetaData);
+      case "a4375344-6cf5-45aa-a118-831ca970d916":
+        setMetaData(gridTemplateMetaData);
     }
   }, [widgetId, setMetaData]);
 
