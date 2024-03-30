@@ -5,6 +5,7 @@
 4. Tag image: `docker tag pricepalette-frontend-img:latest pricepaletteimages.azurecr.io/pricepalette-frontend-img`
 5. Push image to ACR: `docker push pricepaletteimages.azurecr.io/pricepalette-frontend-img`
 
+
 ## Deployment steps (API)
 
 1. Login via azure CLI: `az acr login --name pricepaletteimages`
