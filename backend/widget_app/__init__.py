@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic.types import UUID4
-from sqlalchemy.sql import func
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
 
 from backend.database import MONGO_CXN, ALCHEMY_ENGINE, stripe
 from backend.database_models import Widgets, Users, WidgetEmbed, Templates
@@ -71,6 +71,9 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
             price = stripe.Price.create(currency=data.price.currency.lower(), unit_amount=int(card.amount * 100),
                                         recurring={"interval": interval}, product=product.stripe_id)
             json_card["stripe_price_id"] = price.stripe_id
+
+            link = stripe.PaymentLink.create(line_items=[{"price": price.stripe_id, "quantity": 1}])
+            json_card["payment_link"] = link.url
 
         from_template = True if data.templateIdUsed else False
         widget = Widgets(widget_id=data.widgetId, user_id=user_id, from_template=from_template,
