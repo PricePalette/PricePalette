@@ -38,6 +38,7 @@ import { getUserAvatar } from "@/utils/getUserAvatar";
 import { useQuery } from "react-query";
 import superagent from "superagent";
 import { useRouter } from "next/router";
+import { useMetaData } from "@/stores/useMetaData";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -88,9 +89,14 @@ const ZoomControls = () => {
 export default function EditTemplatePage() {
   // getting the widget id from url
   const widgetId = useGetUrlId();
+  const router = useRouter();
   let body = null;
   const [active, setActive] = useState<WidgetSettingType>("Cards");
+  const { metaData } = useMetaData((state) => ({
+    metaData: state.metaData,
+  }));
 
+  console.log("META DATA", metaData);
   const mainLinks = mainLinksMockdata.map((link) => (
     <Tooltip
       label={link.label}
@@ -108,6 +114,30 @@ export default function EditTemplatePage() {
       </UnstyledButton>
     </Tooltip>
   ));
+
+  const handlePublish = async () => {
+    try {
+      const templateId = router.query.templateId as string;
+
+      const requestData = {
+        ...metaData,
+        // templateIdUsed: templateId,
+        templateIdUsed: `21c86e6a-eac0-4278-8fb4-30e80bb23026`,
+      };
+
+      console.log("REQUEST DATA", requestData);
+      const response = await superagent
+        .post(`${backendAPI}/widget/create`)
+        .set(
+          "Authorization",
+          `Bearer ${localStorage.getItem("pp_access_token")}`
+        )
+        .send(requestData);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error making API call:", error);
+    }
+  };
 
   // unless the page has a widgetId dont render anything
   // widgetId initially is undefined then it carries a value
@@ -164,7 +194,7 @@ export default function EditTemplatePage() {
                     color="#edc639"
                     style={{ width: "100%" }}
                     leftSection={<IconRocket size={18} />}
-                    onClick={() => alert("WIP: webpack functionality")}
+                    onClick={() => handlePublish()}
                   >
                     Publish
                   </Button>

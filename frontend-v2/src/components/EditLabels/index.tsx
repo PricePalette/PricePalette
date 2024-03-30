@@ -26,7 +26,7 @@ function EditLabel() {
       title: metaData?.title || "",
       description: metaData?.description || "",
       font: {
-        size: metaData?.font?.size || "s",
+        size: metaData?.font?.size || "S",
       },
       price: {
         duration: "M",
@@ -46,6 +46,7 @@ function EditLabel() {
       return errors;
     },
   });
+  console.log("WHAT", formik.values.font?.size);
 
   if (view === "editWidget") {
     return (
@@ -105,9 +106,10 @@ function EditLabel() {
               onChange={(value) => {
                 if (
                   metaData &&
-                  (value === "s" || value === "m" || value === "l")
+                  (value === "S" || value === "M" || value === "L")
                 ) {
                   formik.setFieldValue("font.size", value);
+                  console.log("FONT", value);
                   updateWidgetMetaData({
                     ...metaData,
                     font: { ...metaData.font, size: value },
@@ -115,9 +117,9 @@ function EditLabel() {
                 }
               }}
               data={[
-                { value: "s", label: "Small" },
-                { value: "m", label: "Medium" },
-                { value: "l", label: "Large" },
+                { value: "S", label: "Small" },
+                { value: "M", label: "Medium" },
+                { value: "L", label: "Large" },
               ]}
             />
           </Input.Wrapper>

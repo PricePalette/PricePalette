@@ -13,7 +13,7 @@ export const gridTemplateMetaData: WidgetMetaData = {
   description: "View our plans",
   themeColor: "#FF7801",
   font: {
-    size: "m",
+    size: "M",
     family: "Arial",
     color: "#000000",
   },
