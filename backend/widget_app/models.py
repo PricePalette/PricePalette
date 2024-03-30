@@ -15,8 +15,8 @@ class WidgetID(BaseModel):
 
 
 class PriceDurationEnum(str, Enum):
-    monthly = 'month'
-    yearly = 'year'
+    monthly = 'M'
+    yearly = 'Y'
 
 
 class CurrencyEnum(str, Enum):
