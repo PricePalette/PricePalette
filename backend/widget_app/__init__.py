@@ -19,6 +19,8 @@ widget_router = APIRouter(
     dependencies=[Depends(verify_jwt)]
 )
 
+STRIPE_INTERVAL = {"m": "month", "y": "year"}
+
 
 def widget_exists(widget_id: str):
     """
@@ -65,8 +67,9 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
         widget_json["stripe_product_id"] = product.stripe_id
 
         for card, json_card in zip(data.cards, widget_json["cards"]):
+            interval = STRIPE_INTERVAL[data.price.duration.lower()]
             price = stripe.Price.create(currency=data.price.currency.lower(), unit_amount=card.amount * 100,
-                                        recurring={"interval": data.price.duration.lower()}, product=product.stripe_id)
+                                        recurring={"interval": interval}, product=product.stripe_id)
             json_card["stripe_price_id"] = price.stripe_id
 
         from_template = True if data.templateIdUsed else False
