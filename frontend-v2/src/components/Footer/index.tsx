@@ -7,7 +7,7 @@ import {
   IconBrandInstagram,
 } from "@tabler/icons-react";
 import classes from "../../styles/footer.module.css";
-import { Logo } from "@/Logo";
+import { Logo } from "@/illustrations/Logo";
 
 const links = [
   { link: "mailto:abc@pricepalette.tech", label: "Contact Us" },
