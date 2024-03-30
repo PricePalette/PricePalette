@@ -13,7 +13,6 @@ class Register(Login):
     username: str
     org_name: str
 
-
 class ForgotPassword(BaseModel):
     email: EmailStr
 
