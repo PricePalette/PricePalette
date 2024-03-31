@@ -113,19 +113,19 @@ export default function templates() {
                 <img
                   src={template.templateImage}
                   alt={template.templateName}
-                  width={600}
-                  height={400}
+                  width={300}
+                  height={300}
                 />
                 <div style={{ padding: "10px" }}>
                   <Text
                     style={{ color: "#5ec5c3", fontWeight: 650 }}
                     mt="xs"
-                    mb="md"
+                    mb="xs"
                     size="xl"
                   >
                     {template.templateName}
                   </Text>
-                  <Text size="md" style={{ color: "#666" }}>
+                  <Text size="lg" style={{ color: "#666" }}>
                     {template.templateDescription}
                   </Text>
                 </div>
