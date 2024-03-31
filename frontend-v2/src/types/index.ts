@@ -20,10 +20,8 @@ export type WidgetMetaData = {
   description: string;
   themeColor: string;
   font: {
-    size?: "s" | "m" | "l";
+    size?: "S" | "M" | "L";
     family?: string;
     color?: string;
   };
-  widgetId: string;
-  updatedFields: string[];
 };

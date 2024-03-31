@@ -24,7 +24,6 @@ export default function ViewPlans() {
       return;
     }
 
-    console.log("PRICE", priceId);
     const response = await fetch(`${backendAPI}/subscribe/create`, {
       method: "POST",
       headers: {

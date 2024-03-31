@@ -13,13 +13,10 @@ export const gridTemplateMetaData: WidgetMetaData = {
   description: "View our plans",
   themeColor: "#5ec5c3",
   font: {
-    size: "m",
+    size: "M",
     family: "Arial",
     color: "#000000",
   },
-  // this is just for now, will change when integrating with API
-  widgetId: "8a0d2edd-79d3-4628-a7fd-f22890930a95",
-  updatedFields: [],
   cards: [
     {
       id: uuidv4(),

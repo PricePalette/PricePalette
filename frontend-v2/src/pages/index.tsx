@@ -114,7 +114,7 @@ export default function IndexPage() {
   const router = useRouter();
 
   const handleGetStartedClick = () => {
-    router.push("/getStarted");
+    router.push("/templates");
   };
 
   const handleViewPlansClick = () => {

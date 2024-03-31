@@ -1,7 +1,9 @@
-import { Loader } from "@mantine/core";
+import { Loader, Text } from "@mantine/core";
 import { useMetaData } from "@/stores/useMetaData";
+import { useQuery } from "react-query";
+import superagent from "superagent";
+import { backendAPI } from "@/utils/constants";
 import { useEffect } from "react";
-import { gridTemplateMetaData } from "@/utils/initialMetaDatas";
 
 export function SetupMetadata({
   children,
@@ -10,21 +12,29 @@ export function SetupMetadata({
   children: React.ReactNode;
   widgetId: string | string[] | undefined;
 }) {
-  console.log("widgetId from setupmetadata", widgetId);
-
   const metaData = useMetaData((state) => state.metaData);
   const setMetaData = useMetaData((state) => state.setMetaData);
 
+  const { data, isLoading } = useQuery({
+    queryKey: ["WidgetInfoQuery", { id: 1 }],
+    queryFn: () =>
+      superagent
+        .get(`${backendAPI}/widget/info?widgetId=${widgetId}`)
+        .set("Accept", "application/json")
+        .set(
+          "Authorization",
+          `Bearer ${localStorage.getItem("pp_access_token")}`
+        )
+        .then((res) => res.body.content)
+        .catch((error) => error.response.body),
+  });
+
   useEffect(() => {
-    switch (widgetId) {
-      case "21c86e6a-eac0-4278-8fb4-30e80bb23026":
-        setMetaData(gridTemplateMetaData);
-      case "1905d495-6371-4b2a-9f6a-c4a586e0d216":
-        setMetaData(gridTemplateMetaData);
-      case "a4375344-6cf5-45aa-a118-831ca970d916":
-        setMetaData(gridTemplateMetaData);
+    // save the initialMetaData from api in global store
+    if (data && !isLoading && !metaData) {
+      setMetaData(data);
     }
-  }, [widgetId, setMetaData]);
+  }, [data, isLoading, metaData, setMetaData]);
 
   let body: React.ReactNode = (
     <div
@@ -33,9 +43,13 @@ export function SetupMetadata({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        flexDirection: "column",
       }}
     >
       <Loader />
+      <Text c="dimmed" mt={"md"}>
+        You still there? We are almost done...
+      </Text>
     </div>
   );
 

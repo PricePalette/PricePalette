@@ -1,4 +1,5 @@
 import { GridTemplate } from "@/templates/GridTemplate";
+import { useGetUrlWidgetId } from "@/utils/useGetUrlId";
 import { GridTemplate2 } from "@/templates/GridTemplate2";
 import { GridTemplate3 } from "@/templates/GridTemplate3";
 

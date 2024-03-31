@@ -32,7 +32,7 @@ const mockdata = [
   {
     label: "Templates",
     icon: IconTemplate,
-    link: "/getStarted",
+    link: "/templates",
   },
   { label: "Profile Settings", icon: IconSettings, link: "/settings" },
 ];
@@ -80,7 +80,7 @@ export default function Dashboard() {
   const handleDelete = (widgetId: any) => deleteWidgetMutate(widgetId);
 
   const handleCreateWidget = () => {
-    router.push("/getStarted");
+    router.push("/templates");
   };
 
   const handleEdit = (templateId: any, widgetId: any) => {
@@ -132,122 +132,127 @@ export default function Dashboard() {
             <Title order={2} my="md">
               Welcome Back
             </Title>
-            <Button onClick={handleCreateWidget} my="md">
-              Create Widget
-            </Button>
+            <div style={{ width: "100%" }}>
+              <Button onClick={handleCreateWidget} my="md">
+                Create Widget
+              </Button>
 
-            <Title order={3} my="lg">
-              Widgets
-            </Title>
+              <Title order={3} my="lg">
+                Widgets
+              </Title>
 
-            {isLoading ? (
-              <Skeleton height={150} />
-            ) : data && data.length > 0 ? (
-              data.map((item: any, index: any) => (
-                <Card
-                  key={index}
-                  withBorder
-                  radius="md"
-                  className={classes.card}
-                >
-                  <div className={classes.cardContent}>
-                    <Group>
-                      <Image
-                        src="https://images.unsplash.com/photo-1602080858428-57174f9431cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80"
-                        height={160}
-                        fit="cover"
-                        alt="A description of the image"
-                      />
-                      <div className={classes.body}>
-                        <Text className={classes.title} mt="xs" mb="md">
-                          {item.title}
-                        </Text>
-                        <Text tt="uppercase" c="dimmed" fw={700} size="xs">
-                          {item.description}
-                        </Text>
-                      </div>
-                    </Group>
-                    <div
-                      className={classes.buttonsRight}
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                        height: "100%",
-                      }}
-                    >
+              {isLoading ? (
+                <Skeleton height={150} />
+              ) : data && data.length > 0 ? (
+                data.map((item: any, index: any) => (
+                  <Card
+                    key={index}
+                    withBorder
+                    radius="md"
+                    className={classes.card}
+                  >
+                    <div className={classes.cardContent}>
+                      <Group>
+                        <Image
+                          src="https://images.unsplash.com/photo-1602080858428-57174f9431cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80"
+                          height={160}
+                          fit="cover"
+                          alt="A description of the image"
+                        />
+                        <div className={classes.body}>
+                          <Text className={classes.title} mt="xs" mb="md">
+                            {item.title}
+                          </Text>
+                          <Text tt="uppercase" c="dimmed" fw={700} size="xs">
+                            {item.description}
+                          </Text>
+                        </div>
+                      </Group>
                       <div
-                        style={{ alignSelf: "flex-end", marginBottom: "auto" }}
+                        className={classes.buttonsRight}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          height: "100%",
+                        }}
                       >
-                        <Button
-                          onClick={() =>
-                            handleEdit(item.templateIdUsed, item.widgetId)
-                          }
-                          my="sm"
-                          mr="xs"
-                          variant="outline"
+                        <div
+                          style={{
+                            alignSelf: "flex-end",
+                            marginBottom: "auto",
+                          }}
                         >
-                          Edit
-                        </Button>
-                        <Button onClick={handleExport} my="sm" mr="xs">
-                          Export
-                        </Button>
-                      </div>
-                      <div style={{ alignSelf: "flex-end" }}>
-                        <Button
-                          color="red"
-                          onClick={() => setDeleteModalOpen(true)}
-                          my="sm"
-                          mr="xs"
-                        >
-                          Delete
-                        </Button>
-                      </div>
+                          <Button
+                            onClick={() =>
+                              handleEdit(item.templateIdUsed, item.widgetId)
+                            }
+                            my="sm"
+                            mr="xs"
+                            variant="outline"
+                          >
+                            Edit
+                          </Button>
+                          <Button onClick={handleExport} my="sm" mr="xs">
+                            Export
+                          </Button>
+                        </div>
+                        <div style={{ alignSelf: "flex-end" }}>
+                          <Button
+                            color="red"
+                            onClick={() => setDeleteModalOpen(true)}
+                            my="sm"
+                            mr="xs"
+                          >
+                            Delete
+                          </Button>
+                        </div>
 
-                      <Modal
-                        opened={isDeleteModalOpen}
-                        onClose={() => setDeleteModalOpen(false)}
-                        title="Confirm Deletion"
-                      >
-                        <Text>
-                          Are you sure you want to delete this widget?
-                        </Text>
-                        <Button
-                          color="red"
-                          onClick={() => handleDelete(item.widgetId)}
-                          mt="md"
+                        <Modal
+                          opened={isDeleteModalOpen}
+                          onClose={() => setDeleteModalOpen(false)}
+                          title="Confirm Deletion"
                         >
-                          Yes, delete it
-                        </Button>
-                        <Button
-                          variant="subtle"
-                          onClick={() => setDeleteModalOpen(false)}
-                          mt="md"
-                        >
-                          Cancel
-                        </Button>
-                      </Modal>
+                          <Text>
+                            Are you sure you want to delete this widget?
+                          </Text>
+                          <Button
+                            color="red"
+                            onClick={() => handleDelete(item.widgetId)}
+                            mt="md"
+                          >
+                            Yes, delete it
+                          </Button>
+                          <Button
+                            variant="subtle"
+                            onClick={() => setDeleteModalOpen(false)}
+                            mt="md"
+                          >
+                            Cancel
+                          </Button>
+                        </Modal>
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              ))
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  width: "100%",
-                  margin: 8,
-                }}
-              >
-                <NoDataIcon />
-                <Text fw={600} fz={20} mt="md">
-                  No widgets as of now
-                </Text>
-              </div>
-            )}
+                  </Card>
+                ))
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    width: "100%",
+                    margin: 8,
+                  }}
+                >
+                  <NoDataIcon />
+                  <Text fw={600} fz={20} mt="md">
+                    No widgets as of now
+                  </Text>
+                </div>
+              )}
+            </div>
           </Container>
           <ProfileModal
             isProfileModalOpen={isProfileModalOpen}

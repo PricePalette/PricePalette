@@ -1,7 +1,9 @@
 import { useRouter } from "next/router";
 
-export const useGetUrlId = () => {
+export const useGetUrlWidgetId = () => {
   const router = useRouter();
 
-  return router.query.id;
+  const widgetId = router.query.widget;
+
+  return widgetId;
 };
