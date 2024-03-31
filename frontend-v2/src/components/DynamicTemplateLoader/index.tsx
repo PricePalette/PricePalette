@@ -10,9 +10,8 @@ interface DynamicTemplateLoaderProps {
 const DynamicTemplateLoader: React.FC<DynamicTemplateLoaderProps> = ({
   id,
 }) => {
-  const widgetId = useGetUrlWidgetId();
   switch (id) {
-    case `${widgetId}`:
+    case "21c86e6a-eac0-4278-8fb4-30e80bb23026":
       return <GridTemplate />;
     case "1905d495-6371-4b2a-9f6a-c4a586e0d216":
       return <GridTemplate2 />;

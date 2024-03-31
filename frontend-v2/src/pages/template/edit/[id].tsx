@@ -51,8 +51,9 @@ const mainLinksMockdata: {
 
 export default function EditTemplatePage() {
   // getting the widget id from url
-  const widgetId = useGetUrlWidgetId();
   let body = null;
+  const router = useRouter();
+  const widgetId = useGetUrlWidgetId();
   const metaData = useMetaData((state) => state.metaData);
   const [active, setActive] = useState<WidgetSettingType>("Cards");
 
@@ -178,7 +179,7 @@ export default function EditTemplatePage() {
             overflow: "scroll",
           }}
         >
-          <DynamicTemplateLoader id={String(widgetId)} />
+          <DynamicTemplateLoader id={String(router.query.id)} />
         </div>
       </>
     );
