@@ -70,7 +70,7 @@ export default function Dashboard() {
   } = useMutation(deleteWidget, {
     onSuccess: () => {
       setDeleteModalOpen(false);
-      // router.reload();
+      router.reload();
     },
     onError: (error) => {
       console.error(deleteError);

@@ -30,11 +30,13 @@ import EditLabels from "@/components/EditLabels";
 import EditColors from "@/components/EditColors";
 import { LetterLogo } from "@/illustrations/LetterLogo";
 import { UserInfoCard } from "@/components/UserInfoCard";
-import { backendAPI } from "@/utils/constants";
+import { SERVER_ERROR, SERVER_SUCCESS, backendAPI } from "@/utils/constants";
 import { getUserAvatar } from "@/utils/getUserAvatar";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import superagent from "superagent";
 import { useRouter } from "next/router";
+import { WidgetMetaData } from "@/types";
+import { useMetaData } from "@/stores/useMetaData";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -51,7 +53,34 @@ export default function EditTemplatePage() {
   // getting the widget id from url
   const widgetId = useGetUrlWidgetId();
   let body = null;
+  const metaData = useMetaData((state) => state.metaData);
   const [active, setActive] = useState<WidgetSettingType>("Cards");
+
+  /* update widget */
+  const mutation = useMutation({
+    mutationFn: (data: WidgetMetaData) => {
+      return superagent
+        .put(`${backendAPI}/widget/update`)
+        .set("Accept", "application/json")
+        .set(
+          "Authorization",
+          `Bearer ${localStorage.getItem("pp_access_token")}`
+        )
+        .send(data)
+        .then((res) => res.body)
+        .catch((error) => error.response.body);
+    },
+    onSuccess: (data) => {
+      // error
+      if (data.message === SERVER_ERROR) {
+      }
+
+      // success
+      if (data.message === SERVER_SUCCESS) {
+        console.log("we need to make the export call now");
+      }
+    },
+  });
 
   const mainLinks = mainLinksMockdata.map((link) => (
     <Tooltip
@@ -126,7 +155,9 @@ export default function EditTemplatePage() {
                     color="#edc639"
                     style={{ width: "100%" }}
                     leftSection={<IconRocket size={18} />}
-                    onClick={() => {}}
+                    onClick={() => {
+                      mutation.mutate(metaData!);
+                    }}
                   >
                     Publish
                   </Button>
