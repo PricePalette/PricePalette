@@ -94,13 +94,34 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
 async def update_widget(data: UpdateWidget):
     widget_exists(str(data.widgetId))
 
-    result = {key: value for key, value in data.model_dump(mode="json").items()
-              if key in data.updatedFields}
+    from_db = widget_collection.find_one({"widgetId": str(data.widgetId)})
+    from_api = data.model_dump(mode="json")
+
+    to_update = {}
+    for key, value in from_api.items():
+        to_update[key] = None
+        if (isinstance(value, str) or isinstance(value, dict)) and value != from_db[key]:
+            to_update[key] = value
+
+    to_update = {k: v for k, v in to_update.items() if v}
+    if not to_update:
+        return JSONResponse(content={"message": "OK", "detail": "Nothing to update"})
 
     with Session(ALCHEMY_ENGINE) as session:
         session.query(Widgets).filter_by(widget_id=str(data.widgetId)).update({'updated_date': func.now()})
         session.commit()
-    widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": result})
+    widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": to_update})
+
+    if to_update.get("title"):
+        stripe.Product.modify(data.stripe_product_id, name=f"{to_update['title']} - {data.widgetId}")
+
+    if to_update.get("description"):
+        stripe.Product.modify(data.stripe_product_id, description=to_update['description'])
+
+    # delete and recreate prices
+    if to_update.get("price"):
+        pass
+
     return JSONResponse(content={"message": "OK"})
 
 

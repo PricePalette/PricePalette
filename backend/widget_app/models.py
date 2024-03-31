@@ -43,18 +43,19 @@ class Font(BaseModel):
 
 class CardFeature(BaseModel):
     text: str
-    hint: str = None
+    hint: Union[str, None] = None
 
 
 class Card(BaseModel):
     id: str
     title: str
     description: str
-    img: str = None
+    img: Union[str, None] = None
     features: List[CardFeature] = Field(min_length=1)
     amount: Union[int, float]
     buttonText: str
     priceCaption: str
+    stripe_price_id: Union[str, None] = None
 
 
 class WidgetMetadata(BaseModel):
@@ -73,4 +74,4 @@ class CreateWidget(WidgetMetadata):
 
 
 class UpdateWidget(WidgetID, WidgetMetadata):
-    pass
+    stripe_product_id: str

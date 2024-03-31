@@ -8,6 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from backend.database import MONGO_CLIENT, ALCHEMY_ENGINE
 from backend.database_models import create_tables
+from backend.embed_app import embed_router
 from backend.widget_app import widget_router
 from backend.user_app import user_router
 from backend.templates_app import templates_router
@@ -28,6 +29,7 @@ app.include_router(widget_router)
 app.include_router(user_router)
 app.include_router(templates_router)
 app.include_router(sub_router)
+app.include_router(embed_router)
 
 
 @app.exception_handler(RequestValidationError)
