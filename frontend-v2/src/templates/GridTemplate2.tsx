@@ -13,7 +13,7 @@ function TemplateCard({
   billDuration: "Monthly" | "Yearly";
   metaData: WidgetMetaData;
 }) {
-  const currentFontSize = metaData.font?.size || "m";
+  const currentFontSize = metaData.font?.size || "M";
   const appliedFontSize = fontSizeMap[currentFontSize];
   return (
     <Card
