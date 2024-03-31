@@ -17,7 +17,6 @@ export const gridTemplateMetaData: WidgetMetaData = {
     family: "Arial",
     color: "#000000",
   },
-  updatedFields: [],
   cards: [
     {
       id: uuidv4(),

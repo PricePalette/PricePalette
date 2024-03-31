@@ -1,10 +1,9 @@
-import { Loader } from "@mantine/core";
+import { Loader, Text } from "@mantine/core";
 import { useMetaData } from "@/stores/useMetaData";
-import { useEffect } from "react";
-import { gridTemplateMetaData } from "@/utils/initialMetaDatas";
 import { useQuery } from "react-query";
 import superagent from "superagent";
 import { backendAPI } from "@/utils/constants";
+import { useEffect } from "react";
 
 export function SetupMetadata({
   children,
@@ -13,8 +12,6 @@ export function SetupMetadata({
   children: React.ReactNode;
   widgetId: string | string[] | undefined;
 }) {
-  console.log("widgetId from setupmetadata", widgetId);
-
   const metaData = useMetaData((state) => state.metaData);
   const setMetaData = useMetaData((state) => state.setMetaData);
 
@@ -32,10 +29,12 @@ export function SetupMetadata({
         .catch((error) => error.response.body),
   });
 
-  if (data) {
-    setMetaData(data);
-    console.log("DATA", data);
-  }
+  useEffect(() => {
+    // save the initialMetaData from api in global store
+    if (data && !isLoading && !metaData) {
+      setMetaData(data);
+    }
+  }, [data, isLoading, metaData, setMetaData]);
 
   let body: React.ReactNode = (
     <div
@@ -44,9 +43,13 @@ export function SetupMetadata({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        flexDirection: "column",
       }}
     >
       <Loader />
+      <Text c="dimmed" mt={"md"}>
+        You still there? We are almost done...
+      </Text>
     </div>
   );
 

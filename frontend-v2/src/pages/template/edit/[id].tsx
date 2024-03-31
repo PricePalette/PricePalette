@@ -5,30 +5,27 @@ import {
   Title,
   rem,
   Flex,
-  ActionIcon,
   Button,
   Avatar,
   Box,
   Group,
   Popover,
+  Loader,
+  Text,
 } from "@mantine/core";
 import {
   IconTextSize,
   IconPalette,
   IconLayout,
   TablerIconsProps,
-  IconZoomReset,
-  IconZoomOut,
-  IconZoomIn,
   IconRocket,
   IconExternalLink,
 } from "@tabler/icons-react";
 import classes from "@/styles/editTemplate.module.css";
-import { useGetUrlId } from "@/utils/useGetUrlId";
+import { useGetUrlWidgetId } from "@/utils/useGetUrlId";
 import DynamicTemplateLoader from "@/components/DynamicTemplateLoader";
 import { DrapNDropCards } from "@/components/DragNDropCards";
 import { SetupMetadata } from "@/components/SetupMetaData";
-import { useControls } from "react-zoom-pan-pinch";
 import EditLabels from "@/components/EditLabels";
 import EditColors from "@/components/EditColors";
 import { LetterLogo } from "@/illustrations/LetterLogo";
@@ -38,7 +35,6 @@ import { getUserAvatar } from "@/utils/getUserAvatar";
 import { useQuery } from "react-query";
 import superagent from "superagent";
 import { useRouter } from "next/router";
-import { useMetaData } from "@/stores/useMetaData";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -51,52 +47,12 @@ const mainLinksMockdata: {
   { icon: IconTextSize, label: "Labels" },
 ];
 
-const ZoomControls = () => {
-  const { zoomIn, zoomOut, resetTransform } = useControls();
-
-  return (
-    <ActionIcon.Group>
-      <ActionIcon
-        variant="default"
-        size="lg"
-        aria-label="Zoom In"
-        onClick={() => zoomIn()}
-      >
-        <IconZoomIn style={{ width: rem(20) }} stroke={1.5} />
-      </ActionIcon>
-
-      <ActionIcon
-        variant="default"
-        size="lg"
-        aria-label="Zoom Out"
-        onClick={() => zoomOut()}
-      >
-        <IconZoomOut style={{ width: rem(20) }} stroke={1.5} />
-      </ActionIcon>
-
-      <ActionIcon
-        variant="default"
-        size="lg"
-        aria-label="Zoom Reset"
-        onClick={() => resetTransform()}
-      >
-        <IconZoomReset style={{ width: rem(20) }} stroke={1.5} />
-      </ActionIcon>
-    </ActionIcon.Group>
-  );
-};
-
 export default function EditTemplatePage() {
   // getting the widget id from url
-  const widgetId = useGetUrlId();
-  const router = useRouter();
+  const widgetId = useGetUrlWidgetId();
   let body = null;
   const [active, setActive] = useState<WidgetSettingType>("Cards");
-  const { metaData } = useMetaData((state) => ({
-    metaData: state.metaData,
-  }));
 
-  console.log("META DATA", metaData);
   const mainLinks = mainLinksMockdata.map((link) => (
     <Tooltip
       label={link.label}
@@ -114,8 +70,6 @@ export default function EditTemplatePage() {
       </UnstyledButton>
     </Tooltip>
   ));
-
-  console.log("***Widget ID****", widgetId);
 
   // unless the page has a widgetId dont render anything
   // widgetId initially is undefined then it carries a value
@@ -200,10 +154,44 @@ export default function EditTemplatePage() {
   }
 
   return (
-    <SetupMetadata widgetId={widgetId}>
-      <Flex style={{ height: "100vh" }}>{body}</Flex>
-    </SetupMetadata>
+    <GetWidgetId widgetId={widgetId}>
+      <SetupMetadata widgetId={widgetId}>
+        <Flex style={{ height: "100vh" }}>{body}</Flex>
+      </SetupMetadata>
+    </GetWidgetId>
   );
+}
+
+function GetWidgetId({
+  children,
+  widgetId,
+}: {
+  children: React.ReactNode;
+  widgetId: string | string[] | undefined;
+}) {
+  let body: React.ReactNode = (
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+      }}
+    >
+      <Loader />
+      <Text c="dimmed" mt={"md"}>
+        Hold on we are getting your widget data...
+      </Text>
+    </div>
+  );
+
+  // this means we definetely have the widgetId
+  if (widgetId) {
+    body = children;
+  }
+
+  return body;
 }
 
 function Profile() {

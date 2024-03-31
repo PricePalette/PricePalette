@@ -3,13 +3,15 @@ import React from "react";
 import { Header } from "@/components/Header";
 import { useRouter } from "next/router";
 import { Card, Text, Grid, SimpleGrid, Container, Group } from "@mantine/core";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import superagent, { SuperAgent } from "superagent";
-import { backendAPI } from "@/utils/constants";
+import { SERVER_ERROR, SERVER_SUCCESS, backendAPI } from "@/utils/constants";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useMetaData } from "@/stores/useMetaData";
 import { gridTemplateMetaData } from "@/utils/initialMetaDatas";
+import { WidgetMetaData } from "@/types";
+import { toErrorMap } from "@/utils/toErrorMap";
 
 interface Template {
   templateId: string;
@@ -19,44 +21,35 @@ interface Template {
 }
 
 export default function templates() {
-  const router = useRouter();
-
-  const handleCardClick = async (templateId: string) => {
-    let widget_id;
-
-    try {
-      const requestData = {
-        ...gridTemplateMetaData,
-        templateIdUsed: templateId,
-      };
-
-      console.log("REQUEST DATA", requestData);
-      const response = await superagent
+  const mutation = useMutation({
+    mutationFn: (data: WidgetMetaData & { templateIdUsed: string }) => {
+      return superagent
         .post(`${backendAPI}/widget/create`)
+        .set("Accept", "application/json")
         .set(
           "Authorization",
           `Bearer ${localStorage.getItem("pp_access_token")}`
         )
-        .send(requestData);
-
-      const { message, content } = response.body;
-      if (message === "OK" && content) {
-        widget_id = content.widget_id;
-      } else {
+        .send(data)
+        .then((res) => res.body)
+        .catch((error) => error.response.body);
+    },
+    onSuccess: (data, variables) => {
+      // error
+      if (data.message === SERVER_ERROR) {
         console.error("Failed to create widget");
-        return;
       }
-    } catch (error) {
-      console.error("Error making API call:", error);
-      return;
-    }
 
-    if (widget_id) {
-      router.push(`/template/edit/${templateId}?widget=${widget_id}`);
-    } else {
-      console.error("Failed to create widget: No widget ID returned");
-    }
-  };
+      // success
+      if (data.message === SERVER_SUCCESS) {
+        router.push(
+          `/template/edit/${variables.templateIdUsed}?widget=${data.content.widget_id}`
+        );
+      }
+    },
+  });
+
+  const router = useRouter();
 
   const [templates, setTemplates] = useState<Template[]>([]);
 
@@ -109,7 +102,12 @@ export default function templates() {
               shadow="sm"
               radius="md"
               style={{ marginBottom: 20, cursor: "pointer" }}
-              onClick={() => handleCardClick(template.templateId)}
+              onClick={() =>
+                mutation.mutate({
+                  ...gridTemplateMetaData,
+                  templateIdUsed: template.templateId,
+                })
+              }
             >
               <Group wrap="nowrap" gap={20}>
                 <img

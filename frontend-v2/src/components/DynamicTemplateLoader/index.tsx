@@ -1,5 +1,5 @@
 import { GridTemplate } from "@/templates/GridTemplate";
-import { useGetUrlId } from "@/utils/useGetUrlId";
+import { useGetUrlWidgetId } from "@/utils/useGetUrlId";
 
 interface DynamicTemplateLoaderProps {
   id: string;
@@ -8,7 +8,7 @@ interface DynamicTemplateLoaderProps {
 const DynamicTemplateLoader: React.FC<DynamicTemplateLoaderProps> = ({
   id,
 }) => {
-  const widgetId = useGetUrlId();
+  const widgetId = useGetUrlWidgetId();
   switch (id) {
     case `${widgetId}`:
       return <GridTemplate />;
