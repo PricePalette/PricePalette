@@ -47,6 +47,7 @@ class CardFeature(BaseModel):
 
 
 class Card(BaseModel):
+    id: str
     title: str
     description: str
     img: str = None
@@ -72,4 +73,4 @@ class CreateWidget(WidgetMetadata):
 
 
 class UpdateWidget(WidgetID, WidgetMetadata):
-    updatedFields: List[str]
+    pass
