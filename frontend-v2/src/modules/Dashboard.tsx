@@ -169,9 +169,6 @@ export default function Dashboard() {
                           <Text tt="uppercase" c="dimmed" fw={700} size="xs">
                             {item.description}
                           </Text>
-                          <Text tt="uppercase" c="dimmed" fw={700} size="xs">
-                            {item.widgetId}
-                          </Text>
                         </div>
                       </Group>
                       <div

@@ -29,7 +29,7 @@ import { SetupMetadata } from "@/components/SetupMetaData";
 import EditLabels from "@/components/EditLabels";
 import EditColors from "@/components/EditColors";
 import { LetterLogo } from "@/illustrations/LetterLogo";
-import { UserInfoCard } from "@/components/UserInfoCard";
+import { UserInfoCard } from "@/components/UserInfoCard2";
 import { SERVER_ERROR, SERVER_SUCCESS, backendAPI } from "@/utils/constants";
 import { getUserAvatar } from "@/utils/getUserAvatar";
 import { useMutation, useQuery } from "react-query";
@@ -57,6 +57,7 @@ export default function EditTemplatePage() {
   const router = useRouter();
   const widgetId = useGetUrlWidgetId();
   const metaData = useMetaData((state) => state.metaData);
+  const setMetaData = useMetaData((state) => state.setMetaData);
   const [active, setActive] = useState<WidgetSettingType>("Cards");
 
   /* update widget */
@@ -80,6 +81,9 @@ export default function EditTemplatePage() {
 
       // success
       if (data.message === SERVER_SUCCESS) {
+        if (!data.detail) {
+          setMetaData(data.content);
+        }
         console.log("the change: ", data);
         toast.success("Your changes have been saved!", {
           position: "top-right",
