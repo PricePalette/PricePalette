@@ -31,7 +31,7 @@ class Users(Base):
     organization_name = Column(String(50), nullable=False)
     password = Column(String(200), nullable=False)
     salt = Column(String(50), nullable=False)
-    plan_id = Column(String(50), nullable=False)
+    plan_id = Column(String(50), nullable=True)
     active = Column(Boolean, default=True)
     joined_date = Column(DateTime, default=datetime.datetime.utcnow())
     widgets_created = Column(Integer, default=0)
