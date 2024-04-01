@@ -26,6 +26,8 @@ import { Header } from "@/components/Header";
 import ProfileModal from "@/components/ProfileModal";
 import { AuthOrNot } from "@/components/AuthOrNot";
 import superagent from "superagent";
+import { InstallWidgetModal } from "@/components/InstallWidgetModal";
+import { useCurrentWidgetId } from "@/stores/useCurrentWidgetId";
 
 const mockdata = [
   { label: "Dashboard", icon: IconDashboard, link: "/dashboard" },
@@ -41,9 +43,14 @@ export default function Dashboard() {
   const router = useRouter();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isProfileModalOpen, setProfileModalOpen] = useState(false);
+  const [isInstallWidgetModalOpen, setInstallWidgetModalOpen] = useState(false);
+  const currentWidgetId = useCurrentWidgetId((state) => state.currentWidgetId);
+  const setCurrentWidgetId = useCurrentWidgetId(
+    (state) => state.setCurrentWidgetId
+  );
 
   const { data, isLoading } = useQuery({
-    queryKey: ["WidgetsQuery", { id: 1 }],
+    queryKey: ["WidgetsListQuery", { id: 1 }],
     queryFn: () =>
       superagent
         .get(`${backendAPI}/widget/list`)
@@ -85,10 +92,6 @@ export default function Dashboard() {
 
   const handleEdit = (templateId: any, widgetId: any) => {
     router.push(`/template/edit/${templateId}/?widget=${widgetId}`);
-  };
-
-  const handleExport = () => {
-    console.log("Export");
   };
 
   const handleProfileClick = () => {
@@ -166,6 +169,9 @@ export default function Dashboard() {
                           <Text tt="uppercase" c="dimmed" fw={700} size="xs">
                             {item.description}
                           </Text>
+                          <Text tt="uppercase" c="dimmed" fw={700} size="xs">
+                            {item.widgetId}
+                          </Text>
                         </div>
                       </Group>
                       <div
@@ -184,23 +190,34 @@ export default function Dashboard() {
                           }}
                         >
                           <Button
-                            onClick={() =>
-                              handleEdit(item.templateIdUsed, item.widgetId)
-                            }
+                            onClick={() => {
+                              console.log(item.widgetId);
+                              handleEdit(item.templateIdUsed, item.widgetId);
+                            }}
                             my="sm"
                             mr="xs"
                             variant="outline"
                           >
                             Edit
                           </Button>
-                          <Button onClick={handleExport} my="sm" mr="xs">
-                            Export
+                          <Button
+                            onClick={() => {
+                              setCurrentWidgetId(item.widgetId);
+                              setInstallWidgetModalOpen(true);
+                            }}
+                            my="sm"
+                            mr="xs"
+                          >
+                            Install
                           </Button>
                         </div>
                         <div style={{ alignSelf: "flex-end" }}>
                           <Button
                             color="red"
-                            onClick={() => setDeleteModalOpen(true)}
+                            onClick={() => {
+                              setCurrentWidgetId(item.widgetId);
+                              setDeleteModalOpen(true);
+                            }}
                             my="sm"
                             mr="xs"
                           >
@@ -208,6 +225,20 @@ export default function Dashboard() {
                           </Button>
                         </div>
 
+                        {/* Install widget modal  */}
+                        <Modal
+                          size="xl"
+                          opened={isInstallWidgetModalOpen}
+                          onClose={() => setInstallWidgetModalOpen(false)}
+                          title="Install Widget"
+                          styles={{
+                            title: { fontSize: "20px", fontWeight: "bold" },
+                          }}
+                        >
+                          <InstallWidgetModal widgetId={currentWidgetId!} />
+                        </Modal>
+
+                        {/* Delete widget modal  */}
                         <Modal
                           opened={isDeleteModalOpen}
                           onClose={() => setDeleteModalOpen(false)}
@@ -218,7 +249,7 @@ export default function Dashboard() {
                           </Text>
                           <Button
                             color="red"
-                            onClick={() => handleDelete(item.widgetId)}
+                            onClick={() => handleDelete(currentWidgetId)}
                             mt="md"
                           >
                             Yes, delete it

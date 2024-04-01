@@ -66,7 +66,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         title: { fontSize: "20px", fontWeight: "bold" },
       }}
     >
-      <Stack>
+      {/* <Stack>
         <div style={{ display: "flex", alignItems: "center" }}>
           <Text size="lg" style={{ marginRight: 10, fontWeight: "bold" }}>
             Username:
@@ -79,7 +79,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           </Text>
           <Text size="lg">{userData?.content?.email}</Text>
         </div>
-      </Stack>
+      </Stack> */}
 
       <TextInput
         label="Stripe Key"
@@ -89,9 +89,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         disabled={isKeySubmitted}
         styles={{
           label: {
-            fontSize: "18px",
-            fontWeight: "bold",
-            marginTop: "18px",
             marginBottom: 10,
           },
         }}

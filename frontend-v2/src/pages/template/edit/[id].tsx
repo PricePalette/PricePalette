@@ -37,6 +37,8 @@ import superagent from "superagent";
 import { useRouter } from "next/router";
 import { WidgetMetaData } from "@/types";
 import { useMetaData } from "@/stores/useMetaData";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -78,7 +80,18 @@ export default function EditTemplatePage() {
 
       // success
       if (data.message === SERVER_SUCCESS) {
-        console.log("we need to make the export call now");
+        console.log("the change: ", data);
+        toast.success("Your changes have been saved!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     },
   });
@@ -190,6 +203,7 @@ export default function EditTemplatePage() {
       <SetupMetadata widgetId={widgetId}>
         <Flex style={{ height: "100vh" }}>{body}</Flex>
       </SetupMetadata>
+      <ToastContainer />
     </GetWidgetId>
   );
 }
