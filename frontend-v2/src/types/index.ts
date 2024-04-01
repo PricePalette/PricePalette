@@ -16,6 +16,8 @@ export type WidgetMetaData = {
     amount: number;
     buttonText: string;
     priceCaption: string;
+    stripe_price_id?: string;
+    payment_link?: string;
   }[];
   description: string;
   themeColor: string;

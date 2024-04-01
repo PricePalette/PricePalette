@@ -188,7 +188,6 @@ export default function Dashboard() {
                         >
                           <Button
                             onClick={() => {
-                              console.log(item.widgetId);
                               handleEdit(item.templateIdUsed, item.widgetId);
                             }}
                             my="sm"

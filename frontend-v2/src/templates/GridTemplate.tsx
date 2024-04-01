@@ -108,7 +108,11 @@ function TemplateCard({
           ))}
         </Flex>
 
-        <Button style={{ width: "100%" }} bg={`${metaData.themeColor}`}>
+        <Button
+          style={{ width: "100%" }}
+          bg={`${metaData.themeColor}`}
+          onClick={() => window.open(card.payment_link, "_blank")}
+        >
           {card.buttonText}
         </Button>
       </Flex>

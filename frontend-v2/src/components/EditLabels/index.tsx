@@ -46,7 +46,6 @@ function EditLabel() {
       return errors;
     },
   });
-  console.log("WHAT", formik.values.font?.size);
 
   if (view === "editWidget") {
     return (
@@ -109,7 +108,6 @@ function EditLabel() {
                   (value === "S" || value === "M" || value === "L")
                 ) {
                   formik.setFieldValue("font.size", value);
-                  console.log("FONT", value);
                   updateWidgetMetaData({
                     ...metaData,
                     font: { ...metaData.font, size: value },

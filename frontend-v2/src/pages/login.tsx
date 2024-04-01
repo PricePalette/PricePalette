@@ -50,7 +50,6 @@ export default function Login() {
         .catch((error) => error.response.body);
     },
     onSuccess: (data) => {
-      console.log(data);
       // error
       if (data.message === SERVER_ERROR) {
         formik.setErrors(toErrorMap(data.errors));
