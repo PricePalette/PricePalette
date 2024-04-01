@@ -17,6 +17,10 @@ embed_router = APIRouter(
 async def widget_info(embedId: UUID4):
     with Session(ALCHEMY_ENGINE) as session:
         embed = session.query(WidgetEmbed).filter_by(embed_id=str(embedId), active=1).first()
+
+    if not embed:
+        return JSONResponse(content={"message": "error"}, status_code=404)
+
     widget = widget_collection.find_one({"widgetId": str(embed.widget_id)})
     if not widget:
         return JSONResponse(content={"message": "error"}, status_code=404)
