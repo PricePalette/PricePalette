@@ -84,7 +84,7 @@ export default function EditTemplatePage() {
         if (!data.detail) {
           setMetaData(data.content);
         }
-        console.log("the change: ", data);
+
         toast.success("Your changes have been saved!", {
           position: "top-right",
           autoClose: 5000,
@@ -96,6 +96,7 @@ export default function EditTemplatePage() {
           theme: "light",
           transition: Bounce,
         });
+        router.push("/dashboard");
       }
     },
   });

@@ -147,7 +147,7 @@ function TemplateCard({
         <Button
           style={{ width: "100%" }}
           bg={`${metaData.themeColor}`}
-          onClick={() => alert("working")}
+          onClick={() => window.open(card.payment_link, "_blank")}
         >
           {card.buttonText}
         </Button>

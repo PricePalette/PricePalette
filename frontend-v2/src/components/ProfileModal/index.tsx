@@ -41,7 +41,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const handleStripeKeySubmit = () => {
-    console.log("Stripe Key Submitted:", stripeKey);
     setKeySubmitted(true);
   };
   const handleEditStripeKey = () => {

@@ -41,11 +41,6 @@ export default function ViewPlans() {
     if (message === "OK" && content) {
       const { subscription_id, client_secret } = content;
 
-      console.log("DATA", {
-        subscriptionId: subscription_id,
-        clientSecret: client_secret,
-      });
-
       router.push({
         pathname: "/checkout",
         query: { subscription_id, client_secret },

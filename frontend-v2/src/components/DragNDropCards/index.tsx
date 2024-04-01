@@ -133,15 +133,12 @@ export function DrapNDropCards() {
     <div>
       <DragDropContext
         onDragEnd={({ destination, source }) => {
-          console.log("oldCards: ", metaData);
           const newCards = arrayMoveImmutable(
             metaData?.cards!,
             source.index,
             destination?.index || 0
           );
           updateCards(newCards);
-          console.log("newCardsNonState: ", newCards);
-          console.log("newCards: ", metaData);
           return handlers.reorder({
             from: source.index,
             to: destination?.index || 0,
