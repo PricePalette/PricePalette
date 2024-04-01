@@ -11,6 +11,10 @@ urlretrieved = urlretrieve(blob_url)
 with open(urlretrieved[0], "r") as fp:
     load_dotenv(stream=fp)
 
+PRICEPALETTE_PLANS = {"price_1Ov0bVCjcrhrZTSatO9LbWyF": 5000,
+                      "price_1Ov0bVCjcrhrZTSarKzaXfdL": 15000,
+                      "price_1Ov0bVCjcrhrZTSaNA5k670V": 30000}
+
 JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 JWT_ALGORITHM = os.environ["JWT_ALGORITHM"]
 JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 60

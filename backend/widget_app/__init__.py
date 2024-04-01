@@ -1,3 +1,5 @@
+import copy
+import json
 import uuid
 from typing import Annotated
 
@@ -98,19 +100,19 @@ async def update_widget(data: UpdateWidget):
     from_api = data.model_dump(mode="json")
 
     to_update = {}
+    cards_to_update = []
     for key, value in from_api.items():
         to_update[key] = None
         if (isinstance(value, str) or isinstance(value, dict)) and value != from_db[key]:
             to_update[key] = value
+        elif key == "cards":
+            for api_card, db_card in zip(value, from_db["cards"]):
+                if json.dumps(api_card) != json.dumps(db_card):
+                    cards_to_update.append(api_card)
 
     to_update = {k: v for k, v in to_update.items() if v}
     if not to_update:
         return JSONResponse(content={"message": "OK", "detail": "Nothing to update", "content": {}})
-
-    with Session(ALCHEMY_ENGINE) as session:
-        session.query(Widgets).filter_by(widget_id=str(data.widgetId)).update({'updated_date': func.now()})
-        session.commit()
-    widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": to_update})
 
     if to_update.get("title"):
         stripe.Product.modify(data.stripe_product_id, name=f"{to_update['title']} - {data.widgetId}")
@@ -118,9 +120,34 @@ async def update_widget(data: UpdateWidget):
     if to_update.get("description"):
         stripe.Product.modify(data.stripe_product_id, description=to_update['description'])
 
+    common_price_kwargs = {}
     # delete and recreate prices
     if to_update.get("price"):
-        pass
+        if to_update["price"]["currency"].lower() != from_db["price"]["currency"].lower():
+            common_price_kwargs["currency"] = to_update["price"]["currency"].lower()
+        else:
+            common_price_kwargs["currency"] = from_db["price"]["currency"].lower()
+
+        if to_update["price"]["duration"].lower() != from_db["price"]["duration"].lower():
+            common_price_kwargs["recurring"] = {"interval": STRIPE_INTERVAL[to_update["price"]["duration"].lower()]}
+        else:
+            common_price_kwargs["recurring"] = {"interval": STRIPE_INTERVAL[from_db["price"]["duration"].lower()]}
+
+    if common_price_kwargs:
+        cards_copy = copy.deepcopy(from_db["cards"])
+        for idx, card in enumerate(from_db["cards"]):
+            price = stripe.Price.create(**common_price_kwargs, unit_amount=int(card["amount"] * 100),
+                                        product=from_db["stripe_product_id"])
+            cards_copy[idx]["stripe_price_id"] = price.stripe_id
+
+            link = stripe.PaymentLink.create(line_items=[{"price": price.stripe_id, "quantity": 1}])
+            cards_copy[idx]["payment_link"] = link.url
+        widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": {"cards": cards_copy}})
+
+    with Session(ALCHEMY_ENGINE) as session:
+        session.query(Widgets).filter_by(widget_id=str(data.widgetId)).update({'updated_date': func.now()})
+        session.commit()
+    widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": to_update})
 
     widget = widget_collection.find_one({"widgetId": str(data.widgetId)})
     widget.pop("_id")
