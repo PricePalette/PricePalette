@@ -241,8 +241,9 @@ export default function Dashboard() {
                           onClose={() => setDeleteModalOpen(false)}
                           title="Confirm Deletion"
                         >
-                          <Text>
-                            Are you sure you want to delete this widget?
+                          <Text size="sm">
+                            Deleting a widget will also delete all embed links.
+                            Are you sure you want to continue?
                           </Text>
                           <Button
                             color="red"
