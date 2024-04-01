@@ -185,6 +185,9 @@ async def embed_widget(widgetId: UUID4):
     widget_exists(str(widgetId))
 
     with Session(ALCHEMY_ENGINE) as session:
+        existing_embed = session.query(WidgetEmbed).filter_by(widget_id=str(widgetId)).count()
+        if existing_embed > 0:
+            return JSONResponse(content={"message": "error", "detail": "Widget is already embedded"}, status_code=409)
         embed_id = str(uuid.uuid4())
         widget_embed = WidgetEmbed(embed_id=embed_id, widget_id=str(widgetId), active=True)
         session.add(widget_embed)
