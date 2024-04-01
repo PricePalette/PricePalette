@@ -25,16 +25,19 @@ export function SetupMetadata({
           "Authorization",
           `Bearer ${localStorage.getItem("pp_access_token")}`
         )
-        .then((res) => res.body.content)
+        .then((res) => {
+          setMetaData(res.body.content);
+          return res.body.content;
+        })
         .catch((error) => error.response.body),
   });
 
-  useEffect(() => {
-    // save the initialMetaData from api in global store
-    if (data && !isLoading && !metaData) {
-      setMetaData(data);
-    }
-  }, [data, isLoading, metaData, setMetaData]);
+  // useEffect(() => {
+  //   // save the initialMetaData from api in global store
+  //   if (data && !isLoading && !metaData) {
+  //     setMetaData(data);
+  //   }
+  // }, [data, isLoading, metaData, setMetaData]);
 
   let body: React.ReactNode = (
     <div
@@ -53,7 +56,7 @@ export function SetupMetadata({
     </div>
   );
 
-  if (metaData) {
+  if (data && metaData && !isLoading) {
     body = children;
   }
 

@@ -2,7 +2,7 @@ import React from "react";
 import { useMetaData } from "@/stores/useMetaData";
 import { WidgetMetaData } from "@/types";
 import EditCards from "../EditCards";
-import { ColorPicker } from "@mantine/core";
+import { ColorInput, ColorPicker } from "@mantine/core";
 import { useState } from "react";
 import { Text } from "@mantine/core";
 
@@ -31,17 +31,21 @@ const EditColors = () => {
   return (
     <div>
       <Text size="xl">Edit Colors</Text>
-      <div style={{ marginTop: "2rem" }}>
-        <h3>Theme Color</h3>
-        <ColorPicker
+      <div style={{ marginTop: "1em" }}>
+        <ColorInput
+          label="Theme Color"
+          description="Set a color for your theme"
+          placeholder={themeColor}
           format="hex"
           value={themeColor}
           onChange={handleThemeColorChange}
         />
       </div>
-      <div>
-        <h3>Font Color</h3>
-        <ColorPicker
+      <div style={{ marginTop: "2em" }}>
+        <ColorInput
+          label="Font Color"
+          description="Set a color for your fonts"
+          placeholder={fontColor}
           format="hex"
           value={fontColor}
           onChange={handleFontColorChange}

@@ -29,7 +29,7 @@ import { SetupMetadata } from "@/components/SetupMetaData";
 import EditLabels from "@/components/EditLabels";
 import EditColors from "@/components/EditColors";
 import { LetterLogo } from "@/illustrations/LetterLogo";
-import { UserInfoCard } from "@/components/UserInfoCard";
+import { UserInfoCard } from "@/components/UserInfoCard2";
 import { SERVER_ERROR, SERVER_SUCCESS, backendAPI } from "@/utils/constants";
 import { getUserAvatar } from "@/utils/getUserAvatar";
 import { useMutation, useQuery } from "react-query";
@@ -37,6 +37,8 @@ import superagent from "superagent";
 import { useRouter } from "next/router";
 import { WidgetMetaData } from "@/types";
 import { useMetaData } from "@/stores/useMetaData";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export type WidgetSettingType = "Cards" | "Color" | "Labels";
 
@@ -55,6 +57,7 @@ export default function EditTemplatePage() {
   const router = useRouter();
   const widgetId = useGetUrlWidgetId();
   const metaData = useMetaData((state) => state.metaData);
+  const setMetaData = useMetaData((state) => state.setMetaData);
   const [active, setActive] = useState<WidgetSettingType>("Cards");
 
   /* update widget */
@@ -78,7 +81,21 @@ export default function EditTemplatePage() {
 
       // success
       if (data.message === SERVER_SUCCESS) {
-        console.log("we need to make the export call now");
+        if (!data.detail) {
+          setMetaData(data.content);
+        }
+        console.log("the change: ", data);
+        toast.success("Your changes have been saved!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     },
   });
@@ -190,6 +207,7 @@ export default function EditTemplatePage() {
       <SetupMetadata widgetId={widgetId}>
         <Flex style={{ height: "100vh" }}>{body}</Flex>
       </SetupMetadata>
+      <ToastContainer />
     </GetWidgetId>
   );
 }
