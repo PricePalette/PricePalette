@@ -105,7 +105,7 @@ async def update_widget(data: UpdateWidget):
 
     to_update = {k: v for k, v in to_update.items() if v}
     if not to_update:
-        return JSONResponse(content={"message": "OK", "detail": "Nothing to update"})
+        return JSONResponse(content={"message": "OK", "detail": "Nothing to update", "content": {}})
 
     with Session(ALCHEMY_ENGINE) as session:
         session.query(Widgets).filter_by(widget_id=str(data.widgetId)).update({'updated_date': func.now()})
@@ -122,7 +122,9 @@ async def update_widget(data: UpdateWidget):
     if to_update.get("price"):
         pass
 
-    return JSONResponse(content={"message": "OK"})
+    widget = widget_collection.find_one({"widgetId": str(data.widgetId)})
+    widget.pop("_id")
+    return JSONResponse(content={"message": "OK", "content": widget})
 
 
 @widget_router.delete("/delete")
