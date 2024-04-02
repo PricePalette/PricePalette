@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from backend.database import ALCHEMY_ENGINE, stripe, MONGO_CXN
-from backend.database_models import Subscriptions
+from backend.database_models import Subscriptions, Users
 from backend.dependency import get_user_jwt
 from backend.subscription_app.models import CreateSubscribe
 
@@ -35,6 +35,9 @@ async def create_subscription(data: CreateSubscribe, user_id: Annotated[str, Dep
                                   client_secret=subscription.latest_invoice.
                                   payment_intent.client_secret)
         session.add(subscribe)
+
+        user = session.query(Users).filter_by(user_id=user_id).one()
+        user.plan_id = data.price_id
         session.commit()
 
     return JSONResponse(content={"message": "OK", "content": {"subscription_id": subscription.id,
