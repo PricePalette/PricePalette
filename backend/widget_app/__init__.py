@@ -42,12 +42,22 @@ def widget_exists(widget_id: str):
 async def list_widgets(user_id: Annotated[str, Depends(get_user_jwt)]):
     with Session(ALCHEMY_ENGINE) as session:
         widget_ids = [i.widget_id for i in session.query(Widgets).filter_by(user_id=user_id, active=True)]
+
+        widget_embed_info = []
+        for id in widget_ids:
+            embed = session.query(WidgetEmbed).filter_by(widget_id=id, active=True).one_or_none()
+            if embed:
+                widget_embed_info.append([embed.embed_id, embed.views])
+            else:
+                widget_embed_info.append([None, None])
     widgets = widget_collection.find({"widgetId": {"$in": widget_ids}})
     if not widgets:
         return JSONResponse(content={"message": "error"}, status_code=404)
     widgets = list(widgets)
-    for widget in widgets:
+    for widget, embed_info in zip(widgets, widget_embed_info):
         widget.pop("_id", None)
+        widget["embed_id"] = embed_info[0]
+        widget["views"] = embed_info[1]
     return JSONResponse(content={"message": "OK", "content": widgets})
 
 
