@@ -2,7 +2,15 @@
 import React from "react";
 import { Header } from "@/components/Header";
 import { useRouter } from "next/router";
-import { Card, Text, Grid, SimpleGrid, Container, Group } from "@mantine/core";
+import {
+  Card,
+  Text,
+  Grid,
+  SimpleGrid,
+  Container,
+  Group,
+  Skeleton,
+} from "@mantine/core";
 import { useMutation, useQuery } from "react-query";
 import superagent, { SuperAgent } from "superagent";
 import { SERVER_ERROR, SERVER_SUCCESS, backendAPI } from "@/utils/constants";
@@ -39,6 +47,7 @@ export default function templates() {
     onSuccess: (data, variables) => {
       // error
       if (data.message === SERVER_ERROR) {
+        console.log("error");
         if (data.detail === "User not subscribed to a plan") {
           toast.error(
             "You need to subscribe to a pricing plan before creating a widget. Redirecting you there...",
@@ -57,6 +66,10 @@ export default function templates() {
               transition: Bounce,
             }
           );
+        }
+
+        if (data.details === "Unauthorized") {
+          router.push("/login");
         }
       }
 
@@ -115,53 +128,77 @@ export default function templates() {
           </Text>
         </SimpleGrid>
         <div style={{ padding: 20 }}>
-          {templates.map((template) => (
-            <Card
-              key={template.templateId}
-              withBorder
-              shadow="sm"
-              radius="md"
-              style={{ marginBottom: 20, cursor: "pointer" }}
-              onClick={() =>
-                mutation.mutate({
-                  ...gridTemplateMetaData,
-                  templateIdUsed: template.templateId,
-                })
-              }
-            >
-              <Group wrap="nowrap" gap={20}>
-                <img
-                  src={
-                    template.templateId ===
-                    "21c86e6a-eac0-4278-8fb4-30e80bb23026"
-                      ? "/Curved Card.svg"
-                      : template.templateId ===
-                        "1905d495-6371-4b2a-9f6a-c4a586e0d216"
-                      ? "/Section Card.svg"
-                      : "/Leaf Card.svg"
-                  }
-                  alt={template.templateName}
-                  width={300}
-                  height={300}
-                />
-                <div style={{ padding: "10px" }}>
-                  <Text
-                    style={{ color: "#5ec5c3", fontWeight: 650 }}
-                    mt="xs"
-                    mb="xs"
-                    size="xl"
-                  >
-                    {template.templateName}
-                  </Text>
-                  <Text size="lg" style={{ color: "#666" }}>
-                    {template.templateDescription}
-                  </Text>
-                </div>
-              </Group>
-            </Card>
-          ))}
+          {mutation.isLoading ? (
+            <>
+              <Skeleton visible={true} height={"200px"}>
+                Creating your widget
+              </Skeleton>
+
+              <Skeleton
+                visible={true}
+                height={"200px"}
+                style={{ marginTop: 20 }}
+              >
+                Creating your widget
+              </Skeleton>
+
+              <Skeleton
+                visible={true}
+                height={"200px"}
+                style={{ marginTop: 20, marginBottom: 20 }}
+              >
+                Creating your widget
+              </Skeleton>
+            </>
+          ) : (
+            templates.map((template) => (
+              <Card
+                key={template.templateId}
+                withBorder
+                shadow="sm"
+                radius="md"
+                style={{ marginBottom: 20, cursor: "pointer" }}
+                onClick={() =>
+                  mutation.mutate({
+                    ...gridTemplateMetaData,
+                    templateIdUsed: template.templateId,
+                  })
+                }
+              >
+                <Group wrap="nowrap" gap={20}>
+                  <img
+                    src={
+                      template.templateId ===
+                      "21c86e6a-eac0-4278-8fb4-30e80bb23026"
+                        ? "/Curved Card.svg"
+                        : template.templateId ===
+                          "1905d495-6371-4b2a-9f6a-c4a586e0d216"
+                        ? "/Section Card.svg"
+                        : "/Leaf Card.svg"
+                    }
+                    alt={template.templateName}
+                    width={300}
+                    height={300}
+                  />
+                  <div style={{ padding: "10px" }}>
+                    <Text
+                      style={{ color: "#5ec5c3", fontWeight: 650 }}
+                      mt="xs"
+                      mb="xs"
+                      size="xl"
+                    >
+                      {template.templateName}
+                    </Text>
+                    <Text size="lg" style={{ color: "#666" }}>
+                      {template.templateDescription}
+                    </Text>
+                  </div>
+                </Group>
+              </Card>
+            ))
+          )}
         </div>
-        <ToastContainer />
+        <ToastContainer style={{ width: "500px" }} />
       </Container>
     </>
   );
