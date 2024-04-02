@@ -206,7 +206,7 @@ export default function Dashboard() {
                                   color="#868E96"
                                 />
                                 <Text c="dimmed" fw={700} size="xs" ml={"xs"}>
-                                  {item.views}
+                                  {item.views} views
                                 </Text>
                               </div>
                             </Tooltip>
