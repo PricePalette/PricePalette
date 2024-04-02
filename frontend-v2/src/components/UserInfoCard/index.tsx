@@ -1,6 +1,6 @@
 import { getUserAvatar } from "@/utils/getUserAvatar";
 import { Paper, Avatar, Button, Text } from "@mantine/core";
-import { IconLogout } from "@tabler/icons-react";
+import { IconDashboard, IconLogout } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useQueryClient } from "react-query";
 
@@ -23,6 +23,18 @@ export function UserInfoCard({
       <Text ta="center" c="dimmed" fz="sm">
         {username}
       </Text>
+
+      <Button
+        variant="filled"
+        fullWidth
+        mt="md"
+        leftSection={<IconDashboard size={14} />}
+        onClick={() => {
+          router.push("/dashboard");
+        }}
+      >
+        Dashboard
+      </Button>
 
       <Button
         variant="filled"
