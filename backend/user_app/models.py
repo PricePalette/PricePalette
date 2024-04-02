@@ -13,6 +13,11 @@ class Register(Login):
     username: str
     org_name: str
 
+
+class UpdateSecret(BaseModel):
+    client_secret: str
+
+
 class ForgotPassword(BaseModel):
     email: EmailStr
 

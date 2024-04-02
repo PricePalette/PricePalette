@@ -14,7 +14,7 @@ from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKE
 from backend.database import ALCHEMY_ENGINE, stripe
 from backend.database_models import Users
 from backend.dependency import get_user_jwt
-from backend.user_app.models import Register, Login, ForgotPassword, ResetPassword
+from backend.user_app.models import Register, Login, ForgotPassword, ResetPassword, UpdateSecret
 
 user_router = APIRouter(
     prefix="/user",
@@ -55,7 +55,7 @@ async def register(user_info: Register):
         customer = stripe.Customer.create(email=user_info.email, name=user_info.org_name)
         user = Users(user_name=user_info.username, email=user_info.email, organization_name=user_info.org_name,
                      password=pswd, salt=salt, plan_id=None,
-                     user_id=user_id, stripe_cust_id=customer.stripe_id)
+                     user_id=user_id, stripe_cust_id=customer.stripe_id, stripe_cust_secret=None)
         session.add(user)
         session.commit()
     access_token = create_access_token(sub=user_id)
@@ -67,22 +67,23 @@ async def register(user_info: Register):
 @user_router.post("/login")
 async def login(user_info: Login):
     with Session(ALCHEMY_ENGINE) as session:
-        user = session.query(Users).filter_by(email=user_info.email).limit(1).all()
+        user = session.query(Users).filter_by(email=user_info.email).one_or_none()
         if not user:
             return JSONResponse(status_code=401,
                                 content={"message": "error",
                                          "errors": [{"field": "email", "message": "Invalid email"}]})
 
-        user = user[0]
         if not bcrypt.checkpw(user_info.password.encode(), user.password.encode()):
             return JSONResponse(status_code=401,
                                 content={"message": "error",
                                          "errors": [{"field": "password", "message": "Invalid password"}]})
     access_token = create_access_token(sub=user.user_id)
+    redacted_key = f"xxxx-xxxx-xx{user.stripe_cust_secret[-2:]}" if user.stripe_cust_secret else None
     return JSONResponse(content={"message": "OK",
                                  "access_token": access_token,
                                  "content": {"user_id": user.user_id, "user_name": user.user_name,
-                                             "email": user.email, "stripe_cust_id": user.stripe_cust_id}})
+                                             "email": user.email, "stripe_cust_id": user.stripe_cust_id,
+                                             "redacted_key": redacted_key}})
 
 
 @user_router.get("/info")
@@ -95,6 +96,16 @@ async def info(user_id: Annotated[str, Depends(get_user_jwt)]):
     return JSONResponse(content={"message": "OK",
                                  "content": {"user_id": user.user_id, "user_name": user.user_name,
                                              "email": user.email, "stripe_cust_id": user.stripe_cust_id}})
+
+
+@user_router.post("/update-secret")
+async def update_secret(data: UpdateSecret, user_id: Annotated[str, Depends(get_user_jwt)]):
+    with Session(ALCHEMY_ENGINE) as session:
+        user = session.query(Users).filter_by(user_id=user_id).one()
+        user.stripe_cust_secret = data.client_secret
+        session.commit()
+    return JSONResponse(content={"message": "OK",
+                                 "content": {"redacted_key": f"xxxx-xxxx-xx{data.client_secret[-2:]}"}})
 
 
 @user_router.post("/forgot-password")
