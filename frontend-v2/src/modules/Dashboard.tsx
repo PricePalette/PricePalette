@@ -189,22 +189,28 @@ export default function Dashboard() {
                           >
                             {item.description}
                           </Text>
-                          <Tooltip label="Widget Views">
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                marginTop: "0.5em",
-                                width: "100px",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <IconEye width={25} height={25} color="#868E96" />
-                              <Text c="dimmed" fw={700} size="xs" ml={"xs"}>
-                                {item.views ? item.views : 0}
-                              </Text>
-                            </div>
-                          </Tooltip>
+                          {item.views ? (
+                            <Tooltip label="Widget Views">
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  marginTop: "0.5em",
+                                  width: "100px",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <IconEye
+                                  width={25}
+                                  height={25}
+                                  color="#868E96"
+                                />
+                                <Text c="dimmed" fw={700} size="xs" ml={"xs"}>
+                                  {item.views} views
+                                </Text>
+                              </div>
+                            </Tooltip>
+                          ) : null}
                         </div>
                       </Group>
                       <div
