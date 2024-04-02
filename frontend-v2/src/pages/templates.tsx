@@ -111,7 +111,15 @@ export default function templates() {
             >
               <Group wrap="nowrap" gap={20}>
                 <img
-                  src={template.templateImage}
+                  src={
+                    template.templateId ===
+                    "21c86e6a-eac0-4278-8fb4-30e80bb23026"
+                      ? "/Curved Card.svg"
+                      : template.templateId ===
+                        "1905d495-6371-4b2a-9f6a-c4a586e0d216"
+                      ? "/Section Card.svg"
+                      : "/Leaf Card.svg"
+                  }
                   alt={template.templateName}
                   width={300}
                   height={300}

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   Group,
   ScrollArea,
@@ -156,11 +157,19 @@ export default function Dashboard() {
                   >
                     <div className={classes.cardContent}>
                       <Group>
-                        <Image
-                          src="https://images.unsplash.com/photo-1602080858428-57174f9431cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80"
+                        <img
+                          src={
+                            item.templateIdUsed ===
+                            "21c86e6a-eac0-4278-8fb4-30e80bb23026"
+                              ? "/Curved Card.svg"
+                              : item.templateId ===
+                                "1905d495-6371-4b2a-9f6a-c4a586e0d216"
+                              ? "/Section Card.svg"
+                              : "/Leaf Card.svg"
+                          }
+                          alt={"template skeleton"}
+                          width={160}
                           height={160}
-                          fit="cover"
-                          alt="A description of the image"
                         />
                         <div className={classes.body}>
                           <Text className={classes.title} mt="xs" mb="md">
