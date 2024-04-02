@@ -17,8 +17,8 @@ embed_router = APIRouter(
 @embed_router.get("/widget-info")
 async def widget_info(embedId: UUID4):
     with Session(ALCHEMY_ENGINE) as session:
-        embed = session.query(WidgetEmbed).filter_by(embed_id=str(embedId), active=True).first()
-        widget = session.query(Widgets).filter_by(widget_id=embed.widget_id).one()
+        embed = session.query(WidgetEmbed).filter_by(embed_id=str(embedId), active=True).one()
+        widget = session.query(Widgets).filter_by(widget_id=embed.widget_id, active=True).one()
         user = session.query(Users).filter_by(user_id=widget.user_id).one()
 
     if embed.views >= PRICEPALETTE_PLANS[user.plan_id]:
