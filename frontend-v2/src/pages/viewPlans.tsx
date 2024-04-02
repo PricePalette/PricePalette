@@ -73,6 +73,7 @@ export default function ViewPlans() {
           {plansData?.cards.map((card, index) => {
             return (
               <Card
+                key={index}
                 withBorder
                 radius={"md"}
                 mt={"2em"}
