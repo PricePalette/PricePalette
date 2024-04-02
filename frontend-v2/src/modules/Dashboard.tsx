@@ -14,8 +14,14 @@ import {
   rem,
   Modal,
   Skeleton,
+  Tooltip,
 } from "@mantine/core";
-import { IconTemplate, IconDashboard, IconSettings } from "@tabler/icons-react";
+import {
+  IconTemplate,
+  IconDashboard,
+  IconSettings,
+  IconEye,
+} from "@tabler/icons-react";
 import classes from "../styles/navbarnested.module.css";
 import { useRouter } from "next/router";
 import { useMutation, useQuery } from "react-query";
@@ -172,12 +178,33 @@ export default function Dashboard() {
                           height={160}
                         />
                         <div className={classes.body}>
-                          <Text className={classes.title} mt="xs" mb="md">
+                          <Text className={classes.title} mt="xs">
                             {item.title}
                           </Text>
-                          <Text tt="uppercase" c="dimmed" fw={700} size="xs">
+                          <Text
+                            c="dimmed"
+                            fw={700}
+                            size="xs"
+                            style={{ marginTop: "0.2em" }}
+                          >
                             {item.description}
                           </Text>
+                          <Tooltip label="Widget Views">
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                marginTop: "0.5em",
+                                width: "100px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <IconEye width={25} height={25} color="#868E96" />
+                              <Text c="dimmed" fw={700} size="xs" ml={"xs"}>
+                                {item.views ? item.views : 0}
+                              </Text>
+                            </div>
+                          </Tooltip>
                         </div>
                       </Group>
                       <div
