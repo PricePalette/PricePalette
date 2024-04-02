@@ -87,16 +87,18 @@ export default function EditTemplatePage() {
 
         toast.success("Your changes have been saved!", {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 4000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
           theme: "light",
+          onClose: () => {
+            router.push("/dashboard");
+          },
           transition: Bounce,
         });
-        router.push("/dashboard");
       }
     },
   });

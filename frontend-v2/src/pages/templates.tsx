@@ -12,6 +12,8 @@ import { useMetaData } from "@/stores/useMetaData";
 import { gridTemplateMetaData } from "@/utils/initialMetaDatas";
 import { WidgetMetaData } from "@/types";
 import { toErrorMap } from "@/utils/toErrorMap";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Template {
   templateId: string;
@@ -37,7 +39,25 @@ export default function templates() {
     onSuccess: (data, variables) => {
       // error
       if (data.message === SERVER_ERROR) {
-        console.error("Failed to create widget");
+        if (data.detail === "User not subscribed to a plan") {
+          toast.error(
+            "You need to subscribe to a pricing plan before creating a widget. Redirecting you there...",
+            {
+              position: "top-right",
+              autoClose: 2500,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              onClose: () => {
+                router.push("/viewPlans");
+              },
+              transition: Bounce,
+            }
+          );
+        }
       }
 
       // success
@@ -141,6 +161,7 @@ export default function templates() {
             </Card>
           ))}
         </div>
+        <ToastContainer />
       </Container>
     </>
   );
