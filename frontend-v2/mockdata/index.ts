@@ -17,41 +17,59 @@ export const templateData = [
   },
 ];
 
-export const plansData = [
-  {
-    id: "price_1Ov0bVCjcrhrZTSatO9LbWyF",
-    title: "Lite",
-    subTitle: "Suitable for startups",
-    price: "$15",
-    features: [
-      "Access to all widgets",
-      "Usage upto 5000 views",
-      "User Friendly",
-      "100% Ad Free",
-    ],
+export const plansData = {
+  themeColor: "#5ec5c3",
+  font: {
+    size: "M",
+    family: "Arial",
+    color: "#000000",
   },
-  {
-    id: "price_1Ov0bVCjcrhrZTSarKzaXfdL",
-    title: "Pro",
-    subTitle: "Suitable for small business",
-    price: "$25",
-    features: [
-      "Access to all widgets",
-      "Usage upto 15000 views",
-      "User Friendly",
-      "100% Ad Free",
-    ],
+  price: {
+    duration: "M",
+    currency: "CAD",
   },
-  {
-    id: "price_1Ov0bVCjcrhrZTSaNA5k670V",
-    title: "Elite",
-    subTitle: "Suitable for medium scale business",
-    price: "$40",
-    features: [
-      "Access to all widgets",
-      "Usage upto 30000 views",
-      "User Friendly",
-      "100% Ad Free",
-    ],
-  },
-];
+  cards: [
+    {
+      id: "price_1Ov0bVCjcrhrZTSatO9LbWyF",
+      title: "Lite",
+      description: "Suitable for startups",
+      features: [
+        { text: "Access to all widgets" },
+        { text: "Usage up to 5000 views" },
+        { text: "User Friendly" },
+        { text: "100% Ad Free" },
+      ],
+      amount: 15,
+      buttonText: "Start Now",
+      priceCaption: "Per Month",
+    },
+    {
+      id: "price_1Ov0bVCjcrhrZTSarKzaXfdL",
+      title: "Pro",
+      description: "Suitable for small business",
+      features: [
+        { text: "Access to all widgets" },
+        { text: "Usage up to 15000 views" },
+        { text: "User Friendly" },
+        { text: "100% Ad Free" },
+      ],
+      amount: 25,
+      buttonText: "Start Now",
+      priceCaption: "Per Month",
+    },
+    {
+      id: "price_1Ov0bVCjcrhrZTSaNA5k670V",
+      title: "Elite",
+      description: "Suitable for medium scale business",
+      features: [
+        { text: "Access to all widgets" },
+        { text: "Usage up to 30000 views" },
+        { text: "User Friendly" },
+        { text: "100% Ad Free" },
+      ],
+      amount: 40,
+      buttonText: "Start Now",
+      priceCaption: "Per Month",
+    },
+  ],
+};

@@ -37,13 +37,13 @@ import { InstallWidgetModal } from "@/components/InstallWidgetModal";
 import { useCurrentWidgetId } from "@/stores/useCurrentWidgetId";
 
 const mockdata = [
-  { label: "Dashboard", icon: IconDashboard, link: "/dashboard" },
   {
     label: "Templates",
     icon: IconTemplate,
     link: "/templates",
   },
   { label: "Profile Settings", icon: IconSettings, link: "/settings" },
+  { label: "View Plans", icon: IconDashboard, link: "/viewPlans" },
 ];
 
 export default function Dashboard() {
