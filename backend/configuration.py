@@ -13,7 +13,8 @@ with open(urlretrieved[0], "r") as fp:
 
 PRICEPALETTE_PLANS = {"price_1Ov0bVCjcrhrZTSatO9LbWyF": 5000,
                       "price_1Ov0bVCjcrhrZTSarKzaXfdL": 15000,
-                      "price_1Ov0bVCjcrhrZTSaNA5k670V": 30000}
+                      "price_1Ov0bVCjcrhrZTSaNA5k670V": 30000,
+                      "631e263e-d9ae-40cc-ac21-91d71fe7c9fd": 50}
 
 JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 JWT_ALGORITHM = os.environ["JWT_ALGORITHM"]
