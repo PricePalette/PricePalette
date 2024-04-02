@@ -63,6 +63,9 @@ async def widget_info(widgetId: UUID4):
 @widget_router.post("/create")
 async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_user_jwt)]):
     with (Session(ALCHEMY_ENGINE) as session):
+        user = session.query(Users).filter_by(user_id=user_id).one()
+        if not user.plan_id:
+            return JSONResponse(content={"message": "error", "detail": "User not subscribed to a plan"})
         widget_json = data.model_dump(mode="json")
         product = stripe.Product.create(name=f"{data.title} - {data.widgetId}", description=data.description,
                                         metadata={"for_user_id": user_id})
@@ -82,7 +85,7 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
                          template_id_used=data.templateIdUsed, stripe_product_id=product.stripe_id)
         session.add(widget)
 
-        session.query(Users).filter_by(user_id=user_id).update({'widgets_created': Users.widgets_created + 1})
+        user.widgets_created += 1
         session.query(Templates).filter_by(template_id=data.templateIdUsed
                                            ).update({'usages': Templates.usages + 1})
 

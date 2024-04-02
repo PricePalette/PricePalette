@@ -54,7 +54,7 @@ async def register(user_info: Register):
         pswd, salt = create_hash_and_salt(user_info.password)
         customer = stripe.Customer.create(email=user_info.email, name=user_info.org_name)
         user = Users(user_name=user_info.username, email=user_info.email, organization_name=user_info.org_name,
-                     password=pswd, salt=salt, plan_id="631e263e-d9ae-40cc-ac21-91d71fe7c9fd",
+                     password=pswd, salt=salt, plan_id=None,
                      user_id=user_id, stripe_cust_id=customer.stripe_id)
         session.add(user)
         session.commit()
