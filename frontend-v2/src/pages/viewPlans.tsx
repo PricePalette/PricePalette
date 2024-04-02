@@ -6,9 +6,12 @@ import {
   Container,
   List,
   ListItem,
+  Flex,
+  Title,
+  Tooltip,
 } from "@mantine/core";
 import { plansData } from "../../mockdata";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconQuestionMark } from "@tabler/icons-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import classes from "../styles/viewplans.module.css";
@@ -18,7 +21,10 @@ import { useRouter } from "next/router";
 export default function ViewPlans() {
   const router = useRouter();
 
+  const appliedFontSize = "0.5rem";
+
   const createSubscription = async (priceId: string) => {
+    console.log("PRICE ID", priceId);
     if (!localStorage.getItem("pp_access_token")) {
       router.push("/login");
       return;
@@ -64,45 +70,106 @@ export default function ViewPlans() {
 
       <Container size="xs" className={classes.container}>
         <div className={classes.cardDiv}>
-          {plansData.map((eachPlan, index) => (
-            <Card key={index} shadow="lg" radius="md" className={classes.card}>
-              <Card.Section className={classes.cardSection}>
-                <Text size="lg" fw={500}>
-                  {eachPlan.title}
-                </Text>
-                <Text size="md" style={{ marginBottom: "10px" }}>
-                  {eachPlan.subTitle}
-                </Text>
-                <Text fw={700} style={{ fontSize: 26, lineHeight: 1 }}>
-                  {eachPlan.price}
-                </Text>
-              </Card.Section>
-
-              <Group mt="md" mb="xs" style={{ alignItems: "flex-start" }}>
-                <List style={{ marginTop: "8px" }}>
-                  {eachPlan.features.map((eachFeature, index) => (
-                    <ListItem
-                      key={index}
-                      icon={<IconCheck size={18} />}
-                      style={{ marginBottom: "8px" }}
-                    >
-                      {eachFeature}
-                    </ListItem>
-                  ))}
-                </List>
-              </Group>
-
-              {/* Handle On Click */}
-              <Button
-                color="#4C5897"
-                radius="md"
-                style={{ marginTop: "30px" }}
-                onClick={() => createSubscription(eachPlan.id)}
+          {plansData?.cards.map((card, index) => {
+            return (
+              <Card
+                key={index}
+                withBorder
+                radius={"md"}
+                mt={"2em"}
+                style={{ height: "550px", width: "300px" }}
               >
-                Subscribe
-              </Button>
-            </Card>
-          ))}
+                <Card.Section
+                  bg={`${plansData.themeColor}`}
+                  p={"lg"}
+                  style={{
+                    height: "290px",
+                    "border-radius": "0 0 30% 30% / 50px",
+                  }}
+                >
+                  <Flex
+                    direction={"column"}
+                    align={"center"}
+                    justify={"center"}
+                    style={{ height: "100%" }}
+                  >
+                    <Text
+                      c={`${plansData.font.color}`}
+                      fw={700}
+                      style={{ fontSize: `calc(1.3rem + ${appliedFontSize})` }}
+                    >
+                      {card.title}
+                    </Text>
+                    <span
+                      style={{
+                        fontSize: `calc(3.5rem + ${appliedFontSize})`,
+                        color: `${plansData.font.color}`,
+                      }}
+                    >
+                      ${card.amount}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: `calc(0.5rem + ${appliedFontSize})`,
+                        color: `${plansData.font.color}`,
+                      }}
+                    >
+                      {card.priceCaption}
+                    </span>
+                    <Text size="xl" c={`${plansData.font.color}`}>
+                      Billed{" "}
+                      {plansData.price.duration === "M" ? "monthly" : "yearly"}{" "}
+                      <span
+                        style={{
+                          fontSize: `1rem`,
+                          color: `${plansData.font.color}`,
+                        }}
+                      >
+                        in {plansData.price.currency}
+                      </span>
+                    </Text>
+                  </Flex>
+                </Card.Section>
+
+                <Flex
+                  direction="column"
+                  justify={"space-between"}
+                  align={"center"}
+                  style={{ height: "100%" }}
+                >
+                  <Flex
+                    direction={"column"}
+                    justify={"center"}
+                    gap={"md"}
+                    style={{ height: "100%" }}
+                  >
+                    {card.features.map((feature, index) => (
+                      <Flex align={"center"} key={index}>
+                        <IconCheck height={"18px"} width={"18px"} />
+                        <Text
+                          c={`${plansData.font.color}`}
+                          style={{
+                            fontSize: `calc(0.5rem + ${appliedFontSize})`,
+                          }}
+                          ml={"xs"}
+                        >
+                          {feature.text}
+                        </Text>
+                      </Flex>
+                    ))}
+                  </Flex>
+
+                  <Button
+                    style={{ width: "100%" }}
+                    bg={`${plansData.themeColor}`}
+                    onClick={() => createSubscription(card.id)}
+                  >
+                    {card.buttonText}
+                  </Button>
+                </Flex>
+              </Card>
+            );
+          })}
         </div>
       </Container>
       <Footer />

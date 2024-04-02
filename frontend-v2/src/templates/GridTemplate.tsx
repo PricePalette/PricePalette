@@ -4,7 +4,7 @@ import { fontSizeMap } from "@/utils/constants";
 import { Text, Card, Flex, Title, Button, Tooltip } from "@mantine/core";
 import { IconCheck, IconQuestionMark } from "@tabler/icons-react";
 
-function TemplateCard({
+export function TemplateCard({
   card,
   billDuration,
   metaData,
