@@ -50,12 +50,16 @@ async def list_widgets(user_id: Annotated[str, Depends(get_user_jwt)]):
                 widget_embed_info.append([embed.embed_id, embed.views])
             else:
                 widget_embed_info.append([None, None])
-    widgets = widget_collection.find({"widgetId": {"$in": widget_ids}})
+    widgets = widget_collection.aggregate(
+        [{"$match": {"widgetId": {"$in": widget_ids}}},
+         {"$addFields": {"tmpDate": {"$dateFromString": {"dateString": "$createdDate"}}}},
+         {"$sort": {"tmpDate": -1}}])
     if not widgets:
         return JSONResponse(content={"message": "error"}, status_code=404)
     widgets = list(widgets)
     for widget, embed_info in zip(widgets, widget_embed_info):
         widget.pop("_id", None)
+        widget.pop("tmpDate", None)
         widget["embed_id"] = embed_info[0]
         widget["views"] = embed_info[1]
     return JSONResponse(content={"message": "OK", "content": widgets})
