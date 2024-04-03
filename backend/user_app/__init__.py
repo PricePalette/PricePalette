@@ -106,7 +106,7 @@ async def info(user_id: Annotated[str, Depends(get_user_jwt)]):
                                  "content": {"user_id": user.user_id, "user_name": user.user_name,
                                              "email": user.email, "stripe_cust_id": user.stripe_cust_id,
                                              "redacted_key": redacted_key, "views_cap": views_cap,
-                                             "current_views": current_views}})
+                                             "current_views": current_views, "plan_id": user.plan_id}})
 
 
 @user_router.post("/update-secret")
