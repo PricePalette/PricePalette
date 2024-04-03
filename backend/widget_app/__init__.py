@@ -42,12 +42,26 @@ def widget_exists(widget_id: str):
 async def list_widgets(user_id: Annotated[str, Depends(get_user_jwt)]):
     with Session(ALCHEMY_ENGINE) as session:
         widget_ids = [i.widget_id for i in session.query(Widgets).filter_by(user_id=user_id, active=True)]
-    widgets = widget_collection.find({"widgetId": {"$in": widget_ids}})
+
+        widget_embed_info = []
+        for id in widget_ids:
+            embed = session.query(WidgetEmbed).filter_by(widget_id=id, active=True).one_or_none()
+            if embed:
+                widget_embed_info.append([embed.embed_id, embed.views])
+            else:
+                widget_embed_info.append([None, None])
+    widgets = widget_collection.aggregate(
+        [{"$match": {"widgetId": {"$in": widget_ids}}},
+         {"$addFields": {"tmpDate": {"$dateFromString": {"dateString": "$createdDate"}}}},
+         {"$sort": {"tmpDate": -1}}])
     if not widgets:
         return JSONResponse(content={"message": "error"}, status_code=404)
     widgets = list(widgets)
-    for widget in widgets:
+    for widget, embed_info in zip(widgets, widget_embed_info):
         widget.pop("_id", None)
+        widget.pop("tmpDate", None)
+        widget["embed_id"] = embed_info[0]
+        widget["views"] = embed_info[1]
     return JSONResponse(content={"message": "OK", "content": widgets})
 
 
@@ -63,6 +77,9 @@ async def widget_info(widgetId: UUID4):
 @widget_router.post("/create")
 async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_user_jwt)]):
     with (Session(ALCHEMY_ENGINE) as session):
+        user = session.query(Users).filter_by(user_id=user_id).one()
+        if not user.plan_id:
+            return JSONResponse(content={"message": "error", "detail": "User not subscribed to a plan"})
         widget_json = data.model_dump(mode="json")
         product = stripe.Product.create(name=f"{data.title} - {data.widgetId}", description=data.description,
                                         metadata={"for_user_id": user_id})
@@ -76,13 +93,14 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
 
             link = stripe.PaymentLink.create(line_items=[{"price": price.stripe_id, "quantity": 1}])
             json_card["payment_link"] = link.url
+            json_card["payment_link_id"] = link.id
 
         from_template = True if data.templateIdUsed else False
         widget = Widgets(widget_id=data.widgetId, user_id=user_id, from_template=from_template,
                          template_id_used=data.templateIdUsed, stripe_product_id=product.stripe_id)
         session.add(widget)
 
-        session.query(Users).filter_by(user_id=user_id).update({'widgets_created': Users.widgets_created + 1})
+        user.widgets_created += 1
         session.query(Templates).filter_by(template_id=data.templateIdUsed
                                            ).update({'usages': Templates.usages + 1})
 
@@ -99,29 +117,39 @@ async def update_widget(data: UpdateWidget):
     from_db = widget_collection.find_one({"widgetId": str(data.widgetId)})
     from_api = data.model_dump(mode="json")
 
+    # get the diff
     to_update = {}
     cards_to_update = []
-    for key, value in from_api.items():
+    is_unordered = False
+    for key, api_value in from_api.items():
+        db_value = from_db[key]
         to_update[key] = None
-        if (isinstance(value, str) or isinstance(value, dict)) and value != from_db[key]:
-            to_update[key] = value
+        if (isinstance(api_value, str) or isinstance(api_value, dict)) and api_value != db_value:
+            to_update[key] = api_value
         elif key == "cards":
-            for api_card, db_card in zip(value, from_db["cards"]):
-                if json.dumps(api_card) != json.dumps(db_card):
-                    cards_to_update.append(api_card)
-
+            for api_card in api_value:
+                api_card_copy = copy.deepcopy(api_card)
+                api_card_copy.pop("stripe_price_id", None)
+                api_card_copy.pop("payment_link", None)
+                for db_card in db_value:
+                    db_card_copy = copy.deepcopy(db_card)
+                    db_card_copy.pop("stripe_price_id", None)
+                    db_card_copy.pop("payment_link", None)
+                    if api_card["id"] == db_card["id"] and json.dumps(api_card_copy) != json.dumps(db_card_copy):
+                        cards_to_update.append(api_card)
+            is_unordered = any([api_card["id"] != db_card["id"] for api_card, db_card in zip(api_value, db_value)])
     to_update = {k: v for k, v in to_update.items() if v}
-    if not to_update:
+    if not to_update and not cards_to_update and not is_unordered:
         return JSONResponse(content={"message": "OK", "detail": "Nothing to update", "content": {}})
 
+    # modify widget title and description in stripe
     if to_update.get("title"):
         stripe.Product.modify(data.stripe_product_id, name=f"{to_update['title']} - {data.widgetId}")
-
     if to_update.get("description"):
         stripe.Product.modify(data.stripe_product_id, description=to_update['description'])
 
+    # update card currency and interval in stripe and mongodb, unordered
     common_price_kwargs = {}
-    # delete and recreate prices
     if to_update.get("price"):
         if to_update["price"]["currency"].lower() != from_db["price"]["currency"].lower():
             common_price_kwargs["currency"] = to_update["price"]["currency"].lower()
@@ -132,25 +160,56 @@ async def update_widget(data: UpdateWidget):
             common_price_kwargs["recurring"] = {"interval": STRIPE_INTERVAL[to_update["price"]["duration"].lower()]}
         else:
             common_price_kwargs["recurring"] = {"interval": STRIPE_INTERVAL[from_db["price"]["duration"].lower()]}
+    else:
+        common_price_kwargs["currency"] = from_db["price"]["currency"].lower()
+        common_price_kwargs["recurring"] = {"interval": STRIPE_INTERVAL[from_db["price"]["duration"].lower()]}
 
-    if common_price_kwargs:
+    if common_price_kwargs and to_update.get("price"):
         cards_copy = copy.deepcopy(from_db["cards"])
         for idx, card in enumerate(from_db["cards"]):
+            stripe.Price.modify(card["stripe_price_id"], active=False)
+            stripe.PaymentLink.modify(card["payment_link_id"], active=False)
             price = stripe.Price.create(**common_price_kwargs, unit_amount=int(card["amount"] * 100),
                                         product=from_db["stripe_product_id"])
-            cards_copy[idx]["stripe_price_id"] = price.stripe_id
-
             link = stripe.PaymentLink.create(line_items=[{"price": price.stripe_id, "quantity": 1}])
-            cards_copy[idx]["payment_link"] = link.url
+            cards_copy[idx] = {**card, "payment_link": link.url, "stripe_price_id": price.stripe_id}
         widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": {"cards": cards_copy}})
+
+    # update cards metadata in mongodb, unordered
+    if cards_to_update:
+        from_db = widget_collection.find_one({"widgetId": str(data.widgetId)})
+        new_cards = []
+        for card in from_db["cards"]:
+            tmp = None
+            for update_card in cards_to_update:
+                if card["id"] == update_card["id"]:
+                    tmp = update_card
+            if tmp is None:
+                new_cards.append(card)
+            else:
+                stripe.Price.modify(card["stripe_price_id"], active=False)
+                stripe.PaymentLink.modify(card["payment_link_id"], active=False)
+                price = stripe.Price.create(**common_price_kwargs, unit_amount=int(tmp["amount"] * 100),
+                                            product=from_db["stripe_product_id"])
+                link = stripe.PaymentLink.create(line_items=[{"price": price.stripe_id, "quantity": 1}])
+                tmp = {**tmp, "payment_link": link.url, "stripe_price_id": price.stripe_id}
+                new_cards.append(tmp)
+        widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": {"cards": new_cards}})
 
     with Session(ALCHEMY_ENGINE) as session:
         session.query(Widgets).filter_by(widget_id=str(data.widgetId), active=True).update({'updated_date': func.now()})
         session.commit()
-    widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": to_update})
+
+    if to_update:
+        widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": to_update})
 
     widget = widget_collection.find_one({"widgetId": str(data.widgetId)})
     widget.pop("_id")
+
+    if is_unordered:
+        sorter = {card["id"]: idx for idx, card in enumerate(from_api["cards"])}
+        widget["cards"] = sorted(widget["cards"], key=lambda x: sorter[x["id"]])
+        widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": {"cards": widget["cards"]}})
     return JSONResponse(content={"message": "OK", "content": widget})
 
 

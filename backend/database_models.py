@@ -37,6 +37,7 @@ class Users(Base):
     widgets_created = Column(Integer, default=0)
     forgot_password = Column(String(200), nullable=True)
     stripe_cust_id = Column(String(100), unique=True, nullable=True)
+    stripe_cust_secret = Column(String(100), nullable=True)
 
 
 class Widgets(Base):
