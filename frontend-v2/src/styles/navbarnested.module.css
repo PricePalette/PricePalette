@@ -1,8 +1,5 @@
 .navbar {
-  background-color: light-dark(
-    var(--mantine-color-white),
-    var(--mantine-color-dark-6)
-  );
+  background-color: white;
   width: rem(300px);
   padding: var(--mantine-spacing-md);
   padding-bottom: 0;
@@ -93,8 +90,8 @@
   display: flex;
   width: 100%;
   flex-direction: column;
-  background-color: whitesmoke;
   padding: 24px;
   border: 1px solid whitesmoke;
+  background-color: whitesmoke;
   align-items: flex-start;
 }
