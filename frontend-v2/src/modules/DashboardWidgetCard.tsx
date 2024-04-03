@@ -26,6 +26,7 @@ export function DashboardWidgetCard({
   createdDate,
   editLink,
   widgetId,
+  templateType,
 }: {
   widgetId: string;
   views: string;
@@ -33,6 +34,7 @@ export function DashboardWidgetCard({
   desc: string;
   createdDate: string;
   editLink: string;
+  templateType: string;
 }) {
   const date = new Date(createdDate);
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -70,7 +72,18 @@ export function DashboardWidgetCard({
       <Card.Section withBorder>
         <a>
           {/* eslint-disable-next-line */}
-          <Image src="/Curved Card.svg" height={200} p={"0.2em"} />
+          <Image
+            src={
+              templateType === "Curved Card"
+                ? "/Curved Card.svg"
+                : templateType === "Section Card"
+                ? "Section Card.svg"
+                : "Leaf Card.svg"
+            }
+            height={200}
+            p={"0.2em"}
+            fit="contain"
+          />
         </a>
       </Card.Section>
 
@@ -102,14 +115,20 @@ export function DashboardWidgetCard({
             <IconPencil
               style={{ width: rem(16), height: rem(16) }}
               color={"green"}
-              onClick={() => router.push(editLink)}
+              onClick={() => {
+                console.log("edit");
+                router.push(editLink);
+              }}
             />
           </ActionIcon>
           <ActionIcon className={classes.action}>
             <IconTrash
               style={{ width: rem(16), height: rem(16) }}
               color={"red"}
-              onClick={() => setDeleteModalOpen(true)}
+              onClick={() => {
+                console.log("delete");
+                setDeleteModalOpen(true);
+              }}
             />
           </ActionIcon>
           <ActionIcon className={classes.action}>
@@ -117,6 +136,13 @@ export function DashboardWidgetCard({
               style={{ width: rem(16), height: rem(16) }}
               color={"blue"}
               onClick={() => setInstallWidgetModalOpen(true)}
+            />
+          </ActionIcon>
+          <ActionIcon className={classes.action}>
+            <IconShare
+              style={{ width: rem(16), height: rem(16) }}
+              color={"blue"}
+              onClick={() => console.log("hello")}
             />
           </ActionIcon>
         </Group>
