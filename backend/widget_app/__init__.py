@@ -116,6 +116,7 @@ async def update_widget(data: UpdateWidget):
     from_db = widget_collection.find_one({"widgetId": str(data.widgetId)})
     from_api = data.model_dump(mode="json")
 
+    # get the diff
     to_update = {}
     cards_to_update = []
     for key, value in from_api.items():
@@ -131,14 +132,14 @@ async def update_widget(data: UpdateWidget):
     if not to_update:
         return JSONResponse(content={"message": "OK", "detail": "Nothing to update", "content": {}})
 
+    # modify widget title and description in stripe
     if to_update.get("title"):
         stripe.Product.modify(data.stripe_product_id, name=f"{to_update['title']} - {data.widgetId}")
-
     if to_update.get("description"):
         stripe.Product.modify(data.stripe_product_id, description=to_update['description'])
 
     common_price_kwargs = {}
-    # delete and recreate prices
+    # get card currency and interval diff
     if to_update.get("price"):
         if to_update["price"]["currency"].lower() != from_db["price"]["currency"].lower():
             common_price_kwargs["currency"] = to_update["price"]["currency"].lower()
@@ -149,16 +150,14 @@ async def update_widget(data: UpdateWidget):
             common_price_kwargs["recurring"] = {"interval": STRIPE_INTERVAL[to_update["price"]["duration"].lower()]}
         else:
             common_price_kwargs["recurring"] = {"interval": STRIPE_INTERVAL[from_db["price"]["duration"].lower()]}
-
+    # update card prices in stripe and mongodb
     if common_price_kwargs:
         cards_copy = copy.deepcopy(from_db["cards"])
         for idx, card in enumerate(from_db["cards"]):
             price = stripe.Price.create(**common_price_kwargs, unit_amount=int(card["amount"] * 100),
                                         product=from_db["stripe_product_id"])
-            cards_copy[idx]["stripe_price_id"] = price.stripe_id
-
             link = stripe.PaymentLink.create(line_items=[{"price": price.stripe_id, "quantity": 1}])
-            cards_copy[idx]["payment_link"] = link.url
+            cards_copy[idx] = {**cards_copy[idx], "payment_link": link.url, "stripe_price_id": price.stripe_id}
         widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": {"cards": cards_copy}})
 
     with Session(ALCHEMY_ENGINE) as session:

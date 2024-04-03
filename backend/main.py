@@ -2,8 +2,9 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI, Request
-from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import SQLAlchemyError
 
 from backend.database import MONGO_CLIENT, ALCHEMY_ENGINE
@@ -30,6 +31,15 @@ app.include_router(user_router)
 app.include_router(templates_router)
 app.include_router(sub_router)
 app.include_router(embed_router)
+
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.exception_handler(RequestValidationError)
