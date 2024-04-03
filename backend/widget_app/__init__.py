@@ -12,7 +12,7 @@ from sqlalchemy.sql import func
 from backend.database import MONGO_CXN, ALCHEMY_ENGINE, stripe
 from backend.database_models import Widgets, Users, WidgetEmbed, Templates
 from backend.dependency import verify_jwt, get_user_jwt
-from backend.widget_app.models import UserID, WidgetMetadata, UpdateWidget, CreateWidget
+from backend.widget_app.models import UserID, WidgetMetadata, UpdateWidget, CreateWidget, WidgetID
 
 widget_collection = MONGO_CXN["widgets"]
 widget_router = APIRouter(
@@ -76,10 +76,8 @@ async def widget_info(widgetId: UUID4):
 
 @widget_router.post("/create")
 async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_user_jwt)]):
-    with (Session(ALCHEMY_ENGINE) as session):
+    with Session(ALCHEMY_ENGINE) as session:
         user = session.query(Users).filter_by(user_id=user_id).one()
-        if not user.plan_id:
-            return JSONResponse(content={"message": "error", "detail": "User not subscribed to a plan"})
         widget_json = data.model_dump(mode="json")
         product = stripe.Product.create(name=f"{data.title} - {data.widgetId}", description=data.description,
                                         metadata={"for_user_id": user_id})
@@ -239,9 +237,14 @@ async def delete_widget(widgetId: UUID4, user_id: Annotated[str, Depends(get_use
     return JSONResponse(content={"message": "error"}, status_code=500)
 
 
-@widget_router.get("/embed")
-async def embed_widget(widgetId: UUID4):
+@widget_router.post("/embed")
+async def embed_widget(widgetId: WidgetID, user_id: Annotated[str, Depends(get_user_jwt)]):
     widget_exists(str(widgetId))
+
+    with Session(ALCHEMY_ENGINE) as session:
+        user = session.query(Users).filter_by(user_id=user_id).one()
+    if not user.plan_id:
+        return JSONResponse(content={"message": "error", "detail": "User not subscribed to a plan"})
 
     with Session(ALCHEMY_ENGINE) as session:
         existing_embed = session.query(WidgetEmbed).filter_by(widget_id=str(widgetId), active=True).one_or_none()
