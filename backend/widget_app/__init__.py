@@ -93,6 +93,7 @@ async def create_widget(data: CreateWidget, user_id: Annotated[str, Depends(get_
 
             link = stripe.PaymentLink.create(line_items=[{"price": price.stripe_id, "quantity": 1}])
             json_card["payment_link"] = link.url
+            json_card["payment_link_id"] = link.id
 
         from_template = True if data.templateIdUsed else False
         widget = Widgets(widget_id=data.widgetId, user_id=user_id, from_template=from_template,
@@ -119,6 +120,7 @@ async def update_widget(data: UpdateWidget):
     # get the diff
     to_update = {}
     cards_to_update = []
+    is_unordered = False
     for key, api_value in from_api.items():
         db_value = from_db[key]
         to_update[key] = None
@@ -135,9 +137,9 @@ async def update_widget(data: UpdateWidget):
                     db_card_copy.pop("payment_link", None)
                     if api_card["id"] == db_card["id"] and json.dumps(api_card_copy) != json.dumps(db_card_copy):
                         cards_to_update.append(api_card)
-
+            is_unordered = any([api_card["id"] != db_card["id"] for api_card, db_card in zip(api_value, db_value)])
     to_update = {k: v for k, v in to_update.items() if v}
-    if not to_update and not cards_to_update:
+    if not to_update and not cards_to_update and not is_unordered:
         return JSONResponse(content={"message": "OK", "detail": "Nothing to update", "content": {}})
 
     # modify widget title and description in stripe
@@ -165,6 +167,8 @@ async def update_widget(data: UpdateWidget):
     if common_price_kwargs and to_update.get("price"):
         cards_copy = copy.deepcopy(from_db["cards"])
         for idx, card in enumerate(from_db["cards"]):
+            stripe.Price.modify(card["stripe_price_id"], active=False)
+            stripe.PaymentLink.modify(card["payment_link_id"], active=False)
             price = stripe.Price.create(**common_price_kwargs, unit_amount=int(card["amount"] * 100),
                                         product=from_db["stripe_product_id"])
             link = stripe.PaymentLink.create(line_items=[{"price": price.stripe_id, "quantity": 1}])
@@ -183,7 +187,12 @@ async def update_widget(data: UpdateWidget):
             if tmp is None:
                 new_cards.append(card)
             else:
-                tmp = {**tmp, "payment_link": card["payment_link"], "stripe_price_id": card["stripe_price_id"]}
+                stripe.Price.modify(card["stripe_price_id"], active=False)
+                stripe.PaymentLink.modify(card["payment_link_id"], active=False)
+                price = stripe.Price.create(**common_price_kwargs, unit_amount=int(tmp["amount"] * 100),
+                                            product=from_db["stripe_product_id"])
+                link = stripe.PaymentLink.create(line_items=[{"price": price.stripe_id, "quantity": 1}])
+                tmp = {**tmp, "payment_link": link.url, "stripe_price_id": price.stripe_id}
                 new_cards.append(tmp)
         widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": {"cards": new_cards}})
 
@@ -196,6 +205,11 @@ async def update_widget(data: UpdateWidget):
 
     widget = widget_collection.find_one({"widgetId": str(data.widgetId)})
     widget.pop("_id")
+
+    if is_unordered:
+        sorter = {card["id"]: idx for idx, card in enumerate(from_api["cards"])}
+        widget["cards"] = sorted(widget["cards"], key=lambda x: sorter[x["id"]])
+        widget_collection.update_one({"widgetId": str(data.widgetId)}, {"$set": {"cards": widget["cards"]}})
     return JSONResponse(content={"message": "OK", "content": widget})
 
 
