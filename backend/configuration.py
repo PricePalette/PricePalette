@@ -16,6 +16,9 @@ PRICEPALETTE_PLANS = {"price_1Ov0bVCjcrhrZTSatO9LbWyF": 5000,
                       "price_1Ov0bVCjcrhrZTSaNA5k670V": 30000,
                       "631e263e-d9ae-40cc-ac21-91d71fe7c9fd": 50}
 
+MG_KEY = '4978b1ef6df5b97264b6176be2aa16dc-2c441066-291227e7'
+MG_SANDBOX = 'mg.pricepalette.tech'
+
 JWT_SECRET_KEY = os.environ["JWT_SECRET_KEY"]
 JWT_ALGORITHM = os.environ["JWT_ALGORITHM"]
 JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 24 * 60

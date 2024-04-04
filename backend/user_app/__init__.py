@@ -16,6 +16,7 @@ from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKE
 from backend.database import ALCHEMY_ENGINE, stripe
 from backend.database_models import Users, WidgetEmbed, Widgets
 from backend.dependency import get_user_jwt
+from backend.user_app.email import forgot_pass_mail
 from backend.user_app.models import Register, Login, ForgotPassword, ResetPassword, UpdateSecret
 
 user_router = APIRouter(
@@ -143,23 +144,8 @@ async def forgot_password(request_data: ForgotPassword, password_reset_tokens=No
         session.query(Users).filter_by(email=email).update({'forgot_password': reset_token})
         session.commit()
 
-        # Mailgun configuration
-        key = '4978b1ef6df5b97264b6176be2aa16dc-2c441066-291227e7'
-        sandbox = 'mg.pricepalette.tech'
-        recipient = email  # Use the provided email for the recipient
-
-        request_url = f'https://api.mailgun.net/v2/{sandbox}/messages'
-
-        request = requests.post(request_url, auth=('api', key), data={
-            'from': 'no-reply@pricepalette.tech',  # Replace with your sender email
-            'to': recipient,
-            'subject': 'Password Reset',
-            'text': f'Hello,\n\nPlease click on the following link to reset your password: '
-                    f'https://pricepalette.tech/reset-password/{reset_token}',
-        })
-
         # Check if the email was sent successfully
-        if request.status_code != 200:
+        if not forgot_pass_mail(user.email, user.user_name, reset_token):
             return JSONResponse(status_code=500, content={"message": "error", "detail": "Failed to send email"})
 
     return JSONResponse(content={"message": "OK"})
@@ -167,22 +153,18 @@ async def forgot_password(request_data: ForgotPassword, password_reset_tokens=No
 
 @user_router.post("/reset-password")
 async def reset_password(request_data: ResetPassword):
-    email = request_data.email
-    token = request_data.token
-    newPassword = request_data.newPassword
-
     # Check if the email and token are valid
     with Session(ALCHEMY_ENGINE) as session:
-        user = session.query(Users).filter_by(email=email, forgot_password=token).first()
+        user = session.query(Users).filter_by(forgot_password=request_data.token).one()
 
     if not user:
-        raise HTTPException
+        raise HTTPException(status_code=404, detail="Widget not found")
 
     # Hash the new password
-    hashed_password, salt = create_hash_and_salt(newPassword)
+    hashed_password, salt = create_hash_and_salt(request_data.newPassword)
 
     # Update the password reset token in the database
     session.query(Users).filter_by(email=email).update({'password': hashed_password, 'salt': salt})
     session.commit()
 
-    return {"message": "Password reset successfully"}
+    return {"message": "OK"}
