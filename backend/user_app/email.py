@@ -1,17 +1,12 @@
 import requests
 from string import Template
 from backend.configuration import MG_SANDBOX, MG_KEY
+from backend.email_templates import welcome, forgot_password
 
 MG_URL = f'https://api.mailgun.net/v3/{MG_SANDBOX}/messages'
 
-with open(r"./email_templates/forgot_password.html", "r") as fp:
-    forgot_password_html = fp.read()
-
-with open(r"./email_templates/welcome.html", "r") as fp:
-    welcome_html = fp.read()
-
-forgot_password_template = Template(forgot_password_html)
-welcome_template = Template(welcome_html)
+forgot_password_template = Template(forgot_password)
+welcome_template = Template(welcome)
 
 
 def forgot_pass_mail(recipient: str, username: str, reset_token: str) -> bool:
