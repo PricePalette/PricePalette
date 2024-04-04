@@ -15,9 +15,12 @@ import { Image } from "@mantine/core";
 import { useRouter } from "next/router";
 import { useMutation } from "react-query";
 import request from "superagent";
-import { backendAPI } from "@/utils/constants";
+import { SERVER_ERROR, SERVER_SUCCESS, backendAPI } from "@/utils/constants";
 import { useState } from "react";
 import { InstallWidgetModal } from "@/components/InstallWidgetModal";
+import { toErrorMap } from "@/utils/toErrorMap";
+import superagent from "superagent";
+import { toast, Bounce, ToastContainer } from "react-toastify";
 
 export function DashboardWidgetCard({
   title,
@@ -66,6 +69,52 @@ export function DashboardWidgetCard({
   });
 
   const handleDelete = (widgetId: any) => deleteWidgetMutate(widgetId);
+
+  const embedMutation = useMutation({
+    mutationFn: (data: { widgetId: string }) => {
+      return superagent
+        .post(`${backendAPI}/widget/embed`)
+        .send({
+          widgetId: data.widgetId,
+        })
+        .set("Accept", "application/json")
+        .set(
+          "Authorization",
+          `Bearer ${localStorage.getItem("pp_access_token")}`
+        )
+        .then((res) => res.body)
+        .catch((error) => error.response.body);
+    },
+    onSuccess: (data) => {
+      // error
+      if (data.message === SERVER_ERROR) {
+        if (data.detail === "User not subscribed to a plan") {
+          toast.error(
+            "You need to subscribe to a pricing plan before creating a widget. Redirecting you there...",
+            {
+              position: "top-right",
+              autoClose: 2500,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              onClose: () => {
+                router.push("/viewPlans");
+              },
+              transition: Bounce,
+            }
+          );
+        }
+      }
+
+      // success
+      if (data.message === SERVER_SUCCESS) {
+        setInstallWidgetModalOpen(true);
+      }
+    },
+  });
 
   return (
     <Card withBorder radius="md" className={classes.card}>
@@ -131,34 +180,38 @@ export function DashboardWidgetCard({
               }}
             />
           </ActionIcon>
-          <ActionIcon className={classes.action}>
+          <ActionIcon
+            className={classes.action}
+            loading={embedMutation.isLoading}
+            loaderProps={{ color: "blue" }}
+          >
             <IconShare
               style={{ width: rem(16), height: rem(16) }}
               color={"blue"}
-              onClick={() => setInstallWidgetModalOpen(true)}
-            />
-          </ActionIcon>
-          <ActionIcon className={classes.action}>
-            <IconShare
-              style={{ width: rem(16), height: rem(16) }}
-              color={"blue"}
-              onClick={() => console.log("hello")}
+              onClick={() => {
+                embedMutation.mutate({ widgetId });
+              }}
             />
           </ActionIcon>
         </Group>
       </Group>
 
-      <Modal
-        size="xl"
-        opened={isInstallWidgetModalOpen}
-        onClose={() => setInstallWidgetModalOpen(false)}
-        title="Install Widget"
-        styles={{
-          title: { fontSize: "20px", fontWeight: "bold" },
-        }}
-      >
-        <InstallWidgetModal widgetId={widgetId} />
-      </Modal>
+      {/* embed model */}
+      {embedMutation.data ? (
+        embedMutation.data.content ? (
+          <Modal
+            size="xl"
+            opened={isInstallWidgetModalOpen}
+            onClose={() => setInstallWidgetModalOpen(false)}
+            title="Install Widget"
+            styles={{
+              title: { fontSize: "20px", fontWeight: "bold" },
+            }}
+          >
+            <InstallWidgetModal embedId={embedMutation.data.content.embed_id} />
+          </Modal>
+        ) : null
+      ) : null}
 
       {/* Delete widget */}
       <Modal
@@ -181,6 +234,8 @@ export function DashboardWidgetCard({
           Cancel
         </Button>
       </Modal>
+
+      <ToastContainer style={{ width: "500px" }} />
     </Card>
   );
 }
