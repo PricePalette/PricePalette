@@ -1,6 +1,5 @@
 import { Stack, Text } from "@mantine/core";
 import { CodeHighlight } from "@mantine/code-highlight";
-
 import "@mantine/code-highlight/styles.css";
 
 export function InstallWidgetModal({ embedId }: { embedId: string }) {

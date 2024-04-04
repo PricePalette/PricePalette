@@ -85,20 +85,23 @@ export default function EditTemplatePage() {
           setMetaData(data.content);
         }
 
-        toast.success("Your changes have been saved!", {
-          position: "top-right",
-          autoClose: 4000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          onClose: () => {
-            router.push("/dashboard");
-          },
-          transition: Bounce,
-        });
+        if (data.detail && data.detail === "Nothing to update") {
+        } else {
+          toast.success("Your changes have been saved!", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            onClose: () => {
+              router.push("/dashboard");
+            },
+            transition: Bounce,
+          });
+        }
       }
     },
   });
@@ -179,6 +182,8 @@ export default function EditTemplatePage() {
                     onClick={() => {
                       mutation.mutate(metaData!);
                     }}
+                    loading={mutation.isLoading}
+                    loaderProps={{ type: "dots" }}
                   >
                     Publish
                   </Button>

@@ -18,9 +18,9 @@ import request from "superagent";
 import { SERVER_ERROR, SERVER_SUCCESS, backendAPI } from "@/utils/constants";
 import { useState } from "react";
 import { InstallWidgetModal } from "@/components/InstallWidgetModal";
-import { toErrorMap } from "@/utils/toErrorMap";
 import superagent from "superagent";
 import { toast, Bounce, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function DashboardWidgetCard({
   title,
@@ -54,21 +54,17 @@ export function DashboardWidgetCard({
       .set("Authorization", `Bearer ${jwtToken}`);
   };
 
-  const {
-    mutate: deleteWidgetMutate,
-    error: deleteError,
-    isError,
-  } = useMutation(deleteWidget, {
+  const deleteWidgetMutation = useMutation(deleteWidget, {
     onSuccess: () => {
       setDeleteModalOpen(false);
       router.reload();
     },
     onError: (error) => {
-      console.error(deleteError);
+      console.error(deleteWidgetMutation.error);
     },
   });
 
-  const handleDelete = (widgetId: any) => deleteWidgetMutate(widgetId);
+  const handleDelete = (widgetId: any) => deleteWidgetMutation.mutate(widgetId);
 
   const embedMutation = useMutation({
     mutationFn: (data: { widgetId: string }) => {
@@ -165,7 +161,6 @@ export function DashboardWidgetCard({
               style={{ width: rem(16), height: rem(16) }}
               color={"green"}
               onClick={() => {
-                console.log("edit");
                 router.push(editLink);
               }}
             />
@@ -175,7 +170,6 @@ export function DashboardWidgetCard({
               style={{ width: rem(16), height: rem(16) }}
               color={"red"}
               onClick={() => {
-                console.log("delete");
                 setDeleteModalOpen(true);
               }}
             />
@@ -223,7 +217,15 @@ export function DashboardWidgetCard({
           Deleting a widget will also delete all embed links. Are you sure you
           want to continue?
         </Text>
-        <Button color="red" onClick={() => handleDelete(widgetId)} mt="md">
+        <Button
+          color="red"
+          onClick={() => {
+            deleteWidgetMutation.mutate(widgetId);
+          }}
+          mt="md"
+          loading={deleteWidgetMutation.isLoading}
+          loaderProps={{ type: "dots" }}
+        >
           Yes, delete it
         </Button>
         <Button
