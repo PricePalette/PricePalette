@@ -1,8 +1,12 @@
 .wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   padding-top: rem(150px);
   padding-bottom: rem(150px);
   background-image: url("/index.svg");
+  height: 700px;
 }
 
 .inner {

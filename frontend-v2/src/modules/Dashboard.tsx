@@ -45,10 +45,16 @@ const mockdata = [
   { label: "View Plans", icon: IconDashboard, link: "/viewPlans" },
 ];
 
-const plans = {
+const plans: Record<string, string> = {
   price_1Ov0bVCjcrhrZTSatO9LbWyF: "Lite",
   price_1Ov0bVCjcrhrZTSarKzaXfdL: "Pro",
   price_1Ov0bVCjcrhrZTSaNA5k670V: "Elite",
+};
+
+const templateType: Record<string, string> = {
+  "21c86e6a-eac0-4278-8fb4-30e80bb23026": "Curved Card",
+  "1905d495-6371-4b2a-9f6a-c4a586e0d216": "Section Card",
+  "a4375344-6cf5-45aa-a118-831ca970d916": "Leaf Card",
 };
 
 export default function Dashboard() {
@@ -166,11 +172,22 @@ export default function Dashboard() {
                   type="Total Views"
                   metric={
                     userData
-                      ? `${userData.current_views} / ${userData.views_cap}`
+                      ? userData.views_cap
+                        ? `${userData.current_views} / ${userData.views_cap}`
+                        : "N/A"
                       : ""
                   }
                 />
-                <OverviewCard type="Current Plan" metric={"Lite"} />
+                <OverviewCard
+                  type="Current Plan"
+                  metric={
+                    userData
+                      ? userData.plan_id
+                        ? `${plans[String(userData.plan_id)]}`
+                        : "Free"
+                      : ""
+                  }
+                />
               </Flex>
               <Flex
                 align={"center"}
@@ -203,6 +220,7 @@ export default function Dashboard() {
                           desc={item.description}
                           views={item.views}
                           createdDate={item.createdDate}
+                          templateType={templateType[item.templateIdUsed]}
                           editLink={`/template/edit/${item.templateIdUsed}/?widget=${item.widgetId}`}
                         />
                       </Grid.Col>

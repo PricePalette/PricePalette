@@ -178,7 +178,7 @@ export default function templates() {
                     }
                     alt={template.templateName}
                     width={300}
-                    height={300}
+                    height={200}
                   />
                   <div style={{ padding: "10px" }}>
                     <Text
