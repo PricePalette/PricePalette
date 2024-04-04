@@ -61,8 +61,9 @@ async def register(user_info: Register):
                      user_id=user_id, stripe_cust_id=customer.stripe_id, stripe_cust_secret=None)
         session.add(user)
         session.commit()
+
+        welcome_email(user.email, user.user_name)
     access_token = create_access_token(sub=user_id)
-    welcome_email(user.email, user.user_name)
     return JSONResponse(content={"message": "OK", "access_token": access_token,
                                  "content": {"user_id": user_id, "user_name": user_info.username,
                                              "email": user_info.email, "stripe_cust_id": customer.stripe_id}})
