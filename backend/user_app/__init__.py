@@ -16,7 +16,7 @@ from backend.configuration import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKE
 from backend.database import ALCHEMY_ENGINE, stripe
 from backend.database_models import Users, WidgetEmbed, Widgets
 from backend.dependency import get_user_jwt
-from backend.user_app.email import forgot_pass_mail
+from backend.user_app.email import forgot_pass_mail, welcome_email
 from backend.user_app.models import Register, Login, ForgotPassword, ResetPassword, UpdateSecret
 
 user_router = APIRouter(
@@ -62,6 +62,7 @@ async def register(user_info: Register):
         session.add(user)
         session.commit()
     access_token = create_access_token(sub=user_id)
+    welcome_email(user.email, user.user_name)
     return JSONResponse(content={"message": "OK", "access_token": access_token,
                                  "content": {"user_id": user_id, "user_name": user_info.username,
                                              "email": user_info.email, "stripe_cust_id": customer.stripe_id}})
@@ -158,7 +159,9 @@ async def reset_password(request_data: ResetPassword):
         user = session.query(Users).filter_by(forgot_password=request_data.token).one()
 
     if not user:
-        raise HTTPException(status_code=404, detail="Widget not found")
+        return JSONResponse(status_code=404, content={"message": "error",
+                                                      "errors": [{"field": "password",
+                                                                  "message": "Invalid/Expired token"}]})
 
     # Hash the new password
     hashed_password, salt = create_hash_and_salt(request_data.newPassword)
