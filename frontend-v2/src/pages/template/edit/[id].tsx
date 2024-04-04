@@ -135,7 +135,11 @@ export default function EditTemplatePage() {
         >
           <div className={classes.wrapper}>
             <div className={classes.aside}>
-              <div className={classes.logo}>
+              <div
+                className={classes.logo}
+                style={{ cursor: "pointer" }}
+                onClick={() => router.push("/dashboard")}
+              >
                 <LetterLogo width={38} height={38} />
               </div>
               {mainLinks}

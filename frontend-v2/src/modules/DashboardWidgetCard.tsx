@@ -156,35 +156,39 @@ export function DashboardWidgetCard({
         </Center>
 
         <Group gap={8} mr={0}>
-          <ActionIcon className={classes.action}>
+          <ActionIcon
+            className={classes.action}
+            onClick={() => {
+              router.push(editLink);
+            }}
+          >
             <IconPencil
               style={{ width: rem(16), height: rem(16) }}
               color={"green"}
-              onClick={() => {
-                router.push(editLink);
-              }}
             />
           </ActionIcon>
-          <ActionIcon className={classes.action}>
+          <ActionIcon
+            className={classes.action}
+            onClick={() => {
+              setDeleteModalOpen(true);
+            }}
+          >
             <IconTrash
               style={{ width: rem(16), height: rem(16) }}
               color={"red"}
-              onClick={() => {
-                setDeleteModalOpen(true);
-              }}
             />
           </ActionIcon>
           <ActionIcon
             className={classes.action}
             loading={embedMutation.isLoading}
             loaderProps={{ color: "blue" }}
+            onClick={() => {
+              embedMutation.mutate({ widgetId });
+            }}
           >
             <IconShare
               style={{ width: rem(16), height: rem(16) }}
               color={"blue"}
-              onClick={() => {
-                embedMutation.mutate({ widgetId });
-              }}
             />
           </ActionIcon>
         </Group>
