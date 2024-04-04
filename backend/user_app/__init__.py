@@ -125,7 +125,7 @@ async def forgot_password(request_data: ForgotPassword, password_reset_tokens=No
 
     if not email:
         return JSONResponse(status_code=422, content={"message": "error",
-                                                      "errors": [{"field": "password",
+                                                      "errors": [{"field": "email",
                                                                   "message": "Email not provided"}]})
 
     with Session(ALCHEMY_ENGINE) as session:
@@ -133,7 +133,7 @@ async def forgot_password(request_data: ForgotPassword, password_reset_tokens=No
 
         if not user:
             return JSONResponse(status_code=404, content={"message": "error",
-                                                          "errors": [{"field": "password",
+                                                          "errors": [{"field": "email",
                                                                       "message": "Incorrect email"}]})
 
         # Generate a unique password reset token
