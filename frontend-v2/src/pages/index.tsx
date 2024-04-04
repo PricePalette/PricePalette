@@ -149,7 +149,7 @@ export default function IndexPage() {
   return (
     <>
       <Header />
-      <Container className={classes.wrapper} size={1600}>
+      <Container className={classes.wrapper} size={"100%"}>
         <div className={classes.inner}>
           <Title className={classes.title}>
             Craft{" "}
