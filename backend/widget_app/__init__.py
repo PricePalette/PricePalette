@@ -238,8 +238,8 @@ async def delete_widget(widgetId: UUID4, user_id: Annotated[str, Depends(get_use
 
 
 @widget_router.post("/embed")
-async def embed_widget(widgetId: WidgetID, user_id: Annotated[str, Depends(get_user_jwt)]):
-    widget_exists(str(widgetId))
+async def embed_widget(data: WidgetID, user_id: Annotated[str, Depends(get_user_jwt)]):
+    widget_exists(str(data.widgetId))
 
     with Session(ALCHEMY_ENGINE) as session:
         user = session.query(Users).filter_by(user_id=user_id).one()
@@ -247,11 +247,11 @@ async def embed_widget(widgetId: WidgetID, user_id: Annotated[str, Depends(get_u
         return JSONResponse(content={"message": "error", "detail": "User not subscribed to a plan"})
 
     with Session(ALCHEMY_ENGINE) as session:
-        existing_embed = session.query(WidgetEmbed).filter_by(widget_id=str(widgetId), active=True).one_or_none()
+        existing_embed = session.query(WidgetEmbed).filter_by(widget_id=str(data.widgetId), active=True).one_or_none()
         if existing_embed:
             return JSONResponse(content={"message": "OK", "content": {"embed_id": existing_embed.embed_id}})
         embed_id = str(uuid.uuid4())
-        widget_embed = WidgetEmbed(embed_id=embed_id, widget_id=str(widgetId), active=True)
+        widget_embed = WidgetEmbed(embed_id=embed_id, widget_id=str(data.widgetId), active=True)
         session.add(widget_embed)
         session.commit()
     return JSONResponse(content={"message": "OK", "content": {"embed_id": embed_id}})
