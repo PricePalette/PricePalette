@@ -124,13 +124,17 @@ async def forgot_password(request_data: ForgotPassword, password_reset_tokens=No
     email = request_data.email
 
     if not email:
-        return JSONResponse(status_code=422, content={"message": "error", "detail": "Email not provided"})
+        return JSONResponse(status_code=422, content={"message": "error",
+                                                      "errors": [{"field": "password",
+                                                                  "message": "Email not provided"}]})
 
     with Session(ALCHEMY_ENGINE) as session:
         user = session.query(Users).filter_by(email=email).limit(1).first()
 
         if not user:
-            return JSONResponse(status_code=404, content={"message": "error", "detail": "Email not found"})
+            return JSONResponse(status_code=404, content={"message": "error",
+                                                          "errors": [{"field": "password",
+                                                                      "message": "Incorrect email"}]})
 
         # Generate a unique password reset token
         reset_token = str(uuid.uuid4())
@@ -151,7 +155,7 @@ async def forgot_password(request_data: ForgotPassword, password_reset_tokens=No
             'to': recipient,
             'subject': 'Password Reset',
             'text': f'Hello,\n\nPlease click on the following link to reset your password: '
-                    f'https://pricepalette.tech/reset-password?token={reset_token}',
+                    f'https://pricepalette.tech/reset-password/{reset_token}',
         })
 
         # Check if the email was sent successfully
