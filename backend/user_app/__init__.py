@@ -156,7 +156,7 @@ async def forgot_password(request_data: ForgotPassword, password_reset_tokens=No
 async def reset_password(request_data: ResetPassword):
     # Check if the email and token are valid
     with Session(ALCHEMY_ENGINE) as session:
-        user = session.query(Users).filter_by(forgot_password=request_data.token).one()
+        user = session.query(Users).filter_by(forgot_password=request_data.token).one_or_none()
 
     if not user:
         return JSONResponse(status_code=404, content={"message": "error",
@@ -167,7 +167,11 @@ async def reset_password(request_data: ResetPassword):
     hashed_password, salt = create_hash_and_salt(request_data.newPassword)
 
     # Update the password reset token in the database
-    session.query(Users).filter_by(email=email).update({'password': hashed_password, 'salt': salt})
-    session.commit()
+    with Session(ALCHEMY_ENGINE) as session:
+        user = session.query(Users).filter_by(email=user.email).one()
+        user.password = hashed_password
+        user.salt = salt
+        user.forgot_password = None
+        session.commit()
 
     return {"message": "OK"}
