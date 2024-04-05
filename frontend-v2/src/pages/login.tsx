@@ -149,6 +149,23 @@ export default function Login() {
                 Login
               </Button>
             </Group>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "1em",
+              }}
+            >
+              <Anchor
+                component="button"
+                type="button"
+                c="dimmed"
+                onClick={() => router.push("/forgot-password")}
+                size="xs"
+              >
+                Forgot Password?
+              </Anchor>
+            </div>
           </form>
         </Paper>
       </Flex>
