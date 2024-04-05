@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from backend.configuration import PRICEPALETTE_PLANS
 from backend.database import MONGO_CXN, ALCHEMY_ENGINE
 from backend.database_models import WidgetEmbed, Widgets, Users
+from backend.user_app.email import plan_exhausted_email
 
 widget_collection = MONGO_CXN["widgets"]
 embed_router = APIRouter(
@@ -21,17 +22,18 @@ async def widget_info(embedId: UUID4):
         widget = session.query(Widgets).filter_by(widget_id=embed.widget_id, active=True).one()
         user = session.query(Users).filter_by(user_id=widget.user_id).one()
 
-    if embed.views >= PRICEPALETTE_PLANS[user.plan_id]:
-        return JSONResponse(content={"message": "error", "details": "Views exceeded"})
+        if embed.views >= PRICEPALETTE_PLANS[user.plan_id]:
+            plan_exhausted_email(user.email, user.user_name)
+            return JSONResponse(content={"message": "error", "details": "Views exceeded"})
 
-    if not embed:
-        return JSONResponse(content={"message": "error"}, status_code=404)
+        if not embed:
+            return JSONResponse(content={"message": "error"}, status_code=404)
 
-    widget = widget_collection.find_one({"widgetId": str(embed.widget_id)})
-    if not widget:
-        return JSONResponse(content={"message": "error"}, status_code=404)
-    widget.pop("_id", None)
-    with Session(ALCHEMY_ENGINE) as session:
+        widget = widget_collection.find_one({"widgetId": str(embed.widget_id)})
+        if not widget:
+            return JSONResponse(content={"message": "error"}, status_code=404)
+        widget.pop("_id", None)
+
         session.query(WidgetEmbed).filter_by(embed_id=str(embedId)).update({"views": embed.views + 1})
         session.commit()
     return JSONResponse(content={"message": "OK", "content": widget})
