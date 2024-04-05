@@ -1,14 +1,21 @@
 import os
 from urllib.parse import quote_plus
-from urllib.request import urlretrieve
 
 from dotenv import load_dotenv
+from azure.storage.blob import BlobServiceClient
 
-blob_url = f"https://pricepalettefiles.blob.core.windows.net/backend/env"
+blob_service_client = BlobServiceClient.from_connection_string(os.environ['AZURE_STORAGE_CONNECTION_STRING'])
+container_client = blob_service_client.get_container_client(container="backend")
 
-urlretrieved = urlretrieve(blob_url)
-with open(urlretrieved[0], "r") as fp:
+with open("./tmp.txt", "w") as fp:
+    fp.write(container_client.download_blob("env").readall().decode())
+
+with open("./tmp.txt", "r") as fp:
     load_dotenv(stream=fp)
+
+container_client.close()
+blob_service_client.close()
+os.remove("./tmp.txt")
 
 PRICEPALETTE_PLANS = {"price_1Ov0bVCjcrhrZTSatO9LbWyF": 5000,
                       "price_1Ov0bVCjcrhrZTSarKzaXfdL": 15000,
