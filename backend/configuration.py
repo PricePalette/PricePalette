@@ -4,7 +4,7 @@ from urllib.request import urlretrieve
 
 from dotenv import load_dotenv
 
-blob_url = f"https://pricepalettefiles.blob.core.windows.net/backend/env?sp=r&st=2024-04-05T01:53:41Z&se=2024-05-31T09:53:41Z&sip=0.0.0.0-255.255.255.255&sv=2022-11-02&sr=b&sig={os.environ['BLOB_SIGNATURE']}"
+blob_url = f"https://pricepalettefiles.blob.core.windows.net/backend/env"
 
 urlretrieved = urlretrieve(blob_url)
 with open(urlretrieved[0], "r") as fp:
