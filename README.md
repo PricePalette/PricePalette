@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://youtu.be/bHuLCsmDNWI">Youtube Demo</a> -
-  <a href="./openapi.json">OpenAPI docs</a>
+  <a href="./openapi.json">OpenAPI Docs JSON</a>
 </p>
 
 ## Business Problem
