@@ -16,10 +16,10 @@ Imagine in today's world, we have to create pricing templates from scratch that 
 
 ## Structure
 
-| Module                                                                    |        Description         |
-| :------------------------------------------------------------------------ | :------------------------: |
-| [frontend](https://github.com/CodeRoyale/CodeRoyale/tree/v2/frontend)     | React (Nextjs), TypeScript |
-| [backend](https://github.com/PricePalette/PricePalette/tree/main/backend) |      Python, Fast API      |
+| Module                                                                         |        Description         |
+| :----------------------------------------------------------------------------- | :------------------------: |
+| [frontend](https://github.com/PricePalette/PricePalette/tree/main/frontend-v2) | React (Nextjs), TypeScript |
+| [backend](https://github.com/PricePalette/PricePalette/tree/main/backend)      |      Python, Fast API      |
 
 ## Screenshots
 
