@@ -12,7 +12,9 @@
 
 ## Business Problem
 
-Imagine in today's world, we have to create pricing templates from scratch that involve complex coding or expensive specialists, leading to a frustrating process of constant updates when prices or packages change. This is considered an obstacle by small and medium enterprises who are small teams and they have to divert their focus from innovation to endless web development hassles. Gone are the days waiting to write lines of code, test and go live. This is where PricePalette comes to the rescue of such enterprises who do want to invest time in creating pricing templates on their websites but want to use pre-defined templates which are fully customizable. With PricePalette, if your pricing strategies are already decided, then just type in the details with one of our already available templates, and embed the code onto your company’s website. The widgets are already integrated with Stripe (payment gateway) and no business has to worry about integrating with any payment gateways.
+Imagine in today's world, we have to create pricing templates from scratch that involve complex coding or expensive specialists, leading to a frustrating process of constant updates when prices or packages change. This is considered an obstacle by small and medium enterprises who have small teams and they have to divert their focus from innovation to endless web development hassles. Gone are the days of needing to write lines of code, test and go live. This is where PricePalette comes to the rescue of such enterprises who do want to invest time in creating pricing templates on their websites but want to use pre-defined templates which are fully customizable. With PricePalette, if your pricing strategies are already decided, then just type in the details with one of our already available templates, and embed the code onto your company’s website. The widgets are already integrated with Stripe (payment gateway) and no business has to worry about integrating with any payment gateways.
+
+Watch the product demo on [YouTube](https://youtu.be/bHuLCsmDNWI).
 
 ## Structure
 
